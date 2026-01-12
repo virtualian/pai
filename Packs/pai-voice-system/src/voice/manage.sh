@@ -15,7 +15,16 @@
 #
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PORT="${VOICE_SERVER_PORT:-8888}"
+PAI_DIR="${PAI_DIR:-$HOME/.claude}"
+
+# Source environment variables from .env file
+if [ -f "$PAI_DIR/.env" ]; then
+    set -a
+    source "$PAI_DIR/.env"
+    set +a
+fi
+
+PORT="${VOICE_SERVER_PORT:-${VOICE_PORT:-8888}}"
 PID_FILE="/tmp/pai-voice-server.pid"
 LOG_FILE="/tmp/pai-voice-server.log"
 

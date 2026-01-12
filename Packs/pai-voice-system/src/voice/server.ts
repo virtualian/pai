@@ -116,8 +116,8 @@ try {
       console.log('✅ Loaded voice personalities from CORE/voice-personalities.md');
     }
   } else {
-    // Fallback to local voices.json
-    const voicesPath = join(import.meta.dir, '..', '..', 'voice-personalities.json');
+    // Fallback to VoiceServer directory
+    const voicesPath = join(PAI_DIR, 'VoiceServer', 'voice-personalities.json');
     if (existsSync(voicesPath)) {
       const voicesContent = readFileSync(voicesPath, 'utf-8');
       voicesConfig = JSON.parse(voicesContent);
@@ -383,9 +383,11 @@ async function sendNotification(
         console.log(`👤 Personality: ${voiceConfig.description}`);
       }
 
-      console.log(`🎙️  Generating speech (voice: ${voice}, stability: ${voiceSettings.stability}, boost: ${voiceSettings.similarity_boost})`);
+      // Resolve the actual ElevenLabs voice ID from config or use as-is
+      const actualVoiceId = voiceConfig?.voice_id || voice;
+      console.log(`🎙️  Generating speech (voice: ${voice} -> ${actualVoiceId}, stability: ${voiceSettings.stability}, boost: ${voiceSettings.similarity_boost})`);
 
-      const audioBuffer = await generateSpeech(safeMessage, voice, voiceSettings);
+      const audioBuffer = await generateSpeech(safeMessage, actualVoiceId, voiceSettings);
       await playAudio(audioBuffer);
     } catch (error) {
       console.error("Failed to generate/play speech:", error);

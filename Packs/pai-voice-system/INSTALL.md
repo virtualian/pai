@@ -236,7 +236,31 @@ PAI_DIR="${PAI_DIR:-$HOME/.claude}"
 # Copy voice server
 cp "$PACK_DIR/src/voice/server.ts" "$PAI_DIR/VoiceServer/"
 
-# Copy voice personalities configuration
+# Copy voice personalities to canonical location (skills/CORE/)
+# Server looks here first for voice configuration
+mkdir -p "$PAI_DIR/skills/CORE"
+cat > "$PAI_DIR/skills/CORE/voice-personalities.md" << 'VOICE_EOF'
+# Voice Personalities
+
+Agent voice configurations for the PAI voice system.
+
+## Configuration
+
+```json
+VOICE_EOF
+cat "$PACK_DIR/config/voice-personalities.json" >> "$PAI_DIR/skills/CORE/voice-personalities.md"
+cat >> "$PAI_DIR/skills/CORE/voice-personalities.md" << 'VOICE_EOF'
+```
+
+## Setup
+
+1. Go to ElevenLabs.io and create/select voices
+2. Copy the voice_id from each voice's settings page
+3. Add to `$PAI_DIR/.env`: `ELEVENLABS_VOICE_ID=your_voice_id`
+4. For multiple agents, add entries to the JSON above
+VOICE_EOF
+
+# Also copy to VoiceServer as fallback
 cp "$PACK_DIR/config/voice-personalities.json" "$PAI_DIR/VoiceServer/"
 
 # Copy management script
@@ -248,7 +272,8 @@ chmod +x "$PAI_DIR/VoiceServer/"*.sh
 
 **Files copied:**
 - `server.ts` - ElevenLabs TTS HTTP server (port 8888)
-- `voice-personalities.json` - Agent voice configurations with stability/similarity settings
+- `skills/CORE/voice-personalities.md` - Canonical voice configuration (server looks here first)
+- `VoiceServer/voice-personalities.json` - Fallback voice configuration
 - `manage.sh` - Unified management script (start/stop/restart/status/test)
 
 **Mark todo as completed.**
@@ -381,7 +406,8 @@ echo "=== PAI Voice System Verification ==="
 # Check VoiceServer files
 echo "Checking VoiceServer files..."
 [ -f "$PAI_DIR/VoiceServer/server.ts" ] && echo "✓ server.ts" || echo "❌ server.ts missing"
-[ -f "$PAI_DIR/VoiceServer/voice-personalities.json" ] && echo "✓ voice-personalities.json" || echo "❌ voice-personalities.json missing"
+[ -f "$PAI_DIR/skills/CORE/voice-personalities.md" ] && echo "✓ voice-personalities.md (canonical)" || echo "❌ voice-personalities.md missing"
+[ -f "$PAI_DIR/VoiceServer/voice-personalities.json" ] && echo "✓ voice-personalities.json (fallback)" || echo "⚠️  voice-personalities.json fallback missing"
 [ -x "$PAI_DIR/VoiceServer/manage.sh" ] && echo "✓ manage.sh (executable)" || echo "❌ manage.sh not executable"
 
 # Check hook files
@@ -540,7 +566,8 @@ afplay /System/Library/Sounds/Ping.aiff
 | File | Purpose |
 |------|---------|
 | `VoiceServer/server.ts` | ElevenLabs TTS HTTP server (port 8888) |
-| `VoiceServer/voice-personalities.json` | Agent voice configurations with stability/similarity settings |
+| `skills/CORE/voice-personalities.md` | Canonical voice configuration (server looks here first) |
+| `VoiceServer/voice-personalities.json` | Fallback voice configuration |
 | `VoiceServer/manage.sh` | Unified management script (start/stop/restart/status/test) |
 | `hooks/stop-hook-voice.ts` | Session stop voice hook |
 | `hooks/subagent-stop-hook-voice.ts` | Subagent stop voice hook |
@@ -601,7 +628,7 @@ curl -X POST http://localhost:8888/notify \
 
 ## Voice Personalities
 
-The voice system supports multiple agent voices via `voice-personalities.json`:
+The voice system supports multiple agent voices via `voice-personalities.md`:
 
 | Agent | Voice Style |
 |-------|-------------|
@@ -610,7 +637,11 @@ The voice system supports multiple agent voices via `voice-personalities.json`:
 | Architect | Measured, thoughtful pace |
 | Engineer | Clear, technical tone |
 
-Configure voices in `$PAI_DIR/VoiceServer/voice-personalities.json`.
+Configure voices in `$PAI_DIR/skills/CORE/voice-personalities.md` (canonical location).
+
+The server looks for configuration in this order:
+1. `$PAI_DIR/skills/CORE/voice-personalities.md` (recommended)
+2. `$PAI_DIR/VoiceServer/voice-personalities.json` (fallback)
 
 ---
 
