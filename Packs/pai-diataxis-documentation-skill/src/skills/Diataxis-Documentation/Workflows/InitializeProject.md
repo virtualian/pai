@@ -30,7 +30,7 @@ fi
 
 **CRITICAL:** Thoroughly analyze the project BEFORE asking any questions. This analysis informs all recommendations.
 
-### 1.1 Project Type Detection
+### 1.1 Project Type & Repo Detection
 
 ```bash
 # Detect project type and ecosystem
@@ -47,6 +47,14 @@ elif [ -f "pom.xml" ] || [ -f "build.gradle" ]; then
   echo "PROJECT_TYPE: Java"
 else
   echo "PROJECT_TYPE: Unknown"
+fi
+
+# Check repo visibility (for hosting recommendations)
+if command -v gh &> /dev/null && [ -d ".git" ]; then
+  REPO_VISIBILITY=$(gh repo view --json visibility -q '.visibility' 2>/dev/null || echo "unknown")
+  echo "REPO_VISIBILITY: $REPO_VISIBILITY"
+else
+  echo "REPO_VISIBILITY: unknown (gh CLI not available or not a git repo)"
 fi
 ```
 
@@ -101,7 +109,10 @@ echo "=== END INVENTORY ==="
 Before asking questions, present what you found:
 
 ```
-"I've analyzed your project and found these potential documentation sources:
+"I've analyzed your project and found:
+
+🔧 Project type: [Node.js | Python | Go | etc.]
+🔒 Repo visibility: [Public | Private | Unknown]
 
 📁 Existing docs/: [Yes (N files) | No]
 📄 README files: [N files]
@@ -110,7 +121,8 @@ Before asking questions, present what you found:
 📐 Design docs: [Yes | No]
 🌐 Existing docs site: [Docusaurus | MkDocs | None]
 
-Based on this, I'll make recommendations as we configure your documentation."
+Based on this, I'll make recommendations as we configure your documentation.
+Note: Private repos require GitHub Enterprise for GitHub Pages, or use Vercel/Netlify instead."
 ```
 
 ---
@@ -306,9 +318,13 @@ You'll need to add code comments or manually write reference content."
 
 | Factors | Recommended Hosting |
 |---------|-------------------|
-| GitHub repo + any static generator | GitHub Pages |
-| Vercel/Netlify already in use | Vercel/Netlify |
-| Enterprise/private | Self-hosted or Docs platform |
+| Public GitHub repo | GitHub Pages (free, integrated) |
+| Private repo (no Enterprise) | Vercel/Netlify (free tier available) |
+| Private repo + GitHub Enterprise | GitHub Pages or Vercel/Netlify |
+| Enterprise/on-prem requirements | Self-hosted |
+| Managed experience preferred | Docs platform (ReadMe, GitBook) |
+
+**Note:** GitHub Pages requires public repos OR GitHub Enterprise subscription for private repos.
 
 ---
 
