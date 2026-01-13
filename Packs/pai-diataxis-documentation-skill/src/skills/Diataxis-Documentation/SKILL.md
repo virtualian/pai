@@ -1,6 +1,6 @@
 ---
 name: Diataxis-Documentation
-version: 1.2.0
+version: 1.2.1
 install_source: __INSTALL_SOURCE__
 official_source: https://github.com/danielmiessler/Personal_AI_Infrastructure
 official_source_path: Packs/pai-diataxis-documentation-skill
