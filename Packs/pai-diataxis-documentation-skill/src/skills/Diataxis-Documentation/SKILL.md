@@ -1,5 +1,6 @@
 ---
 name: Diataxis-Documentation
+version: 1.0.0
 description: Diataxis-based documentation methodology. USE WHEN creating, modifying, or organizing documentation in docs/, setting up documentation sites, planning documentation, or structuring guides/tutorials/reference/explanation docs.
 ---
 

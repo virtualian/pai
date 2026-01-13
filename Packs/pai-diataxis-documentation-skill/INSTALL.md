@@ -36,10 +36,20 @@ else
   echo "❌ pai-core-install NOT installed - REQUIRED!"
 fi
 
-# Check for existing Diataxis-Documentation skill
+# Check for existing Diataxis-Documentation skill and version
 if [ -d "$PAI_CHECK/skills/Diataxis-Documentation" ]; then
   echo "⚠️  Existing Diataxis-Documentation skill found"
-  ls -la "$PAI_CHECK/skills/Diataxis-Documentation/"
+  # Extract installed version
+  INSTALLED_VERSION=$(grep -E "^version:" "$PAI_CHECK/skills/Diataxis-Documentation/SKILL.md" 2>/dev/null | cut -d' ' -f2 || echo "unknown")
+  echo "Installed version: $INSTALLED_VERSION"
+  # Pack version (update this when releasing new versions)
+  PACK_VERSION="1.0.0"
+  echo "Pack version: $PACK_VERSION"
+  if [ "$INSTALLED_VERSION" = "$PACK_VERSION" ]; then
+    echo "✓ Already up to date"
+  else
+    echo "↑ Update available: $INSTALLED_VERSION → $PACK_VERSION"
+  fi
 else
   echo "✓ No existing Diataxis-Documentation skill (clean install)"
 fi
@@ -50,7 +60,8 @@ fi
 ```
 "Here's what I found:
 - pai-core-install: [installed / NOT INSTALLED - REQUIRED]
-- Existing skill: [Yes / No]"
+- Existing skill: [Yes (version X.X.X) / No]
+- Update available: [Yes (X.X.X → Y.Y.Y) / No / N/A]"
 ```
 
 **STOP if pai-core-install is not installed.** Tell the user:
@@ -60,17 +71,49 @@ fi
 
 ---
 
-## Phase 2: Conflict Resolution (if needed)
+## Phase 2: Update or Install
 
-**Only ask if existing skill detected:**
+### If Update Available (existing skill, newer pack version)
+
+**Use this streamlined flow for updates:**
 
 ```json
 {
-  "header": "Conflict",
+  "header": "Update",
+  "question": "Update available (X.X.X → Y.Y.Y). How should I proceed?",
+  "multiSelect": false,
+  "options": [
+    {"label": "Update skill files (Recommended)", "description": "Updates skill files only. Project configs (docs/.diataxis.md) are preserved."},
+    {"label": "Skip update", "description": "Keep current version"}
+  ]
+}
+```
+
+**If user chooses Update:**
+- Skip to Phase 3 (Installation) - just overwrite skill files
+- No backup needed for minor updates (skill files only)
+- Project configs (`docs/.diataxis.md`) are NOT touched
+
+### If Already Up To Date
+
+Tell the user:
+```
+"Skill is already at version X.X.X (latest). No update needed.
+
+If you're having issues, you can force reinstall with 'Backup and Replace'."
+```
+
+### If Fresh Install or Force Reinstall
+
+**Only ask if existing skill detected AND user wants to force reinstall:**
+
+```json
+{
+  "header": "Install",
   "question": "Existing Diataxis-Documentation skill detected. How should I proceed?",
   "multiSelect": false,
   "options": [
-    {"label": "Backup and Replace (Recommended)", "description": "Creates timestamped backup, then installs new version"},
+    {"label": "Backup and Replace", "description": "Creates timestamped backup, then installs fresh"},
     {"label": "Abort Installation", "description": "Cancel installation, keep existing"}
   ]
 }
@@ -85,6 +128,27 @@ mkdir -p "$BACKUP_DIR"
 [ -d "$PAI_DIR/skills/Diataxis-Documentation" ] && cp -r "$PAI_DIR/skills/Diataxis-Documentation" "$BACKUP_DIR/"
 echo "Backup created at: $BACKUP_DIR"
 ```
+
+---
+
+## Updating Project Configs
+
+**Project configs (`docs/.diataxis.md`) are separate from skill updates.**
+
+If a new skill version requires config changes:
+
+1. Check config version (if present):
+   ```bash
+   grep -E "^<!-- config-version:" ./docs/.diataxis.md 2>/dev/null || echo "No version found"
+   ```
+
+2. If migration needed, the skill will prompt during next use:
+   ```
+   "Your project config was created with an older skill version.
+   I can help migrate it to the new format. Want me to proceed?"
+   ```
+
+3. Migration preserves user choices, only updates structure if needed
 
 ---
 
@@ -171,6 +235,8 @@ echo "=== Verification Complete ==="
 
 ## Success Message
 
+### After Fresh Install
+
 ```
 "PAI Diataxis Documentation Skill v1.0.0 installed successfully!
 
@@ -183,6 +249,18 @@ Try it in any project:
 - 'Set up documentation for this project'
 - 'Plan documentation for this project'
 - 'Create a how-to guide for X'"
+```
+
+### After Update
+
+```
+"PAI Diataxis Documentation Skill updated to v1.0.0!
+
+What changed:
+- [List key changes from changelog]
+
+Your existing project configs (docs/.diataxis.md) were preserved.
+No action needed - the skill is ready to use."
 ```
 
 ---
