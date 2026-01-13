@@ -26,17 +26,39 @@ fi
 
 ---
 
-## Phase 1: Source Discovery (Automatic)
+## Phase 1: Ask Sources First
 
-**CRITICAL:** Thoroughly analyze the project BEFORE asking any questions. This analysis informs all recommendations.
+**CRITICAL:** Ask what sources the user wants to use BEFORE analyzing the project. Only analyze selected sources.
 
-### 1.1 Project Type & Repo Detection
+### Question 1: Sources
+
+```json
+{
+  "header": "Sources",
+  "question": "What sources should inform your documentation?",
+  "multiSelect": true,
+  "options": [
+    {"label": "Existing docs/", "description": "Current documentation directory (if exists)"},
+    {"label": "Code comments", "description": "JSDoc, docstrings, inline documentation"},
+    {"label": "README files", "description": "Project and package READMEs"},
+    {"label": "API specifications", "description": "OpenAPI/Swagger specs (if exists)"},
+    {"label": "Design documents", "description": "specs/, rfcs/, design/ directories"}
+  ]
+}
+```
+
+---
+
+## Phase 2: Analyze Selected Sources
+
+**Only analyze sources the user selected in Phase 1.**
+
+### 2.1 Project Type & Repo Detection (always run)
 
 ```bash
 # Detect project type and ecosystem
 if [ -f "package.json" ]; then
   echo "PROJECT_TYPE: Node.js"
-  cat package.json | head -30
 elif [ -f "pyproject.toml" ] || [ -f "setup.py" ] || [ -f "requirements.txt" ]; then
   echo "PROJECT_TYPE: Python"
 elif [ -f "go.mod" ]; then
@@ -54,89 +76,87 @@ if command -v gh &> /dev/null && [ -d ".git" ]; then
   REPO_VISIBILITY=$(gh repo view --json visibility -q '.visibility' 2>/dev/null || echo "unknown")
   echo "REPO_VISIBILITY: $REPO_VISIBILITY"
 else
-  echo "REPO_VISIBILITY: unknown (gh CLI not available or not a git repo)"
+  echo "REPO_VISIBILITY: unknown"
 fi
 ```
 
-### 1.2 Source Inventory
+### 2.2 Analyze Selected Sources Only
 
-Scan for ALL potential documentation sources:
-
+**If user selected "Existing docs/":**
 ```bash
-echo "=== SOURCE INVENTORY ==="
-
-# Existing documentation
 if [ -d "./docs" ]; then
   DOC_COUNT=$(find ./docs -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
-  echo "EXISTING_DOCS: Yes ($DOC_COUNT markdown files)"
+  echo "EXISTING_DOCS: $DOC_COUNT markdown files"
   find ./docs -name "*.md" -type f | head -20
 else
-  echo "EXISTING_DOCS: No"
+  echo "EXISTING_DOCS: No docs/ directory found"
 fi
+```
 
-# README files
+**If user selected "Code comments":**
+```bash
+# Check for JSDoc/TSDoc
+JSDOC_COUNT=$(grep -r "^\s*/\*\*" --include="*.ts" --include="*.js" . 2>/dev/null | wc -l | tr -d ' ')
+echo "JSDOC_COMMENTS: $JSDOC_COUNT blocks found"
+
+# Check for Python docstrings
+DOCSTRING_COUNT=$(grep -r '"""' --include="*.py" . 2>/dev/null | wc -l | tr -d ' ')
+echo "PYTHON_DOCSTRINGS: $DOCSTRING_COUNT found"
+```
+
+**If user selected "README files":**
+```bash
 README_COUNT=$(find . -maxdepth 3 -name "README*.md" 2>/dev/null | wc -l | tr -d ' ')
 echo "README_FILES: $README_COUNT"
-[ -f "README.md" ] && echo "  - README.md ($(wc -l < README.md) lines)"
+[ -f "README.md" ] && head -50 README.md
+```
 
-# Code comments (sample check)
-if [ -d "./src" ] || [ -d "./lib" ]; then
-  # Check for JSDoc/TSDoc
-  JSDOC_COUNT=$(grep -r "^\s*/\*\*" --include="*.ts" --include="*.js" . 2>/dev/null | wc -l | tr -d ' ')
-  echo "JSDOC_COMMENTS: $JSDOC_COUNT blocks found"
+**If user selected "API specifications":**
+```bash
+[ -f "openapi.yaml" ] && echo "OPENAPI_SPEC: openapi.yaml found"
+[ -f "openapi.json" ] && echo "OPENAPI_SPEC: openapi.json found"
+[ -f "swagger.yaml" ] && echo "OPENAPI_SPEC: swagger.yaml found"
+```
 
-  # Check for Python docstrings
-  DOCSTRING_COUNT=$(grep -r '"""' --include="*.py" . 2>/dev/null | wc -l | tr -d ' ')
-  echo "PYTHON_DOCSTRINGS: $DOCSTRING_COUNT found"
-fi
+**If user selected "Design documents":**
+```bash
+[ -d "./specs" ] && echo "DESIGN_DOCS: specs/ found" && ls ./specs/
+[ -d "./rfcs" ] && echo "DESIGN_DOCS: rfcs/ found" && ls ./rfcs/
+[ -d "./design" ] && echo "DESIGN_DOCS: design/ found" && ls ./design/
+```
 
-# API specifications
-[ -f "openapi.yaml" ] || [ -f "openapi.json" ] || [ -f "swagger.yaml" ] && echo "OPENAPI_SPEC: Yes"
-[ -f "api.md" ] || [ -d "./api" ] && echo "API_DOCS: Yes"
+### 2.3 Check for Existing Docs Site
 
-# External specs
-[ -d "./specs" ] || [ -d "./rfcs" ] || [ -d "./design" ] && echo "DESIGN_DOCS: Yes"
-
-# Existing website/docs site
+```bash
 [ -f "docusaurus.config.js" ] && echo "EXISTING_SITE: Docusaurus"
 [ -f "mkdocs.yml" ] && echo "EXISTING_SITE: MkDocs"
-
-echo "=== END INVENTORY ==="
 ```
 
-### 1.3 Present Findings
-
-Before asking questions, present what you found:
+### 2.4 Present Analysis
 
 ```
-"I've analyzed your project and found:
+"Based on your selected sources, here's what I found:
 
 🔧 Project type: [Node.js | Python | Go | etc.]
 🔒 Repo visibility: [Public | Private | Unknown]
 
-📁 Existing docs/: [Yes (N files) | No]
-📄 README files: [N files]
-💬 Code comments: [JSDoc: N | Docstrings: N | None detected]
-📋 API specs: [OpenAPI found | None]
-📐 Design docs: [Yes | No]
-🌐 Existing docs site: [Docusaurus | MkDocs | None]
+[For each selected source, show what was found]
 
-Based on this, I'll make recommendations as we configure your documentation.
 Note: Private repos require GitHub Enterprise for GitHub Pages, or use Vercel/Netlify instead."
 ```
 
 ---
 
-## Phase 2: User Questions
+## Phase 3: Remaining Questions
 
-**IMPORTANT:** Ask ALL 6 questions in this order. Each question builds on previous answers AND the source analysis from Phase 1.
+**IMPORTANT:** Ask remaining 5 questions. Each builds on sources selected AND analysis from Phase 2.
 
 ### Question Order (Dependencies)
 
 ```
-Sources (confirm what was found)
+Sources ✓ (already asked in Phase 1)
     ↓
-Purpose (informed by sources)
+Purpose (informed by selected sources)
     ↓
 Roles (informed by purpose + sources)
     ↓
@@ -149,30 +169,7 @@ Hosting (informed by technology + project setup)
 
 ---
 
-### Question 1: Sources (Confirmation)
-
-**Present sources found in Phase 1 and confirm which to use.**
-
-```json
-{
-  "header": "Sources",
-  "question": "I found these potential documentation sources. Which should we use?",
-  "multiSelect": true,
-  "options": [
-    {"label": "Existing docs/ (Recommended)", "description": "[N files found] - Current documentation directory"},
-    {"label": "Code comments", "description": "[N JSDoc/docstrings found] - Extract from inline documentation"},
-    {"label": "README files", "description": "[N found] - Project and package READMEs"},
-    {"label": "API specifications", "description": "[OpenAPI/Swagger found] - Generate reference docs"},
-    {"label": "Design documents", "description": "[specs/, rfcs/ found] - Architecture and design docs"}
-  ]
-}
-```
-
-**Dynamic options:** Only show options for sources that were actually found. Mark found sources as recommended.
-
----
-
-### Question 2: Purpose
+### Question 2: Purpose (first question in Phase 3)
 
 **Recommend based on sources found.**
 
@@ -328,7 +325,7 @@ You'll need to add code comments or manually write reference content."
 
 ---
 
-## Phase 3: Scaffold Documentation Site
+## Phase 4: Scaffold Documentation Site
 
 Based on technology choice, scaffold the docs site:
 
@@ -388,7 +385,7 @@ docs/
 
 ---
 
-## Phase 4: Create Project Configuration
+## Phase 5: Create Project Configuration
 
 **Read skill version for config file:**
 
@@ -443,7 +440,7 @@ Custom exclusions:
 
 ---
 
-## Phase 5: Create Initial Structure
+## Phase 6: Create Initial Structure
 
 Based on role priorities and available sources, create starter files:
 
@@ -476,7 +473,7 @@ EOF
 
 ---
 
-## Phase 6: GitHub Actions (if GitHub Pages)
+## Phase 7: GitHub Actions (if GitHub Pages)
 
 **If hosting is GitHub Pages, create workflow:**
 
