@@ -1,4 +1,4 @@
-# PAI Diataxis Documentation Skill v1.2.0 - Installation Guide
+# PAI Diataxis Documentation Skill - Installation Guide
 
 **This guide is designed for AI agents installing this pack into a user's infrastructure.**
 
@@ -8,10 +8,18 @@
 
 **This is a simple file-copy installation.** The skill installs once globally; per-project configuration happens on first use.
 
+### Get Pack Version
+
+```bash
+PACK_DIR="$(pwd)"
+PACK_VERSION=$(grep -E "^version:" "$PACK_DIR/src/skills/Diataxis-Documentation/SKILL.md" | cut -d' ' -f2)
+echo "Pack version: $PACK_VERSION"
+```
+
 ### Welcome Message
 
 ```
-"I'm installing PAI Diataxis Documentation Skill v1.2.0 - a documentation methodology based on the Diataxis framework.
+"I'm installing PAI Diataxis Documentation Skill v$PACK_VERSION - a documentation methodology based on the Diataxis framework.
 
 This installs the skill to your system. When you first use it in a project, I'll help configure a docs site for that specific project."
 ```
@@ -42,8 +50,7 @@ if [ -d "$PAI_CHECK/skills/Diataxis-Documentation" ]; then
   # Extract installed version
   INSTALLED_VERSION=$(grep -E "^version:" "$PAI_CHECK/skills/Diataxis-Documentation/SKILL.md" 2>/dev/null | cut -d' ' -f2 || echo "unknown")
   echo "Installed version: $INSTALLED_VERSION"
-  # Pack version (update this when releasing new versions)
-  PACK_VERSION="1.2.0"
+  # Pack version (read from source SKILL.md)
   echo "Pack version: $PACK_VERSION"
   if [ "$INSTALLED_VERSION" = "$PACK_VERSION" ]; then
     echo "✓ Already up to date"
@@ -269,7 +276,7 @@ echo "=== Verification Complete ==="
 ### After Fresh Install
 
 ```
-"PAI Diataxis Documentation Skill v1.2.0 installed successfully!
+"PAI Diataxis Documentation Skill v$PACK_VERSION installed successfully!
 
 The skill is now available globally. When you first use it in a project, I'll help you:
 - Choose documentation technology (Docusaurus, MkDocs, etc.)
@@ -285,7 +292,7 @@ Try it in any project:
 ### After Update
 
 ```
-"PAI Diataxis Documentation Skill updated to v1.2.0!
+"PAI Diataxis Documentation Skill updated to v$PACK_VERSION!
 
 What changed:
 - [List key changes from changelog]

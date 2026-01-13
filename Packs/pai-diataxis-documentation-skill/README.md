@@ -1,7 +1,7 @@
 ---
 name: PAI Diataxis Documentation Skill
-pack-id: pai-diataxis-documentation-skill-v1.2.0
-version: 1.2.0
+pack-id: pai-diataxis-documentation-skill
+version: see src/skills/Diataxis-Documentation/SKILL.md
 author: ianmarr
 description: Diataxis-based documentation methodology skill - role-first structure, content type separation, installation-time configuration
 type: skill
