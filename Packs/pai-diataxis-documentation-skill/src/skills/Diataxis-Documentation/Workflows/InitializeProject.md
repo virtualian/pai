@@ -59,6 +59,17 @@ fi
 
 ## Phase 2: User Questions
 
+**IMPORTANT:** Ask ALL 6 questions below. Do not skip any. Each answer is stored in `docs/.diataxis.md`.
+
+1. Purpose
+2. Hosting
+3. Technology
+4. Roles/Audiences
+5. Diataxis priorities (per role)
+6. Sources
+
+---
+
 ### Question 1: Documentation Site Purpose
 
 ```json
