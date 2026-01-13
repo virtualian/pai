@@ -86,7 +86,8 @@ Technology choice affects output format and conventions.
 | **InitializeProject** | First use in project, "set up docs", "initialize documentation", no `docs/.diataxis.md` | `Workflows/InitializeProject.md` |
 | **PlanDocumentation** | "plan documentation", "documentation plan", "what docs do we need" | `Workflows/PlanDocumentation.md` |
 | **OrganizeDocumentation** | "organize docs", "restructure documentation", "apply diataxis" | `Workflows/OrganizeDocumentation.md` |
-| **CreateDocumentation** | "create tutorial", "write how-to", "create reference", "write explanation" | `Workflows/CreateDocumentation.md` |
+| **CreateScaffold** | "create scaffold", "new doc scaffold" | `Workflows/CreateScaffold.md` |
+| **GenerateContent** | "generate content", "fill scaffold", "create tutorial", "write how-to" | `Workflows/GenerateContent.md` |
 
 ## Quick Reference: Diataxis Content Types
 
@@ -259,5 +260,6 @@ fi
 - `Workflows/InitializeProject.md` - First-use project setup
 - `Workflows/PlanDocumentation.md` - Planning workflow
 - `Workflows/OrganizeDocumentation.md` - Restructuring workflow
-- `Workflows/CreateDocumentation.md` - Creation workflow
+- `Workflows/CreateScaffold.md` - Create doc structure
+- `Workflows/GenerateContent.md` - Fill scaffold with content
 - [Diataxis.fr](https://diataxis.fr/) - Official Diataxis documentation

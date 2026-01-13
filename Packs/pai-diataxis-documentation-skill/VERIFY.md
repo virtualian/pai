@@ -33,7 +33,8 @@ echo "3. Checking workflows..."
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/InitializeProject.md" ] && echo "   ✓ InitializeProject.md" || echo "   ❌ InitializeProject.md missing"
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/PlanDocumentation.md" ] && echo "   ✓ PlanDocumentation.md" || echo "   ❌ PlanDocumentation.md missing"
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/OrganizeDocumentation.md" ] && echo "   ✓ OrganizeDocumentation.md" || echo "   ❌ OrganizeDocumentation.md missing"
-[ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/CreateDocumentation.md" ] && echo "   ✓ CreateDocumentation.md" || echo "   ❌ CreateDocumentation.md missing"
+[ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/CreateScaffold.md" ] && echo "   ✓ CreateScaffold.md" || echo "   ❌ CreateScaffold.md missing"
+[ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/GenerateContent.md" ] && echo "   ✓ GenerateContent.md" || echo "   ❌ GenerateContent.md missing"
 
 echo ""
 echo "=== Verification Complete ==="
@@ -59,7 +60,8 @@ Diataxis-Documentation/
     ├── InitializeProject.md
     ├── PlanDocumentation.md
     ├── OrganizeDocumentation.md
-    └── CreateDocumentation.md
+    ├── CreateScaffold.md
+    └── GenerateContent.md
 ```
 
 ### 2. SKILL.md Content Check
@@ -78,7 +80,7 @@ head -20 "$PAI_DIR/skills/Diataxis-Documentation/SKILL.md"
 
 ```bash
 PAI_DIR="${PAI_DIR:-$HOME/.claude}"
-for f in InitializeProject PlanDocumentation OrganizeDocumentation CreateDocumentation; do
+for f in InitializeProject PlanDocumentation OrganizeDocumentation CreateScaffold GenerateContent; do
   echo "--- $f.md ---"
   head -10 "$PAI_DIR/skills/Diataxis-Documentation/Workflows/$f.md"
   echo ""

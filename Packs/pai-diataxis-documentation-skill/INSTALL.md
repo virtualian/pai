@@ -293,7 +293,8 @@ cp "$PACK_DIR/src/skills/Diataxis-Documentation/Workflows/"*.md "$PAI_DIR/skills
 - `InitializeProject.md` - First-use project configuration (creates docs site)
 - `PlanDocumentation.md` - Documentation planning and gap analysis
 - `OrganizeDocumentation.md` - Restructuring existing documentation
-- `CreateDocumentation.md` - Writing new documentation
+- `CreateScaffold.md` - Create documentation structure
+- `GenerateContent.md` - Fill scaffold with content
 
 ---
 
@@ -317,7 +318,8 @@ echo "Checking workflow files..."
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/InitializeProject.md" ] && echo "✓ InitializeProject.md" || echo "❌ InitializeProject.md missing"
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/PlanDocumentation.md" ] && echo "✓ PlanDocumentation.md" || echo "❌ PlanDocumentation.md missing"
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/OrganizeDocumentation.md" ] && echo "✓ OrganizeDocumentation.md" || echo "❌ OrganizeDocumentation.md missing"
-[ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/CreateDocumentation.md" ] && echo "✓ CreateDocumentation.md" || echo "❌ CreateDocumentation.md missing"
+[ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/CreateScaffold.md" ] && echo "✓ CreateScaffold.md" || echo "❌ CreateScaffold.md missing"
+[ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/GenerateContent.md" ] && echo "✓ GenerateContent.md" || echo "❌ GenerateContent.md missing"
 
 echo "=== Verification Complete ==="
 ```
@@ -365,7 +367,8 @@ No action needed - the skill is ready to use."
 | `Workflows/InitializeProject.md` | First-use project configuration |
 | `Workflows/PlanDocumentation.md` | Documentation planning workflow |
 | `Workflows/OrganizeDocumentation.md` | Documentation restructuring workflow |
-| `Workflows/CreateDocumentation.md` | New documentation creation workflow |
+| `Workflows/CreateScaffold.md` | Create documentation structure |
+| `Workflows/GenerateContent.md` | Fill scaffold with content |
 
 ---
 

@@ -238,4 +238,4 @@ Ask the user:
 ## Related Workflows
 
 - `OrganizeDocumentation.md` - Restructure existing docs based on plan
-- `CreateDocumentation.md` - Create new docs identified in gaps
+- `CreateScaffold.md` + `GenerateContent.md` - Create new docs identified in gaps

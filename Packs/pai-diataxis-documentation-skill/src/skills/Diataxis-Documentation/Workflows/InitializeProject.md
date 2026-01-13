@@ -829,4 +829,5 @@ Next steps:
 
 - `Standard.md` - Diataxis framework documentation
 - `PlanDocumentation.md` - Next step after initialization
-- `CreateDocumentation.md` - Writing new content
+- `CreateScaffold.md` - Create doc structure
+- `GenerateContent.md` - Fill scaffold with content

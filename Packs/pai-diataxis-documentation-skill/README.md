@@ -97,7 +97,8 @@ pai-diataxis-documentation-skill/
             └── Workflows/
                 ├── PlanDocumentation.md      # Documentation planning
                 ├── OrganizeDocumentation.md  # Restructuring existing docs
-                └── CreateDocumentation.md    # Writing new documentation
+                ├── CreateScaffold.md         # Create doc structure
+                └── GenerateContent.md        # Fill scaffold with content
 ```
 
 ## The Problem This Solves
@@ -147,7 +148,7 @@ After installation:
 ```
 "Plan documentation for this project"     -> PlanDocumentation workflow
 "Organize my existing docs"               -> OrganizeDocumentation workflow
-"Create a how-to guide for X"             -> CreateDocumentation workflow
+"Create a how-to guide for X"             -> CreateScaffold + GenerateContent
 "What Diataxis type should this doc be?"  -> SKILL.md guidance
 ```
 
