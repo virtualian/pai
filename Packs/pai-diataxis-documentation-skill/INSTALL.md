@@ -187,30 +187,33 @@ cp "$PACK_DIR/src/skills/Diataxis-Documentation/Standard.md" "$PAI_DIR/skills/Di
 
 ### 3.3 Record Install Source
 
-**Detect and record where the skill was installed from:**
+**Record the actual location the skill was installed from:**
 
 ```bash
 PAI_DIR="${PAI_DIR:-$HOME/.claude}"
 SKILL_FILE="$PAI_DIR/skills/Diataxis-Documentation/SKILL.md"
+PACK_DIR="$(pwd)"
 
-# Try to detect source from git remote
+# Record the actual install source (local path or git repo)
+# This is where the user ran the install from
+INSTALL_SOURCE="$PACK_DIR"
+
+# If it's a git repo, also note the remote for context
 if [ -d ".git" ]; then
   GIT_REMOTE=$(git remote get-url origin 2>/dev/null || echo "")
   if [ -n "$GIT_REMOTE" ]; then
     # Convert SSH to HTTPS format if needed
-    INSTALL_SOURCE=$(echo "$GIT_REMOTE" | sed 's|git@github.com:|https://github.com/|' | sed 's|\.git$||')
-    echo "Detected install source: $INSTALL_SOURCE"
+    GIT_REMOTE=$(echo "$GIT_REMOTE" | sed 's|git@github.com:|https://github.com/|' | sed 's|\.git$||')
+    INSTALL_SOURCE="$PACK_DIR (from $GIT_REMOTE)"
   fi
 fi
-
-# Default to official PAI repo if not detected
-INSTALL_SOURCE="${INSTALL_SOURCE:-https://github.com/virtualian/pai}"
 
 # Update SKILL.md with actual install source
 sed -i.bak "s|^install_source:.*|install_source: $INSTALL_SOURCE|" "$SKILL_FILE"
 rm -f "$SKILL_FILE.bak"
 
 echo "Install source recorded: $INSTALL_SOURCE"
+echo "Official source (for updates): https://github.com/danielmiessler/Personal_AI_Infrastructure"
 ```
 
 **Files copied:**
