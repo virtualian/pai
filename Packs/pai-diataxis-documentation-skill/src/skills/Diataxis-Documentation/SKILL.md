@@ -1,6 +1,8 @@
 ---
 name: Diataxis-Documentation
 version: 1.0.0
+install_source: https://github.com/virtualian/pai
+install_source_path: Packs/pai-diataxis-documentation-skill
 description: Diataxis-based documentation methodology. USE WHEN creating, modifying, or organizing documentation in docs/, setting up documentation sites, planning documentation, or structuring guides/tutorials/reference/explanation docs.
 ---
 
@@ -201,6 +203,43 @@ Always read `docs/.diataxis.md` at the start of documentation tasks. It contains
 ```
 
 **If `docs/.diataxis.md` doesn't exist:** Route to `Workflows/InitializeProject.md` first.
+
+## Update Check
+
+**When user asks about updates or skill version, check for newer versions:**
+
+```bash
+# Read install source from this file's frontmatter
+SKILL_FILE="${PAI_DIR:-$HOME/.claude}/skills/Diataxis-Documentation/SKILL.md"
+INSTALLED_VERSION=$(grep -E "^version:" "$SKILL_FILE" | cut -d' ' -f2)
+INSTALL_SOURCE=$(grep -E "^install_source:" "$SKILL_FILE" | cut -d' ' -f2)
+INSTALL_PATH=$(grep -E "^install_source_path:" "$SKILL_FILE" | cut -d' ' -f2)
+
+# Default to official PAI repo
+INSTALL_SOURCE="${INSTALL_SOURCE:-https://github.com/virtualian/pai}"
+INSTALL_PATH="${INSTALL_PATH:-Packs/pai-diataxis-documentation-skill}"
+
+# Fetch latest version from source (GitHub raw file)
+# Convert https://github.com/owner/repo to raw URL
+RAW_URL=$(echo "$INSTALL_SOURCE" | sed 's|github.com|raw.githubusercontent.com|')
+REMOTE_SKILL="$RAW_URL/main/$INSTALL_PATH/src/skills/Diataxis-Documentation/SKILL.md"
+
+LATEST_VERSION=$(curl -s "$REMOTE_SKILL" 2>/dev/null | grep -E "^version:" | cut -d' ' -f2 || echo "unknown")
+
+echo "Installed: $INSTALLED_VERSION"
+echo "Latest: $LATEST_VERSION"
+echo "Source: $INSTALL_SOURCE"
+
+if [ "$INSTALLED_VERSION" != "$LATEST_VERSION" ] && [ "$LATEST_VERSION" != "unknown" ]; then
+  echo "⬆️ Update available: $INSTALLED_VERSION → $LATEST_VERSION"
+  echo "To update, clone/pull the repo and run the install:"
+  echo "  cd $INSTALL_PATH && # follow INSTALL.md"
+else
+  echo "✓ Up to date"
+fi
+```
+
+**Triggers:** "check for updates", "skill version", "is there an update"
 
 ## References
 

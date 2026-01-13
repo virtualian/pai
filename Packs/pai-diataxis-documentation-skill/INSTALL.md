@@ -185,11 +185,39 @@ cp "$PACK_DIR/src/skills/Diataxis-Documentation/SKILL.md" "$PAI_DIR/skills/Diata
 cp "$PACK_DIR/src/skills/Diataxis-Documentation/Standard.md" "$PAI_DIR/skills/Diataxis-Documentation/"
 ```
 
+### 3.3 Record Install Source
+
+**Detect and record where the skill was installed from:**
+
+```bash
+PAI_DIR="${PAI_DIR:-$HOME/.claude}"
+SKILL_FILE="$PAI_DIR/skills/Diataxis-Documentation/SKILL.md"
+
+# Try to detect source from git remote
+if [ -d ".git" ]; then
+  GIT_REMOTE=$(git remote get-url origin 2>/dev/null || echo "")
+  if [ -n "$GIT_REMOTE" ]; then
+    # Convert SSH to HTTPS format if needed
+    INSTALL_SOURCE=$(echo "$GIT_REMOTE" | sed 's|git@github.com:|https://github.com/|' | sed 's|\.git$||')
+    echo "Detected install source: $INSTALL_SOURCE"
+  fi
+fi
+
+# Default to official PAI repo if not detected
+INSTALL_SOURCE="${INSTALL_SOURCE:-https://github.com/virtualian/pai}"
+
+# Update SKILL.md with actual install source
+sed -i.bak "s|^install_source:.*|install_source: $INSTALL_SOURCE|" "$SKILL_FILE"
+rm -f "$SKILL_FILE.bak"
+
+echo "Install source recorded: $INSTALL_SOURCE"
+```
+
 **Files copied:**
-- `SKILL.md` - Main skill routing and Diataxis methodology
+- `SKILL.md` - Main skill routing and Diataxis methodology (with install source)
 - `Standard.md` - Diataxis framework documentation
 
-### 3.3 Copy Workflow Files
+### 3.4 Copy Workflow Files
 
 ```bash
 PACK_DIR="$(pwd)"
