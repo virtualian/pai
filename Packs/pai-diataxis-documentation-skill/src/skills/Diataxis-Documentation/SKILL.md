@@ -1,8 +1,9 @@
 ---
 name: Diataxis-Documentation
 version: 1.0.0
-install_source: https://github.com/virtualian/pai
-install_source_path: Packs/pai-diataxis-documentation-skill
+install_source: __INSTALL_SOURCE__
+official_source: https://github.com/danielmiessler/Personal_AI_Infrastructure
+official_source_path: Packs/pai-diataxis-documentation-skill
 description: Diataxis-based documentation methodology. USE WHEN creating, modifying, or organizing documentation in docs/, setting up documentation sites, planning documentation, or structuring guides/tutorials/reference/explanation docs.
 ---
 
@@ -209,31 +210,40 @@ Always read `docs/.diataxis.md` at the start of documentation tasks. It contains
 **When user asks about updates or skill version, check for newer versions:**
 
 ```bash
-# Read install source from this file's frontmatter
 SKILL_FILE="${PAI_DIR:-$HOME/.claude}/skills/Diataxis-Documentation/SKILL.md"
+
+# Read version and sources from frontmatter
 INSTALLED_VERSION=$(grep -E "^version:" "$SKILL_FILE" | cut -d' ' -f2)
-INSTALL_SOURCE=$(grep -E "^install_source:" "$SKILL_FILE" | cut -d' ' -f2)
-INSTALL_PATH=$(grep -E "^install_source_path:" "$SKILL_FILE" | cut -d' ' -f2)
+INSTALL_SOURCE=$(grep -E "^install_source:" "$SKILL_FILE" | sed 's/^install_source: //')
+OFFICIAL_SOURCE=$(grep -E "^official_source:" "$SKILL_FILE" | cut -d' ' -f2)
+OFFICIAL_PATH=$(grep -E "^official_source_path:" "$SKILL_FILE" | cut -d' ' -f2)
 
-# Default to official PAI repo
-INSTALL_SOURCE="${INSTALL_SOURCE:-https://github.com/virtualian/pai}"
-INSTALL_PATH="${INSTALL_PATH:-Packs/pai-diataxis-documentation-skill}"
+# Defaults
+OFFICIAL_SOURCE="${OFFICIAL_SOURCE:-https://github.com/danielmiessler/Personal_AI_Infrastructure}"
+OFFICIAL_PATH="${OFFICIAL_PATH:-Packs/pai-diataxis-documentation-skill}"
 
-# Fetch latest version from source (GitHub raw file)
-# Convert https://github.com/owner/repo to raw URL
-RAW_URL=$(echo "$INSTALL_SOURCE" | sed 's|github.com|raw.githubusercontent.com|')
-REMOTE_SKILL="$RAW_URL/main/$INSTALL_PATH/src/skills/Diataxis-Documentation/SKILL.md"
+# Fetch latest version from official source (GitHub raw file)
+RAW_URL=$(echo "$OFFICIAL_SOURCE" | sed 's|github.com|raw.githubusercontent.com|')
+REMOTE_SKILL="$RAW_URL/main/$OFFICIAL_PATH/src/skills/Diataxis-Documentation/SKILL.md"
 
 LATEST_VERSION=$(curl -s "$REMOTE_SKILL" 2>/dev/null | grep -E "^version:" | cut -d' ' -f2 || echo "unknown")
 
-echo "Installed: $INSTALLED_VERSION"
-echo "Latest: $LATEST_VERSION"
-echo "Source: $INSTALL_SOURCE"
+echo "Installed version: $INSTALLED_VERSION"
+echo "Latest version: $LATEST_VERSION"
+echo "Installed from: $INSTALL_SOURCE"
+echo "Official source: $OFFICIAL_SOURCE"
 
 if [ "$INSTALLED_VERSION" != "$LATEST_VERSION" ] && [ "$LATEST_VERSION" != "unknown" ]; then
+  echo ""
   echo "⬆️ Update available: $INSTALLED_VERSION → $LATEST_VERSION"
-  echo "To update, clone/pull the repo and run the install:"
-  echo "  cd $INSTALL_PATH && # follow INSTALL.md"
+  echo ""
+  echo "To update from official source:"
+  echo "  git clone $OFFICIAL_SOURCE pai-official"
+  echo "  cd pai-official/$OFFICIAL_PATH"
+  echo "  # follow INSTALL.md"
+  echo ""
+  echo "Or update from your install source if it's a local repo:"
+  echo "  cd $INSTALL_SOURCE && git pull && # follow INSTALL.md"
 else
   echo "✓ Up to date"
 fi
