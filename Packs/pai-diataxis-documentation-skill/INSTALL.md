@@ -47,18 +47,38 @@ fi
 # Check for existing Diataxis-Documentation skill and version
 if [ -d "$PAI_CHECK/skills/Diataxis-Documentation" ]; then
   echo "⚠️  Existing Diataxis-Documentation skill found"
-  # Extract installed version
   INSTALLED_VERSION=$(grep -E "^version:" "$PAI_CHECK/skills/Diataxis-Documentation/SKILL.md" 2>/dev/null | cut -d' ' -f2 || echo "unknown")
   echo "Installed version: $INSTALLED_VERSION"
-  # Pack version (read from source SKILL.md)
-  echo "Pack version: $PACK_VERSION"
-  if [ "$INSTALLED_VERSION" = "$PACK_VERSION" ]; then
-    echo "✓ Already up to date"
-  else
-    echo "↑ Update available: $INSTALLED_VERSION → $PACK_VERSION"
-  fi
 else
+  INSTALLED_VERSION="none"
   echo "✓ No existing Diataxis-Documentation skill (clean install)"
+fi
+
+# Pack version (what we're installing from)
+echo "Pack version: $PACK_VERSION"
+
+# Check official remote for latest version
+OFFICIAL_SOURCE="https://github.com/danielmiessler/Personal_AI_Infrastructure"
+OFFICIAL_PATH="Packs/pai-diataxis-documentation-skill"
+RAW_URL="https://raw.githubusercontent.com/danielmiessler/Personal_AI_Infrastructure"
+REMOTE_SKILL="$RAW_URL/main/$OFFICIAL_PATH/src/skills/Diataxis-Documentation/SKILL.md"
+
+LATEST_VERSION=$(curl -s "$REMOTE_SKILL" 2>/dev/null | grep -E "^version:" | head -1 | cut -d' ' -f2 || echo "unknown")
+echo "Latest (official): $LATEST_VERSION"
+
+# Compare versions
+if [ "$INSTALLED_VERSION" != "none" ]; then
+  if [ "$INSTALLED_VERSION" = "$PACK_VERSION" ]; then
+    echo "✓ Pack matches installed"
+  else
+    echo "↑ Pack update: $INSTALLED_VERSION → $PACK_VERSION"
+  fi
+fi
+
+if [ "$LATEST_VERSION" != "unknown" ] && [ "$PACK_VERSION" != "$LATEST_VERSION" ]; then
+  echo ""
+  echo "⚠️  NOTE: Official repo has newer version ($LATEST_VERSION)"
+  echo "   Consider pulling latest from: $OFFICIAL_SOURCE"
 fi
 ```
 
@@ -67,8 +87,10 @@ fi
 ```
 "Here's what I found:
 - pai-core-install: [installed / NOT INSTALLED - REQUIRED]
-- Existing skill: [Yes (version X.X.X) / No]
-- Update available: [Yes (X.X.X → Y.Y.Y) / No / N/A]"
+- Installed version: [X.X.X / none]
+- Pack version: [X.X.X]
+- Latest (official): [X.X.X / unknown]
+- Status: [Up to date / Update available / Official has newer]"
 ```
 
 **STOP if pai-core-install is not installed.** Tell the user:
@@ -166,25 +188,48 @@ If a new skill version requires config changes:
 ```json
 {
   "todos": [
+    {"content": "Capture existing install source", "status": "pending", "activeForm": "Capturing existing install source"},
     {"content": "Create skill directory structure", "status": "pending", "activeForm": "Creating directory structure"},
     {"content": "Copy skill files from pack", "status": "pending", "activeForm": "Copying skill files"},
+    {"content": "Record install/update source", "status": "pending", "activeForm": "Recording install source"},
     {"content": "Copy workflow files", "status": "pending", "activeForm": "Copying workflow files"},
     {"content": "Run verification", "status": "pending", "activeForm": "Running verification"}
   ]
 }
 ```
 
-### 3.1 Create Skill Directory Structure
+### 3.1 Capture Existing Install Source (Before Copy)
+
+**IMPORTANT: Must run before copying files to preserve original install source.**
+
+```bash
+PAI_DIR="${PAI_DIR:-$HOME/.claude}"
+EXISTING_SKILL="$PAI_DIR/skills/Diataxis-Documentation/SKILL.md"
+
+# Capture existing install_source before we overwrite it
+if [ -f "$EXISTING_SKILL" ]; then
+  ORIGINAL_INSTALL_SOURCE=$(grep -E "^install_source:" "$EXISTING_SKILL" | sed 's/^install_source: //')
+  # Only keep it if it's not a placeholder
+  if [ "$ORIGINAL_INSTALL_SOURCE" = "__INSTALL_SOURCE__" ]; then
+    ORIGINAL_INSTALL_SOURCE=""
+  fi
+  echo "Existing install source: ${ORIGINAL_INSTALL_SOURCE:-none}"
+else
+  ORIGINAL_INSTALL_SOURCE=""
+  echo "Fresh install (no existing skill)"
+fi
+```
+
+### 3.2 Create Directory Structure
 
 ```bash
 PAI_DIR="${PAI_DIR:-$HOME/.claude}"
 mkdir -p "$PAI_DIR/skills/Diataxis-Documentation/Workflows"
 ```
 
-### 3.2 Copy Skill Files
+### 3.3 Copy Skill Files
 
 ```bash
-# From the pack directory (where this INSTALL.md is located)
 PACK_DIR="$(pwd)"
 PAI_DIR="${PAI_DIR:-$HOME/.claude}"
 
@@ -192,34 +237,42 @@ cp "$PACK_DIR/src/skills/Diataxis-Documentation/SKILL.md" "$PAI_DIR/skills/Diata
 cp "$PACK_DIR/src/skills/Diataxis-Documentation/Standard.md" "$PAI_DIR/skills/Diataxis-Documentation/"
 ```
 
-### 3.3 Record Install Source
+### 3.4 Record Install/Update Source
 
-**Record the actual location the skill was installed from:**
+**Track original install location and last update location separately.**
 
 ```bash
 PAI_DIR="${PAI_DIR:-$HOME/.claude}"
 SKILL_FILE="$PAI_DIR/skills/Diataxis-Documentation/SKILL.md"
 PACK_DIR="$(pwd)"
 
-# Record the actual install source (local path or git repo)
-# This is where the user ran the install from
-INSTALL_SOURCE="$PACK_DIR"
-
-# If it's a git repo, also note the remote for context
+# Build current source string (local path + git remote if available)
+CURRENT_SOURCE="$PACK_DIR"
 if [ -d ".git" ]; then
   GIT_REMOTE=$(git remote get-url origin 2>/dev/null || echo "")
   if [ -n "$GIT_REMOTE" ]; then
-    # Convert SSH to HTTPS format if needed
     GIT_REMOTE=$(echo "$GIT_REMOTE" | sed 's|git@github.com:|https://github.com/|' | sed 's|\.git$||')
-    INSTALL_SOURCE="$PACK_DIR (from $GIT_REMOTE)"
+    CURRENT_SOURCE="$PACK_DIR (from $GIT_REMOTE)"
   fi
 fi
 
-# Update SKILL.md with actual install source
-sed -i.bak "s|^install_source:.*|install_source: $INSTALL_SOURCE|" "$SKILL_FILE"
-rm -f "$SKILL_FILE.bak"
+# ORIGINAL_INSTALL_SOURCE was captured in step 3.1 before files were copied
+if [ -z "$ORIGINAL_INSTALL_SOURCE" ]; then
+  # Fresh install: set both to current source
+  echo "Fresh install - recording install source"
+  sed -i.bak "s|^install_source:.*|install_source: $CURRENT_SOURCE|" "$SKILL_FILE"
+  sed -i.bak "s|^last_updated_from:.*|last_updated_from: $CURRENT_SOURCE|" "$SKILL_FILE"
+  echo "Install source: $CURRENT_SOURCE"
+else
+  # Update: preserve original, update last_updated_from
+  echo "Update - preserving original install source"
+  sed -i.bak "s|^install_source:.*|install_source: $ORIGINAL_INSTALL_SOURCE|" "$SKILL_FILE"
+  sed -i.bak "s|^last_updated_from:.*|last_updated_from: $CURRENT_SOURCE|" "$SKILL_FILE"
+  echo "Original install: $ORIGINAL_INSTALL_SOURCE"
+  echo "Updated from: $CURRENT_SOURCE"
+fi
 
-echo "Install source recorded: $INSTALL_SOURCE"
+rm -f "$SKILL_FILE.bak"
 echo "Official source (for updates): https://github.com/danielmiessler/Personal_AI_Infrastructure"
 ```
 
@@ -227,7 +280,7 @@ echo "Official source (for updates): https://github.com/danielmiessler/Personal_
 - `SKILL.md` - Main skill routing and Diataxis methodology (with install source)
 - `Standard.md` - Diataxis framework documentation
 
-### 3.4 Copy Workflow Files
+### 3.5 Copy Workflow Files
 
 ```bash
 PACK_DIR="$(pwd)"
