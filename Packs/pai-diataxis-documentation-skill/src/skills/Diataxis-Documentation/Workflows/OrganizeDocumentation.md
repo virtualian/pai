@@ -290,4 +290,4 @@ git stash pop
 ## Related Workflows
 
 - `PlanDocumentation.md` - Plan before organizing
-- `CreateDocumentation.md` - Fill gaps after organizing
+- `CreateScaffold.md` + `GenerateContent.md` - Fill gaps after organizing
