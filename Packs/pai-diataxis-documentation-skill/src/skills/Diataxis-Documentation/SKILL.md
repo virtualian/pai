@@ -1,7 +1,8 @@
 ---
 name: Diataxis-Documentation
-version: 1.2.1
+version: 1.5.1
 install_source: __INSTALL_SOURCE__
+last_updated_from: __LAST_UPDATED_FROM__
 official_source: https://github.com/danielmiessler/Personal_AI_Infrastructure
 official_source_path: Packs/pai-diataxis-documentation-skill
 description: Diataxis-based documentation methodology. USE WHEN creating, modifying, or organizing documentation in docs/, setting up documentation sites, planning documentation, or structuring guides/tutorials/reference/explanation docs.
