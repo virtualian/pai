@@ -435,9 +435,9 @@ echo "roles: [selected roles]" >> ./docs/.diataxis.md
   "question": "For [ROLE], which Diataxis content types are most important?",
   "multiSelect": true,
   "options": [
+    {"label": "Tutorials", "description": "Learning-oriented content for newcomers"},
     {"label": "How-to Guides", "description": "Task-oriented guides for accomplishing specific goals"},
     {"label": "Reference", "description": "Technical specifications, API docs, configuration options"},
-    {"label": "Tutorials", "description": "Learning-oriented content for newcomers"},
     {"label": "Explanation", "description": "Conceptual content explaining why things work"}
   ]
 }
