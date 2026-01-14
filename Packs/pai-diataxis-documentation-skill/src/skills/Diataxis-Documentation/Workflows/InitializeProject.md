@@ -717,11 +717,10 @@ $SOURCES
 
 | Role | Priority |
 |------|----------|
-$(i=0; echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | while read role; do
+$(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | sed '/^[[:space:]]*$/d' | nl -ba | while read num role; do
   role=$(echo "$role" | xargs)  # trim whitespace
   [ -z "$role" ] && continue
-  i=$((i + 1))
-  case $i in
+  case $num in
     1) priority="primary" ;;
     2) priority="secondary" ;;
     *) priority="tertiary" ;;
