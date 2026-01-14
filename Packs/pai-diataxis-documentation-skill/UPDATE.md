@@ -123,7 +123,7 @@ printf "│ Installed       │ %-11s │ current   │\n" "$INSTALLED_VERSION"
 if [ "$LOCAL_AVAILABLE" = "true" ]; then
   if [ "$LOCAL_VERSION" = "$INSTALLED_VERSION" ]; then
     LOCAL_STATUS="same"
-  elif [ "$LOCAL_VERSION" \> "$INSTALLED_VERSION" ]; then
+  elif [[ "$LOCAL_VERSION" > "$INSTALLED_VERSION" ]]; then
     LOCAL_STATUS="NEWER"
   else
     LOCAL_STATUS="older"
@@ -137,7 +137,7 @@ fi
 if [ "$CANONICAL_AVAILABLE" = "true" ]; then
   if [ "$CANONICAL_VERSION" = "$INSTALLED_VERSION" ]; then
     CANONICAL_STATUS="same"
-  elif [ "$CANONICAL_VERSION" \> "$INSTALLED_VERSION" ]; then
+  elif [[ "$CANONICAL_VERSION" > "$INSTALLED_VERSION" ]]; then
     CANONICAL_STATUS="NEWER"
   else
     CANONICAL_STATUS="older"
