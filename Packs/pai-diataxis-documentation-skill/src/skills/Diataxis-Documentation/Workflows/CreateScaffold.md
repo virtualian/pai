@@ -71,11 +71,26 @@ Is the user trying to LEARN something new?
 
 **Read paths from `docs/.diataxis.md`** - do not assume folder names.
 
-Different projects use different conventions:
-- `tutorials/` vs `getting-started/`
-- `how-to/` vs `guides/`
-- `reference/` vs `api/`
-- `explanation/` vs `concepts/` vs `background/`
+**Role-first structure:** Documentation is organized by role first, then content type:
+- `users/tutorials/` - Tutorials for end users
+- `developers/reference/` - API reference for developers
+- `contributors/how-to/` - Contribution guides
+
+**Ask which role this doc serves if unclear:**
+
+```json
+{
+  "header": "Audience",
+  "question": "Who is this documentation for?",
+  "multiSelect": false,
+  "options": [
+    {"label": "Users", "description": "End users of the application"},
+    {"label": "Developers", "description": "People integrating with or extending the project"},
+    {"label": "Operators", "description": "DevOps/SRE deploying and running the system"},
+    {"label": "Contributors", "description": "People contributing to the project"}
+  ]
+}
+```
 
 **File naming:** Follow the project's existing convention:
 - Check existing files in the target folder

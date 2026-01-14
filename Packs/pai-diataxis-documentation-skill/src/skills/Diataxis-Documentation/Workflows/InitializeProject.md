@@ -610,7 +610,15 @@ fi
 project/
 ├── src/                    # Your code
 ├── website/                # Docusaurus site
-│   ├── docs/               # Documentation content (Diataxis-organized)
+│   ├── docs/               # Documentation content (role-first)
+│   │   ├── users/
+│   │   │   ├── tutorials/
+│   │   │   └── how-to/
+│   │   └── developers/
+│   │       ├── tutorials/
+│   │       ├── how-to/
+│   │       ├── reference/
+│   │       └── explanation/
 │   ├── src/                # Custom pages, components
 │   ├── docusaurus.config.js
 │   └── sidebars.js
@@ -620,7 +628,14 @@ project/
 **Standalone docs repo structure (`CONTEXT = "standalone_docs"`):**
 ```
 docs-repo/
-├── docs/                   # Documentation content (Diataxis-organized)
+├── docs/                   # Documentation content (role-first)
+│   ├── users/
+│   │   ├── tutorials/
+│   │   └── how-to/
+│   └── developers/
+│       ├── tutorials/
+│       ├── reference/
+│       └── explanation/
 ├── src/                    # Custom pages, components
 ├── docusaurus.config.js
 └── sidebars.js
@@ -633,37 +648,26 @@ docs-repo/
 **Execute this section ONLY if `TECHNOLOGY = "MkDocs + Material"`**
 
 ```bash
-# Both contexts use docs/ for content, difference is in folder organization
-mkdir -p docs/{tutorials,how-to,reference,explanation}
+# Create docs folder - role structure created in Phase 6
+mkdir -p docs
 
 # Create mkdocs.yml at appropriate location
+# Note: nav structure updated in Phase 6 after roles are processed
 if [ "$CONTEXT" = "within_project" ]; then
-  # Config at project root, docs in docs/
   cat > mkdocs.yml << 'MKDOCS_EOF'
 site_name: Project Documentation
 docs_dir: docs
 theme:
   name: material
-nav:
-  - Home: index.md
-  - Tutorials: tutorials/
-  - How-to Guides: how-to/
-  - Reference: reference/
-  - Explanation: explanation/
+# nav: configured after role structure is created
 MKDOCS_EOF
 elif [ "$CONTEXT" = "standalone_docs" ]; then
-  # Same structure for standalone
   cat > mkdocs.yml << 'MKDOCS_EOF'
 site_name: Documentation
 docs_dir: docs
 theme:
   name: material
-nav:
-  - Home: index.md
-  - Tutorials: tutorials/
-  - How-to Guides: how-to/
-  - Reference: reference/
-  - Explanation: explanation/
+# nav: configured after role structure is created
 MKDOCS_EOF
 fi
 
@@ -679,12 +683,15 @@ EOF
 ```
 project/
 ├── src/                    # Your code
-├── docs/                   # Documentation content
+├── docs/                   # Documentation content (role-first)
 │   ├── index.md
-│   ├── tutorials/
-│   ├── how-to/
-│   ├── reference/
-│   └── explanation/
+│   ├── users/
+│   │   ├── tutorials/
+│   │   └── how-to/
+│   └── developers/
+│       ├── tutorials/
+│       ├── reference/
+│       └── explanation/
 ├── mkdocs.yml              # MkDocs config at project root
 └── package.json            # Your project
 ```
@@ -692,12 +699,14 @@ project/
 **Standalone docs repo structure (`CONTEXT = "standalone_docs"`):**
 ```
 docs-repo/
-├── docs/                   # Documentation content
+├── docs/                   # Documentation content (role-first)
 │   ├── index.md
-│   ├── tutorials/
-│   ├── how-to/
-│   ├── reference/
-│   └── explanation/
+│   ├── users/
+│   │   ├── tutorials/
+│   │   └── how-to/
+│   └── developers/
+│       ├── reference/
+│       └── explanation/
 └── mkdocs.yml
 ```
 
@@ -711,11 +720,11 @@ docs-repo/
 if [ "$CONTEXT" = "within_project" ]; then
   # Site in docs/, content in docs/src/content/docs/
   npm create astro@latest docs -- --template starlight --skip-houston --no-install
-  mkdir -p docs/src/content/docs/{tutorials,how-to,reference,explanation}
+  # Role structure created in Phase 6
 elif [ "$CONTEXT" = "standalone_docs" ]; then
   # Site at root level
   npm create astro@latest . -- --template starlight --skip-houston --no-install
-  mkdir -p src/content/docs/{tutorials,how-to,reference,explanation}
+  # Role structure created in Phase 6
 fi
 ```
 
@@ -726,12 +735,14 @@ project/
 ├── docs/                   # Starlight site
 │   ├── src/
 │   │   └── content/
-│   │       └── docs/       # Documentation content (Diataxis-organized)
+│   │       └── docs/       # Documentation content (role-first)
 │   │           ├── index.mdx
-│   │           ├── tutorials/
-│   │           ├── how-to/
-│   │           ├── reference/
-│   │           └── explanation/
+│   │           ├── users/
+│   │           │   ├── tutorials/
+│   │           │   └── how-to/
+│   │           └── developers/
+│   │               ├── reference/
+│   │               └── explanation/
 │   ├── astro.config.mjs
 │   └── package.json
 └── package.json            # Your project
@@ -742,12 +753,14 @@ project/
 docs-repo/
 ├── src/
 │   └── content/
-│       └── docs/           # Documentation content (Diataxis-organized)
+│       └── docs/           # Documentation content (role-first)
 │           ├── index.mdx
-│           ├── tutorials/
-│           ├── how-to/
-│           ├── reference/
-│           └── explanation/
+│           ├── users/
+│           │   ├── tutorials/
+│           │   └── how-to/
+│           └── developers/
+│               ├── reference/
+│               └── explanation/
 ├── astro.config.mjs
 └── package.json
 ```
@@ -760,34 +773,23 @@ docs-repo/
 
 ```bash
 if [ "$CONTEXT" = "within_project" ]; then
-  # Docs in docs/ subdirectory
-  mkdir -p docs/{tutorials,how-to,reference,explanation}
+  # Docs in docs/ subdirectory - role structure created in Phase 6
+  mkdir -p docs
   cat > docs/README.md << 'EOF'
 # Documentation
 
 [TODO: Add documentation overview]
 
-## Contents
-
-- [Tutorials](./tutorials/) - Learning-oriented guides
-- [How-to Guides](./how-to/) - Task-oriented instructions
-- [Reference](./reference/) - Technical specifications
-- [Explanation](./explanation/) - Conceptual content
+Browse documentation by role below.
 EOF
 elif [ "$CONTEXT" = "standalone_docs" ]; then
-  # Docs at root level
-  mkdir -p {tutorials,how-to,reference,explanation}
+  # Docs at root level - role structure created in Phase 6
   cat > README.md << 'EOF'
 # Documentation
 
 [TODO: Add documentation overview]
 
-## Contents
-
-- [Tutorials](./tutorials/) - Learning-oriented guides
-- [How-to Guides](./how-to/) - Task-oriented instructions
-- [Reference](./reference/) - Technical specifications
-- [Explanation](./explanation/) - Conceptual content
+Browse documentation by role below.
 EOF
 fi
 ```
@@ -796,12 +798,14 @@ fi
 ```
 project/
 ├── src/                    # Your code
-├── docs/                   # Documentation
+├── docs/                   # Documentation (role-first)
 │   ├── README.md           # Index
-│   ├── tutorials/
-│   ├── how-to/
-│   ├── reference/
-│   └── explanation/
+│   ├── users/
+│   │   ├── tutorials/
+│   │   └── how-to/
+│   └── developers/
+│       ├── reference/
+│       └── explanation/
 └── README.md               # Project readme (not Diataxis)
 ```
 
@@ -809,10 +813,12 @@ project/
 ```
 docs-repo/
 ├── README.md               # Index
-├── tutorials/
-├── how-to/
-├── reference/
-└── explanation/
+├── users/
+│   ├── tutorials/
+│   └── how-to/
+└── developers/
+    ├── reference/
+    └── explanation/
 ```
 
 ---
@@ -934,21 +940,16 @@ echo "✓ Configuration finalized: ./docs/.diataxis.md"
 
 ## Phase 6: Create Initial Structure
 
-**Based on technology, context, and role priorities, create starter files.**
+**Based on technology, context, and role priorities, create role-first starter files.**
 
 **Read configuration:**
 ```bash
 TECHNOLOGY=$(grep -E "^technology:" ./docs/.diataxis.md | sed 's/^technology: //')
 CONTEXT=$(grep -E "^context:" ./docs/.diataxis.md | sed 's/^context: //')
-PRIMARY_ROLE=$(grep -E "^roles:" ./docs/.diataxis.md | sed 's/^roles: //' | cut -d',' -f1 | xargs | tr '[:upper:]' '[:lower:]')
-
-# Read diataxis priorities for primary role
-DIATAXIS_KEY="diataxis_${PRIMARY_ROLE}"
-PRIORITIES=$(grep -E "^${DIATAXIS_KEY}:" ./docs/.diataxis.md | sed "s/^${DIATAXIS_KEY}: //")
+ROLES=$(grep -E "^roles:" ./docs/.diataxis.md | sed 's/^roles: //')
 
 echo "Creating structure for: $TECHNOLOGY ($CONTEXT)"
-echo "Primary role: $PRIMARY_ROLE"
-echo "Priorities: $PRIORITIES"
+echo "Roles: $ROLES"
 ```
 
 **Determine docs content path based on technology and context:**
@@ -983,20 +984,31 @@ esac
 echo "Content path: $DOCS_PATH"
 ```
 
-**Create folders only for selected Diataxis types:**
+**Create role-first folder structure:**
 
 ```bash
-# Parse priorities (format: ✓,-,✓,- for Tutorials,How-to,Reference,Explanation)
-HAS_TUTORIALS=$(echo "$PRIORITIES" | cut -d',' -f1 | xargs)
-HAS_HOWTO=$(echo "$PRIORITIES" | cut -d',' -f2 | xargs)
-HAS_REFERENCE=$(echo "$PRIORITIES" | cut -d',' -f3 | xargs)
-HAS_EXPLANATION=$(echo "$PRIORITIES" | cut -d',' -f4 | xargs)
+# Loop through each role and create role-first structure
+echo "$ROLES" | tr ',' '\n' | while read role; do
+  role=$(echo "$role" | xargs | tr '[:upper:]' '[:lower:]')
+  [ -z "$role" ] && continue
 
-# Create folders only for selected types
-[ "$HAS_TUTORIALS" = "✓" ] && mkdir -p "$DOCS_PATH/tutorials"
-[ "$HAS_HOWTO" = "✓" ] && mkdir -p "$DOCS_PATH/how-to"
-[ "$HAS_REFERENCE" = "✓" ] && mkdir -p "$DOCS_PATH/reference"
-[ "$HAS_EXPLANATION" = "✓" ] && mkdir -p "$DOCS_PATH/explanation"
+  # Get priorities for this role (format: ✓,-,✓,- for Tutorials,How-to,Reference,Explanation)
+  DIATAXIS_KEY="diataxis_${role}"
+  PRIORITIES=$(grep -E "^${DIATAXIS_KEY}:" ./docs/.diataxis.md | sed "s/^${DIATAXIS_KEY}: //")
+
+  HAS_TUTORIALS=$(echo "$PRIORITIES" | cut -d',' -f1 | xargs)
+  HAS_HOWTO=$(echo "$PRIORITIES" | cut -d',' -f2 | xargs)
+  HAS_REFERENCE=$(echo "$PRIORITIES" | cut -d',' -f3 | xargs)
+  HAS_EXPLANATION=$(echo "$PRIORITIES" | cut -d',' -f4 | xargs)
+
+  # Create role directory with its content type subdirectories
+  echo "Creating structure for role: $role"
+  mkdir -p "$DOCS_PATH/$role"
+  [ "$HAS_TUTORIALS" = "✓" ] && mkdir -p "$DOCS_PATH/$role/tutorials"
+  [ "$HAS_HOWTO" = "✓" ] && mkdir -p "$DOCS_PATH/$role/how-to"
+  [ "$HAS_REFERENCE" = "✓" ] && mkdir -p "$DOCS_PATH/$role/reference"
+  [ "$HAS_EXPLANATION" = "✓" ] && mkdir -p "$DOCS_PATH/$role/explanation"
+done
 ```
 
 **Create index file (technology-specific):**
@@ -1031,16 +1043,16 @@ EOF
 esac
 ```
 
-**Create placeholder index for each selected Diataxis type:**
+**Create placeholder indexes for each role and content type:**
 
 ```bash
 create_section_index() {
-  local section="$1"
+  local path="$1"
   local title="$2"
   local desc="$3"
-  
-  if [ -d "$DOCS_PATH/$section" ]; then
-    cat > "$DOCS_PATH/$section/index.md" << EOF
+
+  if [ -d "$path" ]; then
+    cat > "$path/index.md" << EOF
 # $title
 
 $desc
@@ -1050,10 +1062,21 @@ EOF
   fi
 }
 
-[ "$HAS_TUTORIALS" = "✓" ] && create_section_index "tutorials" "Tutorials" "Learning-oriented guides for newcomers."
-[ "$HAS_HOWTO" = "✓" ] && create_section_index "how-to" "How-to Guides" "Task-oriented guides for accomplishing specific goals."
-[ "$HAS_REFERENCE" = "✓" ] && create_section_index "reference" "Reference" "Technical specifications and API documentation."
-[ "$HAS_EXPLANATION" = "✓" ] && create_section_index "explanation" "Explanation" "Conceptual content explaining why things work."
+# Create indexes for each role and its content types
+echo "$ROLES" | tr ',' '\n' | while read role; do
+  role=$(echo "$role" | xargs | tr '[:upper:]' '[:lower:]')
+  [ -z "$role" ] && continue
+
+  # Create role landing page
+  role_title=$(echo "$role" | sed 's/.*/\u&/')  # Capitalize first letter
+  create_section_index "$DOCS_PATH/$role" "$role_title Documentation" "Documentation for ${role}."
+
+  # Create content type indexes within role
+  create_section_index "$DOCS_PATH/$role/tutorials" "Tutorials" "Learning-oriented guides for ${role}."
+  create_section_index "$DOCS_PATH/$role/how-to" "How-to Guides" "Task-oriented guides for ${role}."
+  create_section_index "$DOCS_PATH/$role/reference" "Reference" "Technical specifications for ${role}."
+  create_section_index "$DOCS_PATH/$role/explanation" "Explanation" "Conceptual content for ${role}."
+done
 ```
 
 ---
