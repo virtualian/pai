@@ -240,6 +240,10 @@ Using the extracted source material and user decisions:
    - `[PLACEHOLDER: description]` - generated without source (if user chose this)
    - `[CONFLICT: source1 vs source2]` - sources disagree (if user chose "ask each time")
    - `[INACCURATE: docs say X but code shows Y]` - source doesn't match implementation
+5. **Avoid cross-role duplication** - Content should NOT be duplicated across roles:
+   - Re-frame for audience (same concept, different perspective/depth)
+   - Cross-link to canonical source rather than repeating
+   - Place detailed content where primary audience lives, link from elsewhere
 
 #### By Source Quality
 

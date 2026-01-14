@@ -325,6 +325,13 @@ docs/
 
 This structure ensures users find content relevant to them without wading through developer docs, and developers don't miss technical details buried in user guides.
 
+**Avoiding Duplication:** Content should NOT be duplicated across roles. Instead:
+- **Re-frame for audience** - Same concept, different perspective and depth
+- **Cross-link liberally** - Reference the canonical source rather than repeating
+- **Identify the primary audience** - Place detailed content where it belongs, link from elsewhere
+
+Example: An API authentication concept might live in `developers/explanation/authentication.md` with `users/how-to/connecting.md` linking to it for technical details rather than duplicating the explanation.
+
 ### Skill Documentation
 
 PAI skill files (`SKILL.md`) are NOT Diataxis. They follow skill conventions:
