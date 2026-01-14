@@ -17,17 +17,18 @@ Restructure existing documentation into Diataxis categories:
 
 ## Workflow Steps
 
-### Step 1: Read Configuration
+### Step 1: Read Project Configuration
 
-**Read `Config.md` first.** Extract:
+**Read the project's `docs/.diataxis.md` first.** Extract:
 - Scope exclusions (what NOT to reorganize)
 - Documentation location
 - Role priorities (affects where to place docs)
 
 ```bash
-PAI_DIR="${PAI_DIR:-$HOME/.claude}"
-cat "$PAI_DIR/skills/Diataxis-Documentation/Config.md"
+cat ./docs/.diataxis.md
 ```
+
+**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first.
 
 ---
 
@@ -185,7 +186,7 @@ Show the user what will change:
 - `advanced/` (empty after moves)
 - `api/` (empty after moves)
 
-### Files Excluded (per Config.md)
+### Files Excluded (per docs/.diataxis.md)
 - `README.md` - Project overview, not Diataxis
 ```
 

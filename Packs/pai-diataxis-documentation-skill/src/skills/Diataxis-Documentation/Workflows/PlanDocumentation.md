@@ -7,7 +7,7 @@
 ## Purpose
 
 Create a comprehensive documentation plan based on:
-- User's configured roles and priorities (from Config.md)
+- User's configured roles and priorities (from `docs/.diataxis.md`)
 - Existing documentation inventory
 - Diataxis framework requirements
 - Gap analysis
@@ -16,21 +16,20 @@ Create a comprehensive documentation plan based on:
 
 ## Workflow Steps
 
-### Step 1: Read Configuration
+### Step 1: Read Project Configuration
 
-**Read `Config.md` first.** Extract:
+**Read the project's `docs/.diataxis.md` first.** Extract:
 - Roles and their priorities
 - Diataxis elements prioritized per role
 - Documentation sources
 - Scope exclusions
 
 ```bash
-# Check Config.md exists
-PAI_DIR="${PAI_DIR:-$HOME/.claude}"
-cat "$PAI_DIR/skills/Diataxis-Documentation/Config.md"
+# Check project config exists
+cat ./docs/.diataxis.md
 ```
 
-**If Config.md missing:** Run installation wizard to configure.
+**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first.
 
 ---
 
@@ -84,7 +83,7 @@ Create an inventory table with **temporal awareness**:
 ### Step 4: Apply Scope Exclusions
 
 Remove from inventory:
-- Files in Config.md exclusions (standard + custom)
+- Files in `docs/.diataxis.md` exclusions (standard + custom)
 - Files serving platform purposes
 
 **Standard exclusions:**
@@ -97,7 +96,7 @@ Remove from inventory:
 
 ### Step 5: Inventory Documentation Sources
 
-Scan Config.md sources to understand what content can be derived:
+Scan `docs/.diataxis.md` sources to understand what content can be derived:
 
 ```bash
 # Check configured sources exist
@@ -127,9 +126,9 @@ grep -r "deprecated\|legacy\|planned\|experimental\|removed" --include="*.md" --
 
 ### Step 6: Gap Analysis
 
-For each role in Config.md (by priority):
+For each role in `docs/.diataxis.md` (by priority):
 
-1. **List required content types** (from Config.md elements table)
+1. **List required content types** (from `docs/.diataxis.md` elements table)
 2. **Check existing coverage:**
    - Tutorial coverage for this role?
    - How-to coverage for this role?
@@ -142,7 +141,7 @@ For each role in Config.md (by priority):
 ```markdown
 ## Gap Analysis: [Role]
 
-### Required (from Config.md)
+### Required (from docs/.diataxis.md)
 - ✓ How-to guides
 - ✓ Reference docs
 - ✓ Explanation
@@ -165,7 +164,7 @@ For each role in Config.md (by priority):
 Order recommendations by:
 1. **Role priority** (primary > secondary > tertiary)
 2. **Gap severity** (missing > incomplete > improve)
-3. **Content type priority** (from Config.md)
+3. **Content type priority** (from `docs/.diataxis.md`)
 
 ---
 
