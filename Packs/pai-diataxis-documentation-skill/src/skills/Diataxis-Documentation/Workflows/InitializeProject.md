@@ -748,7 +748,7 @@ sidebar_position: 1
 
 Welcome to the documentation.
 
-<!-- TODO: Add project overview -->
+[TODO: Add project overview]
 EOF
 
 # Create placeholder for each priority type
@@ -757,7 +757,7 @@ cat > website/docs/how-to/index.md << 'EOF'
 
 Task-oriented guides for accomplishing specific goals.
 
-<!-- TODO: Add how-to guides -->
+[TODO: Add how-to guides]
 EOF
 ```
 

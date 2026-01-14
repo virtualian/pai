@@ -35,49 +35,45 @@ Read the existing scaffold file to determine:
 
 #### 2.1 Identify Relevant Sources
 
-Based on `docs/.diataxis.md` source priorities, identify files to extract from:
+**Read `docs/.diataxis.md` to find configured sources.** The config specifies which sources to use (set during InitializeProject):
 
-```bash
-# Find source files for the topic
-grep -r "topic_keyword" --include="*.ts" --include="*.md" --include="*.json" .
+| Source Type | What to Look For |
+|-------------|------------------|
+| Existing documentation | Markdown/text files in docs directories |
+| Code comments | Docstrings, inline comments, annotations |
+| README files | Project and package overviews |
+| API specifications | OpenAPI, GraphQL schemas, interface definitions |
+| Design documents | Architecture docs, RFCs, decision records |
+| Changelog/history | Version notes, release history |
 
-# Check code comments
-grep -r "TODO\|NOTE\|@param\|@returns" src/
-
-# Check existing documentation
-find docs/ -name "*.md" -exec grep -l "topic" {} \;
-
-# Check changelog for temporal context
-grep -i "topic" CHANGELOG.md
-```
+**Search within configured sources only.** Use project-appropriate tools to find relevant content for the topic being documented.
 
 #### 2.2 Extract Information by Content Type
 
-**For Tutorial** (extract from):
-- README quick-start sections
-- Existing example code in `examples/`
+**For Tutorial** (look for):
+- Quick-start or getting-started content
+- Example code or sample projects
 - Test files showing usage patterns
-- Code comments explaining flow
+- Comments explaining flow or sequence
 
-**For How-to Guide** (extract from):
-- Code that implements the feature
-- Existing docs mentioning the task
-- Stack Overflow/issues showing user needs
+**For How-to Guide** (look for):
+- Code implementing the feature
+- Existing task-oriented documentation
+- Issue discussions showing user needs
 - Test cases demonstrating expected behavior
 
-**For Reference** (extract from):
-- Type definitions and interfaces
-- JSDoc/docstring comments
-- Configuration schemas
-- API route definitions
-- Default values in code
+**For Reference** (look for):
+- Type definitions, interfaces, schemas
+- Docstrings and API comments
+- Configuration options and defaults
+- Route/endpoint definitions
 
-**For Explanation** (extract from):
-- Architecture decision records (ADRs)
-- Design documents
-- Code comments explaining "why"
-- Git commit messages for context
-- README philosophy sections
+**For Explanation** (look for):
+- Architecture decision records
+- Design rationale documents
+- Comments explaining "why" not "what"
+- Commit messages with context
+- Philosophy or principles sections
 
 #### 2.3 Check Temporal State
 
@@ -86,9 +82,9 @@ For each piece of extracted information:
 | Source Signal | Temporal Tag |
 |---------------|--------------|
 | In current code, no deprecation notice | `[CURRENT]` (default) |
-| `@deprecated` JSDoc tag | `[DEPRECATED]` |
-| In CHANGELOG under "Removed" | `[REMOVED]` - omit or note |
-| In roadmap/TODO, not in code | `[PLANNED]` |
+| Deprecation marker in code or docs | `[DEPRECATED]` |
+| Listed as removed in changelog | `[REMOVED]` - omit or note |
+| In roadmap/TODO, not yet implemented | `[PLANNED]` |
 | Marked "experimental" or "beta" | `[EXPERIMENTAL]` |
 
 #### 2.4 Document Provenance
@@ -96,13 +92,13 @@ For each piece of extracted information:
 Track where each piece of information came from:
 
 ```markdown
-<!-- Source: src/api/auth.ts:L45-L60 -->
-Authentication uses JWT tokens with a 24-hour expiry...
+<!-- Source: path/to/file:L45-L60 -->
+[Factual claim derived from that source...]
 
-<!-- Source: docs/design/auth-flow.md -->
-The authentication flow was designed to minimize round-trips...
+<!-- Source: design/architecture.md -->
+[Design rationale from that document...]
 
-<!-- Source: CHANGELOG.md:v2.1.0 -->
+<!-- Source: CHANGELOG:v2.1.0 -->
 > Added in v2.1.0
 ```
 
