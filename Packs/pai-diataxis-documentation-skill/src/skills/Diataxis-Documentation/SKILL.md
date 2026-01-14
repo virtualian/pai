@@ -1,6 +1,6 @@
 ---
 name: Diataxis-Documentation
-version: 2.2.1
+version: 2.3.0
 install_source: __INSTALL_SOURCE__
 last_updated_from: __LAST_UPDATED_FROM__
 official_source: https://github.com/danielmiessler/Personal_AI_Infrastructure
@@ -88,6 +88,7 @@ Technology choice affects output format and conventions.
 | **OrganizeDocumentation** | "organize docs", "restructure documentation", "apply diataxis" | `Workflows/OrganizeDocumentation.md` |
 | **CreateScaffold** | "create scaffold", "new doc scaffold" | `Workflows/CreateScaffold.md` |
 | **GenerateContent** | "generate content", "fill scaffold", "create tutorial", "write how-to" | `Workflows/GenerateContent.md` |
+| **UpdateSkill** | "update diataxis skill", "check for updates", "skill version" | `Workflows/UpdateSkill.md` |
 
 ## Quick Reference: Diataxis Content Types
 
@@ -209,49 +210,16 @@ Always read `docs/.diataxis.md` at the start of documentation tasks. It contains
 
 ## Update Check
 
-**When user asks about updates or skill version, check for newer versions:**
+**Route to `Workflows/UpdateSkill.md` for update checks and skill updates.**
 
-```bash
-SKILL_FILE="${PAI_DIR:-$HOME/.claude}/skills/Diataxis-Documentation/SKILL.md"
+**Triggers:** "update diataxis skill", "check for updates", "skill version", "is there an update"
 
-# Read version and sources from frontmatter
-INSTALLED_VERSION=$(grep -E "^version:" "$SKILL_FILE" | cut -d' ' -f2)
-INSTALL_SOURCE=$(grep -E "^install_source:" "$SKILL_FILE" | sed 's/^install_source: //')
-OFFICIAL_SOURCE=$(grep -E "^official_source:" "$SKILL_FILE" | cut -d' ' -f2)
-OFFICIAL_PATH=$(grep -E "^official_source_path:" "$SKILL_FILE" | cut -d' ' -f2)
-
-# Defaults
-OFFICIAL_SOURCE="${OFFICIAL_SOURCE:-https://github.com/danielmiessler/Personal_AI_Infrastructure}"
-OFFICIAL_PATH="${OFFICIAL_PATH:-Packs/pai-diataxis-documentation-skill}"
-
-# Fetch latest version from official source (GitHub raw file)
-RAW_URL=$(echo "$OFFICIAL_SOURCE" | sed 's|github.com|raw.githubusercontent.com|')
-REMOTE_SKILL="$RAW_URL/main/$OFFICIAL_PATH/src/skills/Diataxis-Documentation/SKILL.md"
-
-LATEST_VERSION=$(curl -s "$REMOTE_SKILL" 2>/dev/null | grep -E "^version:" | cut -d' ' -f2 || echo "unknown")
-
-echo "Installed version: $INSTALLED_VERSION"
-echo "Latest version: $LATEST_VERSION"
-echo "Installed from: $INSTALL_SOURCE"
-echo "Official source: $OFFICIAL_SOURCE"
-
-if [ "$INSTALLED_VERSION" != "$LATEST_VERSION" ] && [ "$LATEST_VERSION" != "unknown" ]; then
-  echo ""
-  echo "⬆️ Update available: $INSTALLED_VERSION → $LATEST_VERSION"
-  echo ""
-  echo "To update from official source:"
-  echo "  git clone $OFFICIAL_SOURCE pai-official"
-  echo "  cd pai-official/$OFFICIAL_PATH"
-  echo "  # follow INSTALL.md"
-  echo ""
-  echo "Or update from your install source if it's a local repo:"
-  echo "  cd $INSTALL_SOURCE && git pull && # follow INSTALL.md"
-else
-  echo "✓ Up to date"
-fi
-```
-
-**Triggers:** "check for updates", "skill version", "is there an update"
+The UpdateSkill workflow:
+- Checks version against local source (last_updated_from) and canonical source (official GitHub)
+- Offers choice of update source if multiple are available
+- Preserves install_source metadata and project configs
+- Handles deprecations (removes old files)
+- Backs up before updating
 
 ## References
 
