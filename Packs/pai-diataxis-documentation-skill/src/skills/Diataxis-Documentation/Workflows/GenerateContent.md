@@ -118,6 +118,50 @@ When sources don't provide needed information:
 
 **NEVER fill gaps with assumptions or invented content.**
 
+#### 2.6 Verify Source Accuracy
+
+**Sources may be outdated or incorrect.** Before using extracted information, verify it against the actual implementation:
+
+| Source Type | Verify Against |
+|-------------|----------------|
+| Architecture docs | Actual code structure, dependencies, data flow |
+| API documentation | Real endpoints, parameters, responses |
+| Configuration docs | Actual config files, defaults, valid options |
+| Design decisions | Whether implementation matches stated design |
+| Examples/snippets | Whether code actually runs and produces stated output |
+
+**Verification process:**
+
+1. **Identify verifiable claims** - Facts that can be checked (not opinions or rationale)
+2. **Cross-reference with implementation** - Check if code matches documentation
+3. **Flag discrepancies** - Mark inaccurate content for correction
+
+**Inaccuracy markers:**
+
+```markdown
+[INACCURATE: docs claim X but code shows Y]
+[STALE: documented feature no longer exists]
+[INCOMPLETE: docs describe 3 options but code has 5]
+[MISMATCH: API signature differs from documentation]
+```
+
+**Report inaccuracies to user:**
+
+```markdown
+## Source Accuracy Report
+
+| Source | Claim | Reality | Status |
+|--------|-------|---------|--------|
+| design/auth.md | "Uses session tokens" | Code uses JWT | INACCURATE |
+| api/users.md | "Returns 5 fields" | Returns 7 fields | INCOMPLETE |
+| config.md | "Default timeout: 30s" | Default is 60s | STALE |
+```
+
+**When sources conflict with implementation:**
+- Trust implementation over documentation (unless user chose otherwise in Step 4)
+- Flag the discrepancy so docs can be corrected
+- Use verified facts in generated content
+
 ---
 
 ### Step 3: Assess Source Quality
@@ -191,10 +235,11 @@ Using the extracted source material and user decisions:
 1. **Replace each `[TODO: ...]`** with content derived from sources
 2. **Maintain provenance** - `<!-- Source: path:lines -->` for key claims
 3. **Follow content type rules** (Step 6)
-4. **Mark uncertainty:**
+4. **Mark uncertainty and issues:**
    - `[GAP: description]` - sources don't cover this
    - `[PLACEHOLDER: description]` - generated without source (if user chose this)
    - `[CONFLICT: source1 vs source2]` - sources disagree (if user chose "ask each time")
+   - `[INACCURATE: docs say X but code shows Y]` - source doesn't match implementation
 
 #### By Source Quality
 
@@ -314,7 +359,7 @@ Run through quality checklist from `Standard.md`:
 
 - Documentation file with `[TODO: ...]` markers replaced
 - Content derived from sources with provenance comments
-- Explicit markers for gaps: `[GAP: ...]`, `[PLACEHOLDER: ...]`, `[CONFLICT: ...]`
+- Explicit markers: `[GAP: ...]`, `[PLACEHOLDER: ...]`, `[CONFLICT: ...]`, `[INACCURATE: ...]`
 - Cross-references to related docs (only to existing targets)
 - Follows Diataxis structure for content type
 
