@@ -736,9 +736,14 @@ $(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | while read role; do
     *) priorities="" ;;
   esac
   if [ -n "$priorities" ]; then
-    echo "| $role | $priorities |"
+    # Split comma-separated priorities into 4 columns
+    t=$(echo "$priorities" | cut -d',' -f1)
+    h=$(echo "$priorities" | cut -d',' -f2)
+    r=$(echo "$priorities" | cut -d',' -f3)
+    e=$(echo "$priorities" | cut -d',' -f4)
+    echo "| $role | $t | $h | $r | $e |"
   else
-    echo "| $role | (not configured) | | | |"
+    echo "| $role | - | - | - | - |"
   fi
 done)
 

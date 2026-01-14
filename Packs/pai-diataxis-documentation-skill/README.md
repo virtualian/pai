@@ -21,7 +21,7 @@ keywords: [documentation, diataxis, docs, tutorials, how-to, reference, explanat
 
 > Documentation methodology based on the Diataxis framework. Role-first structure, content type separation, and installation-time configuration.
 
-> **Installation:** This pack is designed for AI-assisted installation. Give this directory to your AI and ask it to install using the wizard in `INSTALL.md`. The installation dynamically adapts to your system state. See [AI-First Installation Philosophy](../../README.md#ai-first-installation-philosophy) for details.
+> **Installation:** This pack is designed for AI-assisted installation. Give this directory to your AI and ask it to install using the wizard in `INSTALL.md`. The installation dynamically adapts to your system state. See [How AI Installation Works](../../README.md#how-ai-installation-works) for details.
 
 ---
 
