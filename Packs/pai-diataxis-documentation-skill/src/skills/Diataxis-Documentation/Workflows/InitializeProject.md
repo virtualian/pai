@@ -458,13 +458,25 @@ echo "roles: [selected roles]" >> ./docs/.diataxis.md
 You'll need to add code comments or manually write reference content."
 ```
 
-**After answer (for each role), save immediately:**
+**After answer (for each role), save immediately using this exact format:**
+
 ```bash
-# Append diataxis priorities per role
-echo "diataxis_developers: [selected content types]" >> ./docs/.diataxis.md
-echo "diataxis_users: [selected content types]" >> ./docs/.diataxis.md
-# etc. for each role
+# CRITICAL: Save as 4 comma-separated markers (✓ or -) in order: Tutorials,How-to,Reference,Explanation
+# Example: User selects "Tutorials" and "Reference" for developers:
+echo "diataxis_developers: ✓,-,✓,-" >> ./docs/.diataxis.md
+
+# Example: User selects "How-to Guides" and "Explanation" for users:
+echo "diataxis_users: -,✓,-,✓" >> ./docs/.diataxis.md
+
+# Example: User selects all four for operators:
+echo "diataxis_operators: ✓,✓,✓,✓" >> ./docs/.diataxis.md
 ```
+
+**Format specification:**
+- Always save exactly 4 comma-separated values
+- Order is: `Tutorials,How-to,Reference,Explanation`
+- Use `✓` for selected, `-` for not selected
+- This format is required for Phase 5 parsing
 
 ---
 
@@ -546,21 +558,54 @@ echo "technology: [selected technology]" >> ./docs/.diataxis.md
 
 **Based on context AND technology choice, scaffold the docs site.**
 
-**Read context from saved answers:**
+**Read context and technology from saved answers:**
 ```bash
 CONTEXT=$(grep -E "^context:" ./docs/.diataxis.md | sed 's/^context: //')
+TECHNOLOGY=$(grep -E "^technology:" ./docs/.diataxis.md | sed 's/^technology: //')
+
+echo "CONTEXT: $CONTEXT"
+echo "TECHNOLOGY: $TECHNOLOGY"
 ```
+
+---
+
+### Conditional Scaffold Selection
+
+**CRITICAL:** Execute ONLY the section matching the user's technology choice. Do NOT create scaffolds for other technologies.
+
+```
+if TECHNOLOGY = "Docusaurus"
+    → Execute "Docusaurus" section below
+else if TECHNOLOGY = "MkDocs + Material"
+    → Execute "MkDocs + Material" section below
+else if TECHNOLOGY = "Astro Starlight"
+    → Execute "Astro Starlight" section below
+else if TECHNOLOGY = "Plain Markdown"
+    → Execute "Plain Markdown" section below
+```
+
+Within each technology section, use CONTEXT to determine structure:
+- `within_project` → docs site in subdirectory, code at root
+- `standalone_docs` → docs site at root level
 
 ---
 
 ### Docusaurus
 
-**Within project:**
+**Execute this section ONLY if `TECHNOLOGY = "Docusaurus"`**
+
 ```bash
-# Site in website/, docs content in website/docs/
-npx create-docusaurus@latest website classic --typescript
+# Check context and run appropriate command
+if [ "$CONTEXT" = "within_project" ]; then
+  # Site in website/, docs content in website/docs/
+  npx create-docusaurus@latest website classic --typescript --skip-install
+elif [ "$CONTEXT" = "standalone_docs" ]; then
+  # Site at root level
+  npx create-docusaurus@latest . classic --typescript --skip-install
+fi
 ```
 
+**Within project structure (`CONTEXT = "within_project"`):**
 ```
 project/
 ├── src/                    # Your code
@@ -572,12 +617,7 @@ project/
 └── package.json            # Your project
 ```
 
-**Standalone docs repo:**
-```bash
-# Site at root level
-npx create-docusaurus@latest . classic --typescript
-```
-
+**Standalone docs repo structure (`CONTEXT = "standalone_docs"`):**
 ```
 docs-repo/
 ├── docs/                   # Documentation content (Diataxis-organized)
@@ -590,12 +630,52 @@ docs-repo/
 
 ### MkDocs + Material
 
-**Within project:**
+**Execute this section ONLY if `TECHNOLOGY = "MkDocs + Material"`**
+
 ```bash
-mkdir -p docs
-pip install mkdocs-material  # or add to requirements.txt
+# Both contexts use docs/ for content, difference is in folder organization
+mkdir -p docs/{tutorials,how-to,reference,explanation}
+
+# Create mkdocs.yml at appropriate location
+if [ "$CONTEXT" = "within_project" ]; then
+  # Config at project root, docs in docs/
+  cat > mkdocs.yml << 'MKDOCS_EOF'
+site_name: Project Documentation
+docs_dir: docs
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Tutorials: tutorials/
+  - How-to Guides: how-to/
+  - Reference: reference/
+  - Explanation: explanation/
+MKDOCS_EOF
+elif [ "$CONTEXT" = "standalone_docs" ]; then
+  # Same structure for standalone
+  cat > mkdocs.yml << 'MKDOCS_EOF'
+site_name: Documentation
+docs_dir: docs
+theme:
+  name: material
+nav:
+  - Home: index.md
+  - Tutorials: tutorials/
+  - How-to Guides: how-to/
+  - Reference: reference/
+  - Explanation: explanation/
+MKDOCS_EOF
+fi
+
+# Create index.md
+cat > docs/index.md << 'EOF'
+# Welcome
+
+[TODO: Add project overview]
+EOF
 ```
 
+**Within project structure (`CONTEXT = "within_project"`):**
 ```
 project/
 ├── src/                    # Your code
@@ -609,12 +689,7 @@ project/
 └── package.json            # Your project
 ```
 
-**Standalone docs repo:**
-```bash
-mkdir -p docs
-pip install mkdocs-material
-```
-
+**Standalone docs repo structure (`CONTEXT = "standalone_docs"`):**
 ```
 docs-repo/
 ├── docs/                   # Documentation content
@@ -630,12 +705,21 @@ docs-repo/
 
 ### Astro Starlight
 
-**Within project:**
+**Execute this section ONLY if `TECHNOLOGY = "Astro Starlight"`**
+
 ```bash
-# Site in docs/, content in docs/src/content/docs/
-npm create astro@latest docs -- --template starlight
+if [ "$CONTEXT" = "within_project" ]; then
+  # Site in docs/, content in docs/src/content/docs/
+  npm create astro@latest docs -- --template starlight --skip-houston --no-install
+  mkdir -p docs/src/content/docs/{tutorials,how-to,reference,explanation}
+elif [ "$CONTEXT" = "standalone_docs" ]; then
+  # Site at root level
+  npm create astro@latest . -- --template starlight --skip-houston --no-install
+  mkdir -p src/content/docs/{tutorials,how-to,reference,explanation}
+fi
 ```
 
+**Within project structure (`CONTEXT = "within_project"`):**
 ```
 project/
 ├── src/                    # Your code
@@ -653,11 +737,7 @@ project/
 └── package.json            # Your project
 ```
 
-**Standalone docs repo:**
-```bash
-npm create astro@latest . -- --template starlight
-```
-
+**Standalone docs repo structure (`CONTEXT = "standalone_docs"`):**
 ```
 docs-repo/
 ├── src/
@@ -676,11 +756,43 @@ docs-repo/
 
 ### Plain Markdown
 
-**Within project:**
+**Execute this section ONLY if `TECHNOLOGY = "Plain Markdown"`**
+
 ```bash
-mkdir -p docs/{tutorials,how-to,reference,explanation}
+if [ "$CONTEXT" = "within_project" ]; then
+  # Docs in docs/ subdirectory
+  mkdir -p docs/{tutorials,how-to,reference,explanation}
+  cat > docs/README.md << 'EOF'
+# Documentation
+
+[TODO: Add documentation overview]
+
+## Contents
+
+- [Tutorials](./tutorials/) - Learning-oriented guides
+- [How-to Guides](./how-to/) - Task-oriented instructions
+- [Reference](./reference/) - Technical specifications
+- [Explanation](./explanation/) - Conceptual content
+EOF
+elif [ "$CONTEXT" = "standalone_docs" ]; then
+  # Docs at root level
+  mkdir -p {tutorials,how-to,reference,explanation}
+  cat > README.md << 'EOF'
+# Documentation
+
+[TODO: Add documentation overview]
+
+## Contents
+
+- [Tutorials](./tutorials/) - Learning-oriented guides
+- [How-to Guides](./how-to/) - Task-oriented instructions
+- [Reference](./reference/) - Technical specifications
+- [Explanation](./explanation/) - Conceptual content
+EOF
+fi
 ```
 
+**Within project structure (`CONTEXT = "within_project"`):**
 ```
 project/
 ├── src/                    # Your code
@@ -693,11 +805,7 @@ project/
 └── README.md               # Project readme (not Diataxis)
 ```
 
-**Standalone docs repo:**
-```bash
-mkdir -p {tutorials,how-to,reference,explanation}
-```
-
+**Standalone docs repo structure (`CONTEXT = "standalone_docs"`):**
 ```
 docs-repo/
 ├── README.md               # Index
@@ -789,11 +897,17 @@ $(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | while read role; do
     *) priorities="" ;;
   esac
   if [ -n "$priorities" ]; then
-    # Split comma-separated priorities into 4 columns
-    t=$(echo "$priorities" | cut -d',' -f1)
-    h=$(echo "$priorities" | cut -d',' -f2)
-    r=$(echo "$priorities" | cut -d',' -f3)
-    e=$(echo "$priorities" | cut -d',' -f4)
+    # Parse 4 comma-separated markers: ✓ or - in order Tutorials,How-to,Reference,Explanation
+    # Format saved in Phase 3: "✓,-,✓,-" means Tutorials=yes, How-to=no, Reference=yes, Explanation=no
+    t=$(echo "$priorities" | cut -d',' -f1 | xargs)
+    h=$(echo "$priorities" | cut -d',' -f2 | xargs)
+    r=$(echo "$priorities" | cut -d',' -f3 | xargs)
+    e=$(echo "$priorities" | cut -d',' -f4 | xargs)
+    # Validate we have all 4 fields (fallback to - if missing)
+    [ -z "$t" ] && t="-"
+    [ -z "$h" ] && h="-"
+    [ -z "$r" ] && r="-"
+    [ -z "$e" ] && e="-"
     echo "| $role | $t | $h | $r | $e |"
   else
     echo "| $role | - | - | - | - |"
@@ -820,14 +934,77 @@ echo "✓ Configuration finalized: ./docs/.diataxis.md"
 
 ## Phase 6: Create Initial Structure
 
-Based on role priorities and available sources, create starter files:
+**Based on technology, context, and role priorities, create starter files.**
+
+**Read configuration:**
+```bash
+TECHNOLOGY=$(grep -E "^technology:" ./docs/.diataxis.md | sed 's/^technology: //')
+CONTEXT=$(grep -E "^context:" ./docs/.diataxis.md | sed 's/^context: //')
+PRIMARY_ROLE=$(grep -E "^roles:" ./docs/.diataxis.md | sed 's/^roles: //' | cut -d',' -f1 | xargs | tr '[:upper:]' '[:lower:]')
+
+# Read diataxis priorities for primary role
+DIATAXIS_KEY="diataxis_${PRIMARY_ROLE}"
+PRIORITIES=$(grep -E "^${DIATAXIS_KEY}:" ./docs/.diataxis.md | sed "s/^${DIATAXIS_KEY}: //")
+
+echo "Creating structure for: $TECHNOLOGY ($CONTEXT)"
+echo "Primary role: $PRIMARY_ROLE"
+echo "Priorities: $PRIORITIES"
+```
+
+**Determine docs content path based on technology and context:**
+
+| Technology | Context | Content Path |
+|------------|---------|--------------|
+| Docusaurus | within_project | `website/docs/` |
+| Docusaurus | standalone_docs | `docs/` |
+| MkDocs + Material | either | `docs/` |
+| Astro Starlight | within_project | `docs/src/content/docs/` |
+| Astro Starlight | standalone_docs | `src/content/docs/` |
+| Plain Markdown | within_project | `docs/` |
+| Plain Markdown | standalone_docs | root level |
 
 ```bash
-# Example for Docusaurus with developers as primary role
-mkdir -p website/docs/{how-to,reference,explanation}
+# Set DOCS_PATH based on technology and context
+case "$TECHNOLOGY" in
+  "Docusaurus")
+    [ "$CONTEXT" = "within_project" ] && DOCS_PATH="website/docs" || DOCS_PATH="docs"
+    ;;
+  "MkDocs + Material")
+    DOCS_PATH="docs"
+    ;;
+  "Astro Starlight")
+    [ "$CONTEXT" = "within_project" ] && DOCS_PATH="docs/src/content/docs" || DOCS_PATH="src/content/docs"
+    ;;
+  "Plain Markdown")
+    [ "$CONTEXT" = "within_project" ] && DOCS_PATH="docs" || DOCS_PATH="."
+    ;;
+esac
 
-# Create index
-cat > website/docs/intro.md << 'EOF'
+echo "Content path: $DOCS_PATH"
+```
+
+**Create folders only for selected Diataxis types:**
+
+```bash
+# Parse priorities (format: ✓,-,✓,- for Tutorials,How-to,Reference,Explanation)
+HAS_TUTORIALS=$(echo "$PRIORITIES" | cut -d',' -f1 | xargs)
+HAS_HOWTO=$(echo "$PRIORITIES" | cut -d',' -f2 | xargs)
+HAS_REFERENCE=$(echo "$PRIORITIES" | cut -d',' -f3 | xargs)
+HAS_EXPLANATION=$(echo "$PRIORITIES" | cut -d',' -f4 | xargs)
+
+# Create folders only for selected types
+[ "$HAS_TUTORIALS" = "✓" ] && mkdir -p "$DOCS_PATH/tutorials"
+[ "$HAS_HOWTO" = "✓" ] && mkdir -p "$DOCS_PATH/how-to"
+[ "$HAS_REFERENCE" = "✓" ] && mkdir -p "$DOCS_PATH/reference"
+[ "$HAS_EXPLANATION" = "✓" ] && mkdir -p "$DOCS_PATH/explanation"
+```
+
+**Create index file (technology-specific):**
+
+```bash
+case "$TECHNOLOGY" in
+  "Docusaurus")
+    cat > "$DOCS_PATH/intro.md" << 'EOF'
 ---
 sidebar_position: 1
 ---
@@ -838,15 +1015,45 @@ Welcome to the documentation.
 
 [TODO: Add project overview]
 EOF
+    ;;
+  "MkDocs + Material"|"Astro Starlight")
+    cat > "$DOCS_PATH/index.md" << 'EOF'
+# Introduction
 
-# Create placeholder for each priority type
-cat > website/docs/how-to/index.md << 'EOF'
-# How-to Guides
+Welcome to the documentation.
 
-Task-oriented guides for accomplishing specific goals.
-
-[TODO: Add how-to guides]
+[TODO: Add project overview]
 EOF
+    ;;
+  "Plain Markdown")
+    # Already created in Phase 4
+    ;;
+esac
+```
+
+**Create placeholder index for each selected Diataxis type:**
+
+```bash
+create_section_index() {
+  local section="$1"
+  local title="$2"
+  local desc="$3"
+  
+  if [ -d "$DOCS_PATH/$section" ]; then
+    cat > "$DOCS_PATH/$section/index.md" << EOF
+# $title
+
+$desc
+
+[TODO: Add content]
+EOF
+  fi
+}
+
+[ "$HAS_TUTORIALS" = "✓" ] && create_section_index "tutorials" "Tutorials" "Learning-oriented guides for newcomers."
+[ "$HAS_HOWTO" = "✓" ] && create_section_index "how-to" "How-to Guides" "Task-oriented guides for accomplishing specific goals."
+[ "$HAS_REFERENCE" = "✓" ] && create_section_index "reference" "Reference" "Technical specifications and API documentation."
+[ "$HAS_EXPLANATION" = "✓" ] && create_section_index "explanation" "Explanation" "Conceptual content explaining why things work."
 ```
 
 ---
