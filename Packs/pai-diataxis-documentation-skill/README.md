@@ -3,7 +3,7 @@ name: PAI Diataxis Documentation Skill
 pack-id: pai-diataxis-documentation-skill
 version: see src/skills/Diataxis-Documentation/SKILL.md
 author: ianmarr
-description: Diataxis-based documentation methodology skill - role-aware structure, content type separation, installation-time configuration
+description: Diataxis-based documentation methodology skill - role-first structure, content type separation, installation-time configuration
 type: skill
 purpose-type: [productivity, development, documentation]
 platform: claude-code
@@ -114,7 +114,7 @@ pai-diataxis-documentation-skill/
 ### With Diataxis
 
 1. **Clear Separation** - Each doc has one purpose
-2. **Role-Aware** - Content tagged/filtered by audience
+2. **Role-First** - Documentation organized by audience first
 3. **Consistent Structure** - Predictable patterns across all docs
 4. **Gap Analysis** - Framework reveals what's missing
 5. **Easy Maintenance** - Updates go to obvious locations

@@ -294,25 +294,36 @@ Help the user understand concepts, design decisions, and how things work.
 | Descriptive names | `HowToDeployToAWS.md` |
 | Type prefix (optional) | `Tutorial-FirstAPI.md` |
 
-### Docusaurus Integration
+### Role-First Structure (Required)
 
-When using Docusaurus (`website/` structure):
+Documentation MUST be organized by role first, then by content type:
 
 ```
-website/docs/
-├── tutorials/           # Learning-oriented
-│   ├── getting-started.md
-│   └── first-project.md
-├── how-to/              # Task-oriented
-│   ├── deploy.md
-│   └── configure-auth.md
-├── reference/           # Information-oriented
-│   ├── api.md
-│   └── configuration.md
-└── concepts/            # Understanding-oriented (explanation)
-    ├── architecture.md
-    └── design-decisions.md
+docs/
+├── users/                    # End users
+│   ├── tutorials/
+│   │   └── getting-started.md
+│   ├── how-to/
+│   │   └── common-tasks.md
+│   └── reference/
+│       └── ui-guide.md
+├── developers/               # Integrators, API consumers
+│   ├── tutorials/
+│   │   └── first-integration.md
+│   ├── how-to/
+│   │   └── deploy.md
+│   ├── reference/
+│   │   └── api.md
+│   └── explanation/
+│       └── architecture.md
+└── contributors/             # Project maintainers
+    ├── how-to/
+    │   └── submit-pr.md
+    └── reference/
+        └── code-style.md
 ```
+
+This structure ensures users find content relevant to them without wading through developer docs, and developers don't miss technical details buried in user guides.
 
 ### Skill Documentation
 
