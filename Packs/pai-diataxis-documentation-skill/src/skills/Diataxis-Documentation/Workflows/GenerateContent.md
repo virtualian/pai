@@ -35,7 +35,7 @@ Read the existing scaffold file to determine:
 
 #### 2.1 Identify Relevant Sources
 
-Based on Config.md source priorities, identify files to extract from:
+Based on `docs/.diataxis.md` source priorities, identify files to extract from:
 
 ```bash
 # Find source files for the topic
@@ -137,7 +137,7 @@ Before generating, classify the source material:
 
 ---
 
-### Step 3.1: Gather User Decisions
+### Step 4: Gather User Decisions
 
 **Ask before generating:**
 
@@ -180,7 +180,7 @@ Before generating, classify the source material:
 
 ---
 
-### Step 3.2: Generate Content
+### Step 5: Generate Content
 
 Using the extracted source material and user decisions:
 
@@ -194,7 +194,7 @@ Using the extracted source material and user decisions:
 
 1. **Replace each `[TODO: ...]`** with content derived from sources
 2. **Maintain provenance** - `<!-- Source: path:lines -->` for key claims
-3. **Follow content type rules** (Step 4)
+3. **Follow content type rules** (Step 6)
 4. **Mark uncertainty:**
    - `[GAP: description]` - sources don't cover this
    - `[PLACEHOLDER: description]` - generated without source (if user chose this)
@@ -231,7 +231,7 @@ Using the extracted source material and user decisions:
 
 ---
 
-### Step 4: Apply Content Type Rules
+### Step 6: Apply Content Type Rules
 
 #### Tutorial Rules
 - Use "you" (second person)
@@ -267,7 +267,7 @@ Using the extracted source material and user decisions:
 
 ---
 
-### Step 5: Check Against Anti-Patterns
+### Step 7: Check Against Anti-Patterns
 
 Before finalizing, verify:
 
@@ -280,7 +280,7 @@ Before finalizing, verify:
 
 ---
 
-### Step 6: Add Cross-References
+### Step 8: Add Cross-References
 
 Link to related documentation:
 - Tutorial → Explanation (for theory), How-to (for next steps)
@@ -290,13 +290,13 @@ Link to related documentation:
 
 ---
 
-### Step 7: Write Content to Scaffold
+### Step 9: Write Content to Scaffold
 
 Use the Edit tool to replace placeholder sections with generated content.
 
 ---
 
-### Step 8: Verify Quality
+### Step 10: Verify Quality
 
 Run through quality checklist from `Standard.md`:
 
