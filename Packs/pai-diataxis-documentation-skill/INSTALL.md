@@ -258,7 +258,7 @@ fi
 
 # ORIGINAL_INSTALL_SOURCE was captured in step 3.1 before files were copied
 # Escape special sed characters in replacement strings (& \ | need escaping)
-escape_sed() { echo "$1" | sed 's/[&\|]/\\&/g'; }
+escape_sed() { echo "$1" | sed -e 's/\\/\\\\/g' -e 's/&/\\&/g' -e 's/|/\\|/g'; }
 ESCAPED_CURRENT=$(escape_sed "$CURRENT_SOURCE")
 ESCAPED_ORIGINAL=$(escape_sed "$ORIGINAL_INSTALL_SOURCE")
 
