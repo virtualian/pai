@@ -257,17 +257,22 @@ if [ -d ".git" ]; then
 fi
 
 # ORIGINAL_INSTALL_SOURCE was captured in step 3.1 before files were copied
+# Escape special sed characters in replacement strings (& \ | need escaping)
+escape_sed() { echo "$1" | sed 's/[&\|]/\\&/g'; }
+ESCAPED_CURRENT=$(escape_sed "$CURRENT_SOURCE")
+ESCAPED_ORIGINAL=$(escape_sed "$ORIGINAL_INSTALL_SOURCE")
+
 if [ -z "$ORIGINAL_INSTALL_SOURCE" ]; then
   # Fresh install: set both to current source
   echo "Fresh install - recording install source"
-  sed -i.bak "s|^install_source:.*|install_source: $CURRENT_SOURCE|" "$SKILL_FILE"
-  sed -i.bak "s|^last_updated_from:.*|last_updated_from: $CURRENT_SOURCE|" "$SKILL_FILE"
+  sed -i.bak "s|^install_source:.*|install_source: $ESCAPED_CURRENT|" "$SKILL_FILE"
+  sed -i.bak "s|^last_updated_from:.*|last_updated_from: $ESCAPED_CURRENT|" "$SKILL_FILE"
   echo "Install source: $CURRENT_SOURCE"
 else
   # Update: preserve original, update last_updated_from
   echo "Update - preserving original install source"
-  sed -i.bak "s|^install_source:.*|install_source: $ORIGINAL_INSTALL_SOURCE|" "$SKILL_FILE"
-  sed -i.bak "s|^last_updated_from:.*|last_updated_from: $CURRENT_SOURCE|" "$SKILL_FILE"
+  sed -i.bak "s|^install_source:.*|install_source: $ESCAPED_ORIGINAL|" "$SKILL_FILE"
+  sed -i.bak "s|^last_updated_from:.*|last_updated_from: $ESCAPED_CURRENT|" "$SKILL_FILE"
   echo "Original install: $ORIGINAL_INSTALL_SOURCE"
   echo "Updated from: $CURRENT_SOURCE"
 fi
