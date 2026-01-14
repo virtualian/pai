@@ -283,14 +283,20 @@ ESCAPED_ORIGINAL=$(escape_sed "$ORIGINAL_INSTALL_SOURCE")
 if [ -z "$ORIGINAL_INSTALL_SOURCE" ]; then
   # Fresh install: set both to current source
   echo "Fresh install - recording install source"
-  sed -i.bak "s|^install_source:.*|install_source: $ESCAPED_CURRENT|" "$SKILL_FILE"
-  sed -i.bak "s|^last_updated_from:.*|last_updated_from: $ESCAPED_CURRENT|" "$SKILL_FILE"
+  # Single sed command preserves true original in .bak file
+  sed -i.bak \
+    -e "s|^install_source:.*|install_source: $ESCAPED_CURRENT|" \
+    -e "s|^last_updated_from:.*|last_updated_from: $ESCAPED_CURRENT|" \
+    "$SKILL_FILE"
   echo "Install source: $CURRENT_SOURCE"
 else
   # Update: preserve original, update last_updated_from
   echo "Update - preserving original install source"
-  sed -i.bak "s|^install_source:.*|install_source: $ESCAPED_ORIGINAL|" "$SKILL_FILE"
-  sed -i.bak "s|^last_updated_from:.*|last_updated_from: $ESCAPED_CURRENT|" "$SKILL_FILE"
+  # Single sed command preserves true original in .bak file
+  sed -i.bak \
+    -e "s|^install_source:.*|install_source: $ESCAPED_ORIGINAL|" \
+    -e "s|^last_updated_from:.*|last_updated_from: $ESCAPED_CURRENT|" \
+    "$SKILL_FILE"
   echo "Original install: $ORIGINAL_INSTALL_SOURCE"
   echo "Updated from: $CURRENT_SOURCE"
 fi
