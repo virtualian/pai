@@ -202,9 +202,12 @@ If a new skill version requires config changes:
 
 **IMPORTANT: Must run before copying files to preserve original install source.**
 
+**NOTE:** All Phase 3 commands (3.1 through 3.4) MUST run in the same shell session to preserve the `ORIGINAL_INSTALL_SOURCE` variable. Alternatively, save to a temp file as shown below.
+
 ```bash
 PAI_DIR="${PAI_DIR:-$HOME/.claude}"
 EXISTING_SKILL="$PAI_DIR/skills/Diataxis-Documentation/SKILL.md"
+INSTALL_STATE_FILE="/tmp/pai-diataxis-install-state.$$"
 
 # Capture existing install_source before we overwrite it
 if [ -f "$EXISTING_SKILL" ]; then
@@ -218,6 +221,10 @@ else
   ORIGINAL_INSTALL_SOURCE=""
   echo "Fresh install (no existing skill)"
 fi
+
+# Save to temp file for later phases (in case shell session changes)
+echo "ORIGINAL_INSTALL_SOURCE='$ORIGINAL_INSTALL_SOURCE'" > "$INSTALL_STATE_FILE"
+echo "State saved to $INSTALL_STATE_FILE"
 ```
 
 ### 3.2 Create Directory Structure
@@ -257,6 +264,13 @@ if [ -d ".git" ]; then
 fi
 
 # ORIGINAL_INSTALL_SOURCE was captured in step 3.1 before files were copied
+# Restore from temp file if variable is not set (separate shell session)
+INSTALL_STATE_FILE="/tmp/pai-diataxis-install-state.$$"
+if [ -z "$ORIGINAL_INSTALL_SOURCE" ] && [ -f "$INSTALL_STATE_FILE" ]; then
+  source "$INSTALL_STATE_FILE"
+  echo "Restored state from $INSTALL_STATE_FILE"
+fi
+
 # Escape special sed characters in replacement strings (& \ | need escaping)
 escape_sed() { echo "$1" | sed -e 's/\\/\\\\/g' -e 's/&/\\&/g' -e 's/|/\\|/g'; }
 ESCAPED_CURRENT=$(escape_sed "$CURRENT_SOURCE")

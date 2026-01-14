@@ -628,6 +628,52 @@ docs-repo/
 
 ---
 
+### Astro Starlight
+
+**Within project:**
+```bash
+# Site in docs/, content in docs/src/content/docs/
+npm create astro@latest docs -- --template starlight
+```
+
+```
+project/
+├── src/                    # Your code
+├── docs/                   # Starlight site
+│   ├── src/
+│   │   └── content/
+│   │       └── docs/       # Documentation content (Diataxis-organized)
+│   │           ├── index.mdx
+│   │           ├── tutorials/
+│   │           ├── how-to/
+│   │           ├── reference/
+│   │           └── explanation/
+│   ├── astro.config.mjs
+│   └── package.json
+└── package.json            # Your project
+```
+
+**Standalone docs repo:**
+```bash
+npm create astro@latest . -- --template starlight
+```
+
+```
+docs-repo/
+├── src/
+│   └── content/
+│       └── docs/           # Documentation content (Diataxis-organized)
+│           ├── index.mdx
+│           ├── tutorials/
+│           ├── how-to/
+│           ├── reference/
+│           └── explanation/
+├── astro.config.mjs
+└── package.json
+```
+
+---
+
 ### Plain Markdown
 
 **Within project:**
