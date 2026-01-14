@@ -207,7 +207,9 @@ If a new skill version requires config changes:
 ```bash
 PAI_DIR="${PAI_DIR:-$HOME/.claude}"
 EXISTING_SKILL="$PAI_DIR/skills/Diataxis-Documentation/SKILL.md"
-INSTALL_STATE_FILE="/tmp/pai-diataxis-install-state.$$"
+# Use deterministic path (not $$) so state persists across shell sessions
+INSTALL_STATE_FILE="$PAI_DIR/tmp/pai-diataxis-install-state.tmp"
+mkdir -p "$PAI_DIR/tmp"
 
 # Capture existing install_source before we overwrite it
 if [ -f "$EXISTING_SKILL" ]; then
@@ -265,11 +267,13 @@ fi
 
 # ORIGINAL_INSTALL_SOURCE was captured in step 3.1 before files were copied
 # Restore from temp file if variable is not set (separate shell session)
-INSTALL_STATE_FILE="/tmp/pai-diataxis-install-state.$$"
+INSTALL_STATE_FILE="$PAI_DIR/tmp/pai-diataxis-install-state.tmp"
 if [ -z "$ORIGINAL_INSTALL_SOURCE" ] && [ -f "$INSTALL_STATE_FILE" ]; then
   source "$INSTALL_STATE_FILE"
   echo "Restored state from $INSTALL_STATE_FILE"
 fi
+# Clean up temp file after use
+rm -f "$INSTALL_STATE_FILE" 2>/dev/null
 
 # Escape special sed characters in replacement strings (& \ | need escaping)
 escape_sed() { echo "$1" | sed -e 's/\\/\\\\/g' -e 's/&/\\&/g' -e 's/|/\\|/g'; }
