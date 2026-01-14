@@ -67,7 +67,7 @@ OAuth 2.0 authentication requires a client ID and secret...
 
 ### 3. Site Configuration
 
-**Config.md defines site purpose, hosting, and technology:**
+**`docs/.diataxis.md` defines site purpose, hosting, and technology:**
 - **Purpose** - Developer Portal, Product Docs, Internal, Open Source
 - **Hosting** - GitHub Pages, Vercel/Netlify, Self-hosted, Docs platform
 - **Technology** - Docusaurus, MkDocs, Astro Starlight, Plain Markdown
@@ -115,7 +115,7 @@ Is the user trying to LEARN something new?
 **Example 1: Plan documentation**
 ```
 User: "Plan documentation for this project"
-→ Read Config.md for roles and priorities
+→ Read docs/.diataxis.md for roles and priorities
 → Scan existing docs/
 → Map to Diataxis categories
 → Identify gaps based on role priorities
@@ -133,7 +133,7 @@ User: "What type should our 'Getting Started' guide be?"
 **Example 3: Create documentation**
 ```
 User: "Create a how-to for deploying to AWS"
-→ Read Config.md for role priorities
+→ Read docs/.diataxis.md for role priorities
 → Follow How-to structure from Standard.md
 → Task-oriented: assume user knows basics
 → Numbered steps, clear success criteria
@@ -142,7 +142,7 @@ User: "Create a how-to for deploying to AWS"
 **Example 4: Organize existing docs**
 ```
 User: "Organize my docs into Diataxis structure"
-→ Read Config.md for scope exclusions
+→ Read docs/.diataxis.md for scope exclusions
 → Analyze current docs/ structure
 → Classify each doc by content type
 → Propose new structure
