@@ -717,18 +717,30 @@ $SOURCES
 
 | Role | Priority |
 |------|----------|
-$(echo "$ROLES" | tr ',' '\n' | head -1 | xargs -I {} echo "| {} | primary |")
-$(echo "$ROLES" | tr ',' '\n' | tail -n +2 | head -1 | xargs -I {} echo "| {} | secondary |")
-$(echo "$ROLES" | tr ',' '\n' | tail -n +3 | xargs -I {} echo "| {} | tertiary |")
+$(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | head -1 | xargs -I {} echo "| {} | primary |")
+$(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | tail -n +2 | head -1 | xargs -I {} echo "| {} | secondary |")
+$(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | tail -n +3 | xargs -I {} echo "| {} | tertiary |")
 
 ## Diataxis Elements by Role
 
 | Role | Tutorials | How-to | Reference | Explanation |
 |------|-----------|--------|-----------|-------------|
-$([ -n "$DIATAXIS_DEVELOPERS" ] && echo "| developers | $DIATAXIS_DEVELOPERS |")
-$([ -n "$DIATAXIS_USERS" ] && echo "| users | $DIATAXIS_USERS |")
-$([ -n "$DIATAXIS_OPERATORS" ] && echo "| operators | $DIATAXIS_OPERATORS |")
-$([ -n "$DIATAXIS_CONTRIBUTORS" ] && echo "| contributors | $DIATAXIS_CONTRIBUTORS |")
+$(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | while read role; do
+  role=$(echo "$role" | xargs)  # trim whitespace
+  [ -z "$role" ] && continue
+  case "$role" in
+    developers) priorities="$DIATAXIS_DEVELOPERS" ;;
+    users) priorities="$DIATAXIS_USERS" ;;
+    operators) priorities="$DIATAXIS_OPERATORS" ;;
+    contributors) priorities="$DIATAXIS_CONTRIBUTORS" ;;
+    *) priorities="" ;;
+  esac
+  if [ -n "$priorities" ]; then
+    echo "| $role | $priorities |"
+  else
+    echo "| $role | (not configured) | | | |"
+  fi
+done)
 
 ## Scope Exclusions
 
