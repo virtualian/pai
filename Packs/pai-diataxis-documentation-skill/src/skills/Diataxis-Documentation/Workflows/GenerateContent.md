@@ -7,10 +7,12 @@
 ## Purpose
 
 Fill a documentation scaffold with content:
-- Extract information from sources
-- Apply content type rules
+- Assess source quality and adapt strategy
+- Gather user decisions on priorities and quality
 - Generate documentation following Diataxis principles
 - Verify quality
+
+**Design Principle:** This workflow is agnostic to project type, tech stack, hosting, and content domain. It adapts to source quality—from well-documented to missing—and requires explicit user input for key decisions.
 
 **Prerequisite:** Run `CreateScaffold.md` first to create the structure.
 
@@ -122,28 +124,110 @@ When sources don't provide needed information:
 
 ---
 
-### Step 3: Generate Content
+### Step 3: Assess Source Quality
 
-<!-- ═══════════════════════════════════════════════════════════════════════════
-     TEMPLATE PLACEHOLDER - CUSTOM PROMPT
-     ═══════════════════════════════════════════════════════════════════════════
+Before generating, classify the source material:
 
-     Replace this section with your custom content generation prompt.
+| Quality Level | Indicators | Strategy |
+|---------------|------------|----------|
+| **Well-documented** | Existing docs, rich comments, examples | Extract and reorganize for Diataxis type |
+| **Sparse** | Code exists but minimal docs/comments | Generate from code/specs, flag assumptions |
+| **Poor quality** | Outdated, contradictory, or unclear | Identify salvageable parts, mark rest for rewrite |
+| **Missing** | No sources for required content | Leave explicit `[GAP: ...]` markers |
 
-     The prompt should receive:
-     - Content type (Tutorial/How-to/Reference/Explanation)
-     - Extracted source material
-     - Target scaffold structure
-     - Provenance annotations
+---
 
-     Expected output:
-     - Filled documentation sections
-     - Proper formatting for content type
-     - Cross-references where appropriate
+### Step 3.1: Gather User Decisions
 
-     ═══════════════════════════════════════════════════════════════════════════ -->
+**Ask before generating:**
 
-{{CONTENT_GENERATION_PROMPT}}
+```json
+{
+  "header": "Sources",
+  "question": "When sources conflict, which should take priority?",
+  "multiSelect": false,
+  "options": [
+    {"label": "Code", "description": "Trust implementation over documentation"},
+    {"label": "Docs", "description": "Trust existing docs over current code"},
+    {"label": "Ask each time", "description": "Flag conflicts for manual resolution"}
+  ]
+}
+```
+
+```json
+{
+  "header": "Quality",
+  "question": "What quality level for this content?",
+  "multiSelect": false,
+  "options": [
+    {"label": "Draft", "description": "Good enough to review, may have rough edges"},
+    {"label": "Polished", "description": "Ready for publication, fully refined"}
+  ]
+}
+```
+
+```json
+{
+  "header": "Gaps",
+  "question": "How should content gaps be handled?",
+  "multiSelect": false,
+  "options": [
+    {"label": "Explicit gaps", "description": "Leave [GAP: ...] markers for missing info"},
+    {"label": "Placeholder text", "description": "Generate reasonable placeholders marked [PLACEHOLDER]"}
+  ]
+}
+```
+
+---
+
+### Step 3.2: Generate Content
+
+Using the extracted source material and user decisions:
+
+#### Input Context
+- **Content Type:** Tutorial | How-to | Reference | Explanation
+- **Scaffold File:** Path with `[TODO: ...]` markers
+- **Source Quality:** Well-documented | Sparse | Poor | Missing
+- **User Decisions:** Priority, quality level, gap handling
+
+#### Generation Rules
+
+1. **Replace each `[TODO: ...]`** with content derived from sources
+2. **Maintain provenance** - `<!-- Source: path:lines -->` for key claims
+3. **Follow content type rules** (Step 4)
+4. **Mark uncertainty:**
+   - `[GAP: description]` - sources don't cover this
+   - `[PLACEHOLDER: description]` - generated without source (if user chose this)
+   - `[CONFLICT: source1 vs source2]` - sources disagree (if user chose "ask each time")
+
+#### By Source Quality
+
+**Well-documented sources:**
+- Extract directly, reorganize for Diataxis type
+- Preserve technical accuracy
+- Update examples if outdated
+
+**Sparse sources:**
+- Generate from code structure and signatures
+- Flag inferred behavior: `<!-- Inferred from: path -->`
+- Be conservative - don't guess intent
+
+**Poor quality sources:**
+- Extract only verifiable facts
+- Mark questionable content: `[VERIFY: claim from outdated-doc.md]`
+- Note what needs rewriting
+
+**Missing sources:**
+- Use `[GAP: ...]` or `[PLACEHOLDER: ...]` per user choice
+- Don't invent technical details
+- Scaffold structure is still valuable
+
+#### Content Type Guidance
+
+**Tutorial:** Second person, explicit steps, show expected output, no theory
+**How-to:** Assume basics known, numbered steps, include verification
+**Reference:** Factual only, exhaustive, consistent structure, types/defaults/examples
+**Explanation:** Context first, "why" not "what", trade-offs, connections
 
 ---
 
@@ -232,9 +316,10 @@ Run through quality checklist from `Standard.md`:
 
 ## Output
 
-- Completed documentation file
-- Content derived from sources
-- Cross-references to related docs
+- Documentation file with `[TODO: ...]` markers replaced
+- Content derived from sources with provenance comments
+- Explicit markers for gaps: `[GAP: ...]`, `[PLACEHOLDER: ...]`, `[CONFLICT: ...]`
+- Cross-references to related docs (only to existing targets)
 - Follows Diataxis structure for content type
 
 ---
