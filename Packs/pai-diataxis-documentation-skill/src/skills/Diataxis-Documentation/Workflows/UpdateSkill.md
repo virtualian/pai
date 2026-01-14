@@ -80,14 +80,14 @@ echo "├─────────────────┼─────�
 printf "│ Installed       │ %-11s │ current   │\n" "$INSTALLED_VERSION"
 
 if [ "$LOCAL_AVAILABLE" = "true" ]; then
-  [ "$LOCAL_VERSION" \> "$INSTALLED_VERSION" ] && LOCAL_STATUS="NEWER" || LOCAL_STATUS="same/older"
+  [[ "$LOCAL_VERSION" > "$INSTALLED_VERSION" ]] && LOCAL_STATUS="NEWER" || LOCAL_STATUS="same/older"
   printf "│ Local           │ %-11s │ %-9s │\n" "$LOCAL_VERSION" "$LOCAL_STATUS"
 else
   printf "│ Local           │ %-11s │ %-9s │\n" "n/a" "offline"
 fi
 
 if [ "$CANONICAL_AVAILABLE" = "true" ]; then
-  [ "$CANONICAL_VERSION" \> "$INSTALLED_VERSION" ] && CANONICAL_STATUS="NEWER" || CANONICAL_STATUS="same/older"
+  [[ "$CANONICAL_VERSION" > "$INSTALLED_VERSION" ]] && CANONICAL_STATUS="NEWER" || CANONICAL_STATUS="same/older"
   printf "│ Canonical       │ %-11s │ %-9s │\n" "$CANONICAL_VERSION" "$CANONICAL_STATUS"
 else
   printf "│ Canonical       │ %-11s │ %-9s │\n" "n/a" "offline"
