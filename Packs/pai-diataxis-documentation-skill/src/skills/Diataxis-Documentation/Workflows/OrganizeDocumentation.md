@@ -107,35 +107,38 @@ For documents classified as "Mixed":
 - Lines 51-150: Reference for all config options
 - Lines 151-200: Explanation of config architecture
 
-**Recommended split:**
-1. `tutorials/first-time-setup.md` - Lines 1-50 expanded
-2. `reference/configuration.md` - Lines 51-150 reformatted
-3. `concepts/configuration-architecture.md` - Lines 151-200 expanded
+**Recommended split (role-first):**
+1. `users/tutorials/first-time-setup.md` - Lines 1-50 expanded
+2. `developers/reference/configuration.md` - Lines 51-150 reformatted
+3. `developers/explanation/configuration-architecture.md` - Lines 151-200 expanded
 ```
 
 ---
 
 ### Step 5: Propose New Structure
 
-Design the target structure based on Diataxis:
+Design the target structure based on Diataxis (role-first):
 
 ```markdown
 ## Proposed Structure
 
 ```
 docs/
-├── tutorials/              # Learning-oriented
-│   ├── getting-started.md
-│   └── first-time-setup.md
-├── how-to/                 # Task-oriented
-│   ├── install.md
-│   └── configure-advanced.md
-├── reference/              # Information-oriented
-│   ├── api.md
-│   └── configuration.md
-└── concepts/               # Understanding-oriented
-    ├── architecture.md
-    └── configuration-architecture.md
+├── users/                  # End users
+│   ├── tutorials/
+│   │   ├── getting-started.md
+│   │   └── first-time-setup.md
+│   └── how-to/
+│       └── install.md
+└── developers/             # Developers/integrators
+    ├── how-to/
+    │   └── configure-advanced.md
+    ├── reference/
+    │   ├── api.md
+    │   └── configuration.md
+    └── explanation/
+        ├── architecture.md
+        └── configuration-architecture.md
 ```
 
 **For Docusaurus, update sidebars.js:**
@@ -144,10 +147,19 @@ module.exports = {
   docs: [
     {
       type: 'category',
-      label: 'Tutorials',
-      items: ['tutorials/getting-started', 'tutorials/first-time-setup'],
+      label: 'Users',
+      items: [
+        { type: 'category', label: 'Tutorials', items: ['users/tutorials/getting-started'] },
+        { type: 'category', label: 'How-to', items: ['users/how-to/install'] },
+      ],
     },
-    // ...
+    {
+      type: 'category',
+      label: 'Developers',
+      items: [
+        { type: 'category', label: 'Reference', items: ['developers/reference/api'] },
+      ],
+    },
   ],
 };
 ```
@@ -157,7 +169,7 @@ module.exports = {
 
 ### Step 6: Present Migration Plan
 
-Show the user what will change:
+Show the user what will change (role-first structure):
 
 ```markdown
 ## Migration Plan
@@ -165,21 +177,21 @@ Show the user what will change:
 ### Files to Move
 | From | To | Action |
 |------|-----|--------|
-| `getting-started.md` | `tutorials/getting-started.md` | Move |
-| `api/reference.md` | `reference/api.md` | Move |
-| `guides/installation.md` | `how-to/install.md` | Move + rename |
-| `advanced/architecture.md` | `concepts/architecture.md` | Move |
+| `getting-started.md` | `users/tutorials/getting-started.md` | Move |
+| `api/reference.md` | `developers/reference/api.md` | Move |
+| `guides/installation.md` | `users/how-to/install.md` | Move + rename |
+| `advanced/architecture.md` | `developers/explanation/architecture.md` | Move |
 
 ### Files to Split
 | Original | New Files |
 |----------|-----------|
-| `guides/configuration.md` | `tutorials/first-time-setup.md`, `reference/configuration.md`, `concepts/configuration-architecture.md` |
+| `guides/configuration.md` | `users/tutorials/first-time-setup.md`, `developers/reference/configuration.md`, `developers/explanation/configuration-architecture.md` |
 
-### Directories to Create
-- `tutorials/`
-- `how-to/`
-- `reference/`
-- `concepts/`
+### Directories to Create (role-first)
+- `users/tutorials/`
+- `users/how-to/`
+- `developers/reference/`
+- `developers/explanation/`
 
 ### Directories to Remove (after migration)
 - `guides/` (empty after moves)
@@ -217,14 +229,16 @@ Ask for approval:
 If approved, execute:
 
 ```bash
-# Create new directories
-mkdir -p docs/{tutorials,how-to,reference,concepts}
+# Create role-first directories (based on roles in .diataxis.md)
+# Example for users + developers roles:
+mkdir -p docs/users/{tutorials,how-to,reference}
+mkdir -p docs/developers/{tutorials,how-to,reference,explanation}
 
-# Move files
-git mv docs/getting-started.md docs/tutorials/
-git mv docs/api/reference.md docs/reference/api.md
-git mv docs/guides/installation.md docs/how-to/install.md
-git mv docs/advanced/architecture.md docs/concepts/architecture.md
+# Move files to appropriate role + content type
+git mv docs/getting-started.md docs/users/tutorials/
+git mv docs/api/reference.md docs/developers/reference/api.md
+git mv docs/guides/installation.md docs/users/how-to/install.md
+git mv docs/advanced/architecture.md docs/developers/explanation/architecture.md
 
 # For splits: Use Write tool to create new files from extracted content
 ```
