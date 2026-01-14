@@ -16,7 +16,7 @@ description: Diataxis-based documentation methodology. USE WHEN creating, modify
 
 This skill provides Diataxis-based documentation methodology:
 - **Four Content Types** - Tutorials, How-to Guides, Reference, Explanation
-- **Role-Aware Structure** - Content organized by type, tagged/filtered by audience
+- **Role-First Structure** - Documentation organized by audience, then by content type
 - **Site-Aware** - Purpose, hosting, and technology configuration
 - **Source-Faithful** - Extract from sources, never hallucinate
 - **Temporally Aware** - Past, present, and future capabilities distinguished
