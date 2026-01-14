@@ -717,9 +717,17 @@ $SOURCES
 
 | Role | Priority |
 |------|----------|
-$(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | head -1 | xargs -I {} echo "| {} | primary |")
-$(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | tail -n +2 | head -1 | xargs -I {} echo "| {} | secondary |")
-$(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | tail -n +3 | xargs -I {} echo "| {} | tertiary |")
+$(i=0; echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | while read role; do
+  role=$(echo "$role" | xargs)  # trim whitespace
+  [ -z "$role" ] && continue
+  i=$((i + 1))
+  case $i in
+    1) priority="primary" ;;
+    2) priority="secondary" ;;
+    *) priority="tertiary" ;;
+  esac
+  echo "| $role | $priority |"
+done)
 
 ## Diataxis Elements by Role
 
