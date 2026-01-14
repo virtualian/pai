@@ -1,6 +1,6 @@
 ---
 name: Diataxis-Documentation
-version: 2.3.0
+version: 2.3.1
 install_source: __INSTALL_SOURCE__
 last_updated_from: __LAST_UPDATED_FROM__
 official_source: https://github.com/danielmiessler/Personal_AI_Infrastructure
