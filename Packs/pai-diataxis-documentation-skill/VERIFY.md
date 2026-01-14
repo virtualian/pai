@@ -80,7 +80,7 @@ head -20 "$PAI_DIR/skills/Diataxis-Documentation/SKILL.md"
 
 ```bash
 PAI_DIR="${PAI_DIR:-$HOME/.claude}"
-for f in InitializeProject PlanDocumentation OrganizeDocumentation CreateScaffold GenerateContent; do
+for f in InitializeProject PlanDocumentation OrganizeDocumentation CreateScaffold GenerateContent UpdateSkill; do
   echo "--- $f.md ---"
   head -10 "$PAI_DIR/skills/Diataxis-Documentation/Workflows/$f.md"
   echo ""

@@ -313,6 +313,7 @@ curl -s "$BASE_URL/Workflows/PlanDocumentation.md" -o "$TEMP_DIR/Workflows/PlanD
 curl -s "$BASE_URL/Workflows/OrganizeDocumentation.md" -o "$TEMP_DIR/Workflows/OrganizeDocumentation.md"
 curl -s "$BASE_URL/Workflows/CreateScaffold.md" -o "$TEMP_DIR/Workflows/CreateScaffold.md"
 curl -s "$BASE_URL/Workflows/GenerateContent.md" -o "$TEMP_DIR/Workflows/GenerateContent.md"
+curl -s "$BASE_URL/Workflows/UpdateSkill.md" -o "$TEMP_DIR/Workflows/UpdateSkill.md"
 
 # Verify downloads (check for valid content)
 if ! grep -q "^name: Diataxis-Documentation" "$TEMP_DIR/SKILL.md"; then
