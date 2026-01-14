@@ -349,6 +349,7 @@ echo "Checking workflow files..."
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/OrganizeDocumentation.md" ] && echo "✓ OrganizeDocumentation.md" || echo "❌ OrganizeDocumentation.md missing"
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/CreateScaffold.md" ] && echo "✓ CreateScaffold.md" || echo "❌ CreateScaffold.md missing"
 [ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/GenerateContent.md" ] && echo "✓ GenerateContent.md" || echo "❌ GenerateContent.md missing"
+[ -f "$PAI_DIR/skills/Diataxis-Documentation/Workflows/UpdateSkill.md" ] && echo "✓ UpdateSkill.md" || echo "❌ UpdateSkill.md missing"
 
 echo "=== Verification Complete ==="
 ```
