@@ -1,13 +1,13 @@
 # Installing PAI
 
 > [!IMPORTANT]
-> ## This File Is For Your AI Assistant
+> ## This File Is For Your DA
 >
 > **This is the future of software installation.**
 >
-> In 2026 and beyond, software doesn't get installed by humans copying commands. It gets installed by your AI assistant, who reads the documentation, understands your system, asks you questions, and customizes the installation for your specific needs.
+> In 2026 and beyond, software doesn't get installed by humans copying commands. It gets installed by your DA assistant, who reads the documentation, understands your system, asks you questions, and customizes the installation for your specific needs.
 >
-> **You can install PAI manually if you want**—the instructions are below. But PAI is designed to be installed by your AI. Give your AI this file and let it guide you through a personalized wizard.
+> **You can install PAI manually if you want**—the instructions are below. But PAI is designed to be installed by your DA. Give your DA this file and let it guide you through a personalized wizard.
 
 ---
 
@@ -41,7 +41,7 @@ Start by explaining PAI to your principal:
 
 **How is PAI different from other AI tools?**
 > Unlike plugins, extensions, or simple prompts, PAI is a complete infrastructure layer:
-> - **Memory** — Your AI remembers past sessions, decisions, and learnings
+> - **Memory** — Your DA remembers past sessions, decisions, and learnings
 > - **Skills** — Specialized capabilities that route intelligently based on context
 > - **Hooks** — Event-driven automation that responds to what's happening
 > - **Security** — Layered protection for your data and commands
@@ -78,25 +78,33 @@ This helps you calibrate how much explanation to provide.
 
 #### Phase 3: Choosing What to Install
 
-Explain the concepts of Bundles and Packs:
+PAI offers three installation paths. Explain each and help them choose:
 
-**What are Packs?**
-> Packs are self-contained capability modules. Each pack adds a specific feature:
-> - **Hook System** — Event-driven automation
-> - **History System** — Automatic context tracking
-> - **Voice System** — Spoken notifications
-> - **Browser Skill** — Web automation and testing
-> - And more...
+**Option A: Full Release Install (Recommended)**
+> The fastest path to a working system. You get a complete, pre-configured `.claude/` directory with all infrastructure packs already installed.
 >
-> You can install packs individually, picking exactly what you need.
+> Best for: First-time users, fresh setups, or when you want PAI working immediately.
+>
+> [See Releases/v2.3/README.md](Releases/v2.3/README.md)
 
-**What are Bundles?**
-> Bundles are curated collections of packs that work well together. Instead of choosing packs one-by-one, a bundle gives you a complete, tested experience.
+**Option B: Bundle + Manual Packs**
+> The Bundle wizard creates a skeleton directory structure. You then install each pack manually in order. This gives you understanding of how the system is built.
+>
+> Best for: Users who want to learn the system as they build it, or need customization.
+>
+> [See Bundles/Official/README.md](Bundles/Official/README.md)
+
+**Option C: Individual Packs**
+> Install only specific capabilities you need. Maximum flexibility, minimum overhead.
+>
+> Best for: Experienced users adding specific features to existing setups.
+>
+> [See Packs/README.md](Packs/README.md)
 
 **Ask: How would you like to proceed?**
-- **Install the PAI Bundle** (Recommended) — The complete PAI experience with all core capabilities
-- **Browse individual packs** — Choose specific capabilities you want
-- **Minimal install** — Just the basics to get started
+- **Full Release Install** (Recommended) — Complete working system in 5 minutes
+- **Bundle + Manual Packs** — Build understanding as you install each pack
+- **Individual Packs** — Cherry-pick specific capabilities
 
 ---
 
@@ -108,11 +116,12 @@ If they chose the PAI Bundle, explain what's included:
 
 | Pack | What It Does |
 |------|--------------|
-| **Hook System** | Event-driven automation — the foundation everything else builds on |
-| **Core Install** | Identity, skills routing, and system configuration |
-| **History System** | Automatic capture of sessions, decisions, and learnings |
-| **Voice System** | Spoken notifications via text-to-speech |
-| **Browser Skill** | Web automation for testing and verification |
+| **pai-hook-system** | Event-driven automation — the foundation everything else builds on |
+| **pai-core-install** | Identity, skills routing, system configuration, and memory system |
+| **pai-agents-skill** | Dynamic agent composition with personality traits and voices |
+| **pai-voice-system** | Spoken notifications via text-to-speech (optional) |
+| **pai-browser-skill** | Web automation for testing and verification |
+| **pai-observability-server** | Real-time dashboard for monitoring agent activity |
 
 **Ask: Ready to install the PAI Bundle?**
 - Yes, install everything
@@ -131,11 +140,12 @@ For each pack being installed:
 4. **Confirm success** before moving to the next pack
 
 **Installation order matters.** Install in this sequence:
-1. pai-hook-system (foundation)
-2. pai-core-install (identity and routing)
-3. pai-history-system (memory)
-4. pai-voice-system (optional)
-5. pai-browser-skill (optional)
+1. pai-hook-system (foundation - hooks enable everything else)
+2. pai-core-install (identity, skills, memory system)
+3. pai-agents-skill (agent composition - requires core)
+4. pai-voice-system (optional - TTS notifications)
+5. pai-browser-skill (optional - web automation)
+6. pai-observability-server (optional - monitoring dashboard)
 
 ---
 
@@ -173,23 +183,47 @@ If you prefer to install PAI yourself without AI assistance:
 - An AI coding assistant (Claude Code, Cursor, etc.)
 - Git
 
-### Quick Start
+### Quick Start: Full Release Install (Recommended)
 
 ```bash
 # Clone the repository
 git clone https://github.com/danielmiessler/PAI.git
-cd PAI
+cd PAI/Releases/v2.3
 
-# Run the PAI Bundle installer
-cd Bundles/Official
-bun run install.ts
+# Back up your existing Claude Code configuration (if any)
+[ -d ~/.claude ] && mv ~/.claude ~/.claude-backup-$(date +%Y%m%d)
+
+# Copy the complete PAI installation
+cp -r .claude ~/
+
+# Run the configuration wizard
+cd ~/.claude && bun run install.ts --setup
 ```
 
-The installer will:
-- Ask for your preferences (AI name, install location, timezone)
-- Create the directory structure
-- Configure environment variables
-- Guide you through installing each pack
+The wizard will ask for your name, DA name, timezone, and voice preferences. After completion, restart Claude Code to activate hooks.
+
+**Shell support:** Works with both bash and zsh. The wizard auto-detects your shell and writes to the appropriate config file.
+
+### Alternative: Bundle + Manual Packs
+
+If you prefer to build understanding as you install:
+
+```bash
+# Clone the repository
+git clone https://github.com/danielmiessler/PAI.git
+cd PAI/Bundles/Official
+
+# Run the Bundle wizard (creates skeleton only)
+bun run install.ts
+
+# Then install each pack manually IN ORDER:
+# 1. pai-hook-system
+# 2. pai-core-install
+# 3. pai-statusline
+# 4. pai-voice-system (optional)
+```
+
+> **Warning:** The Bundle wizard alone does NOT create a working system. You must install the required packs afterward.
 
 ### Installing Individual Packs
 
@@ -199,7 +233,7 @@ Each pack in `Packs/` has its own installation:
 # Example: Install just the history system
 cd Packs/pai-history-system
 # Read INSTALL.md and follow instructions
-# Or give the directory to your AI
+# Or give the directory to your DA
 ```
 
 ### Directory Structure
@@ -223,7 +257,7 @@ $PAI_DIR/
 ## Troubleshooting
 
 **Hooks not firing?**
-- Restart your AI session after installation
+- Restart your DA session after installation
 - Check `settings.json` has the hooks registered
 - Verify hook files exist in `$PAI_DIR/hooks/`
 
@@ -243,10 +277,10 @@ Traditional software installation is a series of commands you copy and paste, ho
 
 AI-first installation is different:
 
-1. **Context-aware** — Your AI understands your existing setup before making changes
+1. **Context-aware** — Your DA understands your existing setup before making changes
 2. **Interactive** — You're asked questions, not given a one-size-fits-all script
 3. **Adaptive** — Installation adjusts based on your answers and environment
-4. **Verified** — Your AI confirms things work, not just that commands ran
+4. **Verified** — Your DA confirms things work, not just that commands ran
 5. **Explained** — You understand what's being installed and why
 
 This is how software should be installed in 2026 and beyond. Not copying commands. Having a conversation with an AI that customizes the system for you.
