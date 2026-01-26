@@ -9,8 +9,8 @@ import { homedir } from "os";
 import { join } from "path";
 import { existsSync, readFileSync } from "fs";
 
-// Load .env from user home directory
-const envPath = join(homedir(), '.env');
+// Load .env from ~/.claude directory
+const envPath = join(homedir(), '.claude', '.env');
 if (existsSync(envPath)) {
   const envContent = await Bun.file(envPath).text();
   envContent.split('\n').forEach(line => {
@@ -33,9 +33,8 @@ const PORT = parseInt(process.env.PORT || "8888");
 const ELEVENLABS_API_KEY = process.env.ELEVENLABS_API_KEY;
 
 if (!ELEVENLABS_API_KEY) {
-  console.error('Warning: ELEVENLABS_API_KEY not found in ~/.env');
-  console.error('Voice server will use macOS say command as fallback');
-  console.error('Add: ELEVENLABS_API_KEY=your_key_here to ~/.env');
+  console.error('⚠️  ELEVENLABS_API_KEY not found in ~/.claude/.env');
+  console.error('Add: ELEVENLABS_API_KEY=your_key_here');
 }
 
 // Load settings.json for DA identity and default voice
@@ -49,23 +48,39 @@ try {
     const settings = JSON.parse(settingsContent);
     if (settings.daidentity?.voiceId) {
       daVoiceId = settings.daidentity.voiceId;
-      console.log(`Loaded DA voice ID from settings.json`);
+      console.log(`✅ Loaded DA voice ID from settings.json`);
     }
     if (settings.daidentity?.name) {
       daName = settings.daidentity.name;
     }
     if (settings.daidentity?.voice) {
       daVoiceProsody = settings.daidentity.voice as ProsodySettings;
-      console.log(`Loaded DA voice prosody from settings.json`);
+      console.log(`✅ Loaded DA voice prosody from settings.json`);
     }
   }
 } catch (error) {
-  console.warn('Failed to load DA voice settings from settings.json');
+  console.warn('⚠️  Failed to load DA voice settings from settings.json');
+}
+
+// Load desktop notification setting (default: enabled for backwards compatibility)
+let desktopNotificationsEnabled = true;
+try {
+  const settingsPath = join(homedir(), '.claude', 'settings.json');
+  if (existsSync(settingsPath)) {
+    const settingsContent = readFileSync(settingsPath, 'utf-8');
+    const settings = JSON.parse(settingsContent);
+    if (settings.notifications?.desktop?.enabled === false) {
+      desktopNotificationsEnabled = false;
+      console.log(`🔕 Desktop notifications disabled via settings.json`);
+    }
+  }
+} catch (error) {
+  // Keep default (enabled)
 }
 
 if (!daVoiceId) {
-  console.warn('No voiceId configured in settings.json daidentity section');
-  console.warn('Add: "daidentity": { "voiceId": "your_elevenlabs_voice_id" }');
+  console.warn('⚠️  No voiceId configured in settings.json daidentity section');
+  console.warn('   Add: "daidentity": { "voiceId": "your_elevenlabs_voice_id" }');
 }
 
 // Default voice ID from settings.json or environment variable
@@ -117,11 +132,11 @@ try {
     const jsonMatch = markdownContent.match(/```json\n([\s\S]*?)\n```/);
     if (jsonMatch && jsonMatch[1]) {
       voicesConfig = JSON.parse(jsonMatch[1]);
-      console.log('Loaded agent voice personalities from AGENTPERSONALITIES.md');
+      console.log('✅ Loaded agent voice personalities from AGENTPERSONALITIES.md');
     }
   }
 } catch (error) {
-  console.warn('Failed to load agent voice personalities');
+  console.warn('⚠️  Failed to load agent voice personalities');
 }
 
 // Load user pronunciation customizations
@@ -131,10 +146,10 @@ try {
   if (existsSync(pronunciationsPath)) {
     const content = readFileSync(pronunciationsPath, 'utf-8');
     pronunciations = JSON.parse(content);
-    console.log(`Loaded ${Object.keys(pronunciations).length} pronunciation(s) from USER config`);
+    console.log(`✅ Loaded ${Object.keys(pronunciations).length} pronunciation(s) from USER config`);
   }
 } catch (error) {
-  console.warn('Failed to load pronunciation customizations');
+  console.warn('⚠️  Failed to load pronunciation customizations');
 }
 
 // Apply pronunciation substitutions to text before TTS
@@ -186,10 +201,10 @@ function sanitizeForSpeech(input: string): string {
     .replace(/<script/gi, '')  // Remove script tags
     .replace(/\.\.\//g, '')     // Remove path traversal
     .replace(/[;&|><`$\\]/g, '') // Remove shell metacharacters
-    .replace(/\*\*([^*]+)\*\*/g, '$1')  // Strip bold markdown: **text** -> text
-    .replace(/\*([^*]+)\*/g, '$1')       // Strip italic markdown: *text* -> text
-    .replace(/`([^`]+)`/g, '$1')         // Strip inline code: `text` -> text
-    .replace(/#{1,6}\s+/g, '')           // Strip markdown headers: ### -> (empty)
+    .replace(/\*\*([^*]+)\*\*/g, '$1')  // Strip bold markdown: **text** → text
+    .replace(/\*([^*]+)\*/g, '$1')       // Strip italic markdown: *text* → text
+    .replace(/`([^`]+)`/g, '$1')         // Strip inline code: `text` → text
+    .replace(/#{1,6}\s+/g, '')           // Strip markdown headers: ### → (empty)
     .trim()
     .substring(0, 500);
 
@@ -306,26 +321,6 @@ async function playAudio(audioBuffer: ArrayBuffer, requestVolume?: number): Prom
   });
 }
 
-// Use macOS say command as fallback
-async function speakWithSay(text: string): Promise<void> {
-  return new Promise((resolve, reject) => {
-    const proc = spawn('/usr/bin/say', [text]);
-
-    proc.on('error', (error) => {
-      console.error('Error with say command:', error);
-      reject(error);
-    });
-
-    proc.on('exit', (code) => {
-      if (code === 0) {
-        resolve();
-      } else {
-        reject(new Error(`say exited with code ${code}`));
-      }
-    });
-  });
-}
-
 // Spawn a process safely
 function spawnSafe(command: string, args: string[]): Promise<void> {
   return new Promise((resolve, reject) => {
@@ -352,7 +347,8 @@ async function sendNotification(
   message: string,
   voiceEnabled = true,
   voiceId: string | null = null,
-  requestProsody?: Partial<ProsodySettings>
+  requestProsody?: Partial<ProsodySettings>,
+  desktopEnabled?: boolean  // undefined = use global setting
 ) {
   // Validate and sanitize inputs
   const titleValidation = validateInput(title);
@@ -370,77 +366,69 @@ async function sendNotification(
   const safeTitle = titleValidation.sanitized!;
   let safeMessage = stripMarkers(messageValidation.sanitized!);
 
-  // Generate and play voice
-  if (voiceEnabled) {
+  // Generate and play voice using ElevenLabs
+  if (voiceEnabled && ELEVENLABS_API_KEY) {
     try {
-      if (ELEVENLABS_API_KEY) {
-        const voice = voiceId || DEFAULT_VOICE_ID;
+      const voice = voiceId || DEFAULT_VOICE_ID;
 
-        // Get voice configuration (personality settings)
-        const voiceConfig = getVoiceConfig(voice);
+      // Get voice configuration (personality settings)
+      const voiceConfig = getVoiceConfig(voice);
 
-        // Build prosody: request > voice config > DA config > defaults
-        let prosody: Partial<ProsodySettings> = {};
+      // Build prosody: request > voice config > DA config > defaults
+      let prosody: Partial<ProsodySettings> = {};
 
-        // First try voice config from AGENTPERSONALITIES.md
-        if (voiceConfig) {
-          if (voiceConfig.prosody) {
-            // New format: nested prosody object
-            prosody = voiceConfig.prosody;
-          } else {
-            // Legacy format: flat fields
-            prosody = {
-              stability: voiceConfig.stability,
-              similarity_boost: voiceConfig.similarity_boost,
-              style: voiceConfig.style ?? DEFAULT_PROSODY.style,
-              speed: voiceConfig.speed ?? DEFAULT_PROSODY.speed,
-              use_speaker_boost: voiceConfig.use_speaker_boost ?? DEFAULT_PROSODY.use_speaker_boost,
-            };
-          }
-          console.log(`Voice: ${voiceConfig.description}`);
-        } else if (voice === DEFAULT_VOICE_ID && daVoiceProsody) {
-          // Using DA's default voice - use prosody from settings.json
-          prosody = daVoiceProsody;
-          console.log(`Voice: DA default`);
+      // First try voice config from AGENTPERSONALITIES.md
+      if (voiceConfig) {
+        if (voiceConfig.prosody) {
+          // New format: nested prosody object
+          prosody = voiceConfig.prosody;
+        } else {
+          // Legacy format: flat fields
+          prosody = {
+            stability: voiceConfig.stability,
+            similarity_boost: voiceConfig.similarity_boost,
+            style: voiceConfig.style ?? DEFAULT_PROSODY.style,
+            speed: voiceConfig.speed ?? DEFAULT_PROSODY.speed,
+            use_speaker_boost: voiceConfig.use_speaker_boost ?? DEFAULT_PROSODY.use_speaker_boost,
+          };
         }
-
-        // Request prosody overrides config prosody
-        if (requestProsody) {
-          prosody = { ...prosody, ...requestProsody };
-          console.log(`Using request prosody overrides`);
-        }
-
-        const settings = { ...DEFAULT_PROSODY, ...prosody };
-        const volume = (prosody as any)?.volume ?? daVoiceProsody?.volume;
-        console.log(`Generating speech (voice: ${voice}, stability: ${settings.stability}, style: ${settings.style}, speed: ${settings.speed}, volume: ${volume ?? 1.0})`);
-
-        const spokenMessage = applyPronunciations(safeMessage);
-        const audioBuffer = await generateSpeech(spokenMessage, voice, prosody);
-        await playAudio(audioBuffer, volume);
-      } else {
-        // Fallback to macOS say
-        console.log('Using macOS say (no API key)');
-        await speakWithSay(applyPronunciations(safeMessage));
+        console.log(`👤 Voice: ${voiceConfig.description}`);
+      } else if (voice === DEFAULT_VOICE_ID && daVoiceProsody) {
+        // Using DA's default voice - use prosody from settings.json
+        prosody = daVoiceProsody;
+        console.log(`👤 Voice: DA default (Kai)`);
       }
+
+      // Request prosody overrides config prosody
+      if (requestProsody) {
+        prosody = { ...prosody, ...requestProsody };
+        console.log(`🎛️  Using request prosody overrides`);
+      }
+
+      const settings = { ...DEFAULT_PROSODY, ...prosody };
+      const volume = (prosody as any)?.volume ?? daVoiceProsody?.volume;
+      console.log(`🎙️  Generating speech (voice: ${voice}, stability: ${settings.stability}, style: ${settings.style}, speed: ${settings.speed}, volume: ${volume ?? 1.0})`);
+
+      const spokenMessage = applyPronunciations(safeMessage);
+        const audioBuffer = await generateSpeech(spokenMessage, voice, prosody);
+      await playAudio(audioBuffer, volume);
     } catch (error) {
       console.error("Failed to generate/play speech:", error);
-      // Try fallback to say command
-      try {
-        await speakWithSay(applyPronunciations(safeMessage));
-      } catch (sayError) {
-        console.error("Fallback say also failed:", sayError);
-      }
     }
   }
 
   // Display macOS notification - escape for AppleScript
-  try {
-    const escapedTitle = escapeForAppleScript(safeTitle);
-    const escapedMessage = escapeForAppleScript(safeMessage);
-    const script = `display notification "${escapedMessage}" with title "${escapedTitle}" sound name ""`;
-    await spawnSafe('/usr/bin/osascript', ['-e', script]);
-  } catch (error) {
-    console.error("Notification display error:", error);
+  // Check per-request override first, then fall back to global setting
+  const showDesktop = desktopEnabled ?? desktopNotificationsEnabled;
+  if (showDesktop) {
+    try {
+      const escapedTitle = escapeForAppleScript(safeTitle);
+      const escapedMessage = escapeForAppleScript(safeMessage);
+      const script = `display notification "${escapedMessage}" with title "${escapedTitle}" sound name ""`;
+      await spawnSafe('/usr/bin/osascript', ['-e', script]);
+    } catch (error) {
+      console.error("Notification display error:", error);
+    }
   }
 }
 
@@ -510,13 +498,16 @@ const server = serve({
             ? { volume: data.volume }
             : undefined;
 
+        // Per-request desktop notification override (undefined = use global setting)
+        const desktopEnabled = typeof data.desktop === 'boolean' ? data.desktop : undefined;
+
         if (voiceId && typeof voiceId !== 'string') {
           throw new Error('Invalid voice_id');
         }
 
-        console.log(`Notification: "${title}" - "${message}" (voice: ${voiceEnabled}, voiceId: ${voiceId || DEFAULT_VOICE_ID})`);
+        console.log(`📨 Notification: "${title}" - "${message}" (voice: ${voiceEnabled}, voiceId: ${voiceId || DEFAULT_VOICE_ID}, desktop: ${desktopEnabled ?? 'global'})`);
 
-        await sendNotification(title, message, voiceEnabled, voiceId, voiceSettings);
+        await sendNotification(title, message, voiceEnabled, voiceId, voiceSettings, desktopEnabled);
 
         return new Response(
           JSON.stringify({ status: "success", message: "Notification sent" }),
@@ -542,10 +533,11 @@ const server = serve({
         const data = await req.json();
         const title = data.title || "PAI Assistant";
         const message = data.message || "Task completed";
+        const desktopEnabled = typeof data.desktop === 'boolean' ? data.desktop : undefined;
 
-        console.log(`PAI notification: "${title}" - "${message}"`);
+        console.log(`🤖 PAI notification: "${title}" - "${message}" (desktop: ${desktopEnabled ?? 'global'})`);
 
-        await sendNotification(title, message, true, null);
+        await sendNotification(title, message, true, null, undefined, desktopEnabled);
 
         return new Response(
           JSON.stringify({ status: "success", message: "PAI notification sent" }),
@@ -571,9 +563,10 @@ const server = serve({
         JSON.stringify({
           status: "healthy",
           port: PORT,
-          voice_system: ELEVENLABS_API_KEY ? "ElevenLabs" : "macOS Say",
+          voice_system: "ElevenLabs",
           default_voice_id: DEFAULT_VOICE_ID,
-          api_key_configured: !!ELEVENLABS_API_KEY
+          api_key_configured: !!ELEVENLABS_API_KEY,
+          desktop_notifications: desktopNotificationsEnabled
         }),
         {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -589,8 +582,8 @@ const server = serve({
   },
 });
 
-console.log(`Voice Server running on port ${PORT}`);
-console.log(`Using ${ELEVENLABS_API_KEY ? 'ElevenLabs' : 'macOS Say'} TTS (default voice: ${DEFAULT_VOICE_ID})`);
-console.log(`POST to http://localhost:${PORT}/notify`);
-console.log(`Security: CORS restricted to localhost, rate limiting enabled`);
-console.log(`API Key: ${ELEVENLABS_API_KEY ? 'Configured' : 'Not configured (using fallback)'}`);
+console.log(`🚀 Voice Server running on port ${PORT}`);
+console.log(`🎙️  Using ElevenLabs TTS (default voice: ${DEFAULT_VOICE_ID})`);
+console.log(`📡 POST to http://localhost:${PORT}/notify`);
+console.log(`🔒 Security: CORS restricted to localhost, rate limiting enabled`);
+console.log(`🔑 API Key: ${ELEVENLABS_API_KEY ? '✅ Configured' : '❌ Missing'}`);
