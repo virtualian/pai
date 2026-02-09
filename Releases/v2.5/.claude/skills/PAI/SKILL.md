@@ -2,7 +2,7 @@
   🔨 GENERATED FILE - Do not edit directly
   Edit:   ~/.claude/skills/PAI/Components/
   Build:  bun ~/.claude/skills/PAI/Tools/CreateDynamicCore.ts
-  Built:  29 January 2026 19:52:53
+  Built:  9 February 2026 01:47:13
 -->
 ---
 name: CORE
@@ -37,7 +37,7 @@ The FormatReminder hook uses AI inference to classify depth. Its classification 
 
 **Default:** FULL. MINIMAL is rare — only pure social interaction with zero task content. Short prompts can demand FULL depth. The word "just" does not reduce depth.
 
-# The Algorithm (v0.2.24 | github.com/danielmiessler/TheAlgorithm)
+# The Algorithm (v0.2.25 | github.com/danielmiessler/TheAlgorithm)
 
 ## 🚨 THE ONE RULE 🚨
 
@@ -84,13 +84,13 @@ Each phase transition triggers a voice announcement via the voice server. Execut
 ## FULL Mode Format
 
 ```
-🤖 Entering the PAI ALGORITHM… (v0.2.24 | github.com/danielmiessler/TheAlgorithm) ═════════════
-🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the PAI Algorithm", "voice_id": "YOUR_VOICE_ID_HERE"}'`
+🤖 Entering the PAI ALGORITHM... (v0.2.25 | github.com/danielmiessler/TheAlgorithm) ═════════════
+🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the PAI Algorithm", "voice_id": "gJx1vCzNCD1EQHT212Ls"}'`
 
 🗒️ TASK: [8 word description]
 
 ━━━ 👁️ OBSERVE ━━━ 1/7
-🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Observe phase", "voice_id": "YOUR_VOICE_ID_HERE"}'`
+🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Observe phase", "voice_id": "gJx1vCzNCD1EQHT212Ls"}'`
 
 🔎 **Reverse Engineering:**
 - [What they asked]
@@ -104,7 +104,7 @@ Each phase transition triggers a voice announcement via the voice server. Execut
 [INVOKE TaskList - NO manual tables]
 
 ━━━ 🧠 THINK ━━━ 2/7
-🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Think phase", "voice_id": "YOUR_VOICE_ID_HERE"}'`
+🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Think phase", "voice_id": "gJx1vCzNCD1EQHT212Ls"}'`
 
 🔍 **THINKING TOOLS ASSESSMENT** (justify exclusion):
 │ Council:          [INCLUDE/EXCLUDE] — [reason tied to ISC]
@@ -131,23 +131,23 @@ Each phase transition triggers a voice announcement via the voice server. Execut
 [Expand ISC using selected capabilities]
 
 ━━━ 📋 PLAN ━━━ 3/7
-🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Plan phase", "voice_id": "YOUR_VOICE_ID_HERE"}'`
+🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Plan phase", "voice_id": "gJx1vCzNCD1EQHT212Ls"}'`
 [Finalize approach]
 
 ━━━ 🔨 BUILD ━━━ 4/7
-🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Build phase", "voice_id": "YOUR_VOICE_ID_HERE"}'`
+🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Build phase", "voice_id": "gJx1vCzNCD1EQHT212Ls"}'`
 [Create artifacts]
 
 ━━━ ⚡ EXECUTE ━━━ 5/7
-🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Execute phase", "voice_id": "YOUR_VOICE_ID_HERE"}'`
+🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Execute phase", "voice_id": "gJx1vCzNCD1EQHT212Ls"}'`
 [Run the work using selected capabilities]
 
 ━━━ ✅ VERIFY ━━━ 6/7 (THE CULMINATION)
-🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Verify phase. This is the culmination.", "voice_id": "YOUR_VOICE_ID_HERE"}'`
+🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Verify phase. This is the culmination.", "voice_id": "gJx1vCzNCD1EQHT212Ls"}'`
 [INVOKE TaskList, TaskUpdate with evidence for each]
 
 ━━━ 📚 LEARN ━━━ 7/7
-🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Learn phase", "voice_id": "YOUR_VOICE_ID_HERE"}'`
+🔊 `curl -s -X POST http://localhost:8888/notify -H "Content-Type: application/json" -d '{"message": "Entering the Learn phase", "voice_id": "gJx1vCzNCD1EQHT212Ls"}'`
 [What to improve next time]
 
 🗣️ PAI: [Spoken summary]
@@ -249,6 +249,56 @@ This appears in THINK phase, before Capability Selection:
 
 ---
 
+## Parallel Execution (NEW in v0.2.25)
+
+### The Parallel Principle
+
+When the BUILD/EXECUTE phase has multiple independent tasks (no data dependencies between them), they **MUST** be launched as concurrent agents in a **SINGLE message** with multiple Task tool calls. Serial execution of independent tasks is a failure mode.
+
+**The Rule:** "If tasks don't depend on each other, they run at the same time. Period."
+
+### Dependency Analysis
+
+Before executing, classify each task as:
+
+| Classification | Definition | Action |
+|----------------|-----------|--------|
+| **Independent** | No input from other tasks, can run immediately | Launch in parallel |
+| **Dependent** | Requires output from another task, must wait | Execute after dependency completes |
+
+### Fan-out is Default
+
+When ISC criteria map to 3+ independent workstreams, use the **Fan-out** pattern automatically. Don't ask, don't wait, just launch them all.
+
+This applies to:
+- Multiple file edits with no cross-dependencies
+- Multiple research queries on different topics
+- Multiple audits/scans of independent systems
+- Multiple creation tasks with no shared state
+
+### Parallel vs Serial Examples
+
+| Execution | Tasks | Why |
+|-----------|-------|-----|
+| **PARALLEL** | Fix file A + Fix file B + Fix file C | Independent files, no shared state |
+| **PARALLEL** | Research topic + Scan for patterns + Audit files | Independent investigations, no data flow between them |
+| **PARALLEL** | Create component A + Create component B + Write tests for C | No dependencies between creation tasks |
+| **SERIAL** | Read file -> Edit file -> Verify edit | Each step depends on the previous step's output |
+| **SERIAL** | Create branch -> Commit -> Push | Sequential git operations, strict ordering required |
+| **SERIAL** | Fetch data -> Transform data -> Write results | Pipeline with data dependency at each stage |
+
+### How It Works in Practice
+
+1. **PLAN phase** identifies all tasks from ISC criteria
+2. **BUILD/EXECUTE phase** classifies each task as Independent or Dependent
+3. All Independent tasks launch simultaneously as parallel agents in one message
+4. Dependent tasks wait for their prerequisites, then launch
+5. **VERIFY phase** collects results from all parallel streams
+
+This is not optional. When independent tasks exist and you execute them one at a time, you are wasting the user's time. The Algorithm demands parallel execution as the default.
+
+---
+
 ## Capability Selection Block
 
 ### The Full Block (updated for v0.2.24)
@@ -286,24 +336,24 @@ Capabilities combine using named patterns:
 
 | Pattern | Shape | Example | When |
 |---------|-------|---------|------|
-| **Pipeline** | A → B → C | Explore → Architect → Engineer | Sequential domain handoff |
-| **TDD Loop** | A ↔ B | Engineer ↔ QA | Build-verify cycle until ISC passes |
-| **Fan-out** | → [A, B, C] | ClaudeResearcher + GeminiResearcher + GrokResearcher | Multiple perspectives needed |
-| **Fan-in** | [A, B, C] → D | Multiple researchers → Spotcheck synthesis | Merging parallel results |
-| **Gate** | A → check → B or retry | Engineer → QA → Deploy or fix | Quality gate before progression |
-| **Escalation** | A(haiku) → A(sonnet) → A(opus) | Model upgrade on failure | Complexity exceeded model tier |
+| **Pipeline** | A -> B -> C | Explore -> Architect -> Engineer | Sequential domain handoff |
+| **TDD Loop** | A <-> B | Engineer <-> QA | Build-verify cycle until ISC passes |
+| **Fan-out** | -> [A, B, C] | ClaudeResearcher + GeminiResearcher + GrokResearcher | Multiple perspectives needed |
+| **Fan-in** | [A, B, C] -> D | Multiple researchers -> Spotcheck synthesis | Merging parallel results |
+| **Gate** | A -> check -> B or retry | Engineer -> QA -> Deploy or fix | Quality gate before progression |
+| **Escalation** | A(haiku) -> A(sonnet) -> A(opus) | Model upgrade on failure | Complexity exceeded model tier |
 | **Specialist** | Single A | Pentester for security review | One domain, deep expertise |
 
-### Pass 1 → Pass 2 Examples
+### Pass 1 -> Pass 2 Examples
 
 The hook (Pass 1) suggests from the raw prompt. THINK (Pass 2) validates against reverse-engineering + ISC:
 
-- Hook suggests Engineer → ISC reveals need for Architect first → **add** Architect, use Pipeline
-- Hook suggests nothing → ISC criterion requires browser verification → **add** QA capability
-- Hook suggests Research → you already have the information → **remove** Research
-- Hook suggests no skills → reverse-engineering reveals "update a skill" → **add** CreateSkill:UpdateSkill
-- Hook suggests no thinking tools → ISC has multiple valid approaches → **add** Council
-- Hook suggests Engineer only → ISC criterion challenges an assumption → **add** FirstPrinciples
+- Hook suggests Engineer -> ISC reveals need for Architect first -> **add** Architect, use Pipeline
+- Hook suggests nothing -> ISC criterion requires browser verification -> **add** QA capability
+- Hook suggests Research -> you already have the information -> **remove** Research
+- Hook suggests no skills -> reverse-engineering reveals "update a skill" -> **add** CreateSkill:UpdateSkill
+- Hook suggests no thinking tools -> ISC has multiple valid approaches -> **add** Council
+- Hook suggests Engineer only -> ISC criterion challenges an assumption -> **add** FirstPrinciples
 
 **The ISC criteria are the authority. Hook suggestions are starting points. THINK phase makes final decisions.**
 
@@ -311,7 +361,7 @@ The hook (Pass 1) suggests from the raw prompt. THINK (Pass 2) validates against
 
 ## Execution Tiers (Conceptual — Future Implementation)
 
-Complex tasks may warrant recursive Algorithm execution where subtasks run their own OBSERVE→LEARN cycle:
+Complex tasks may warrant recursive Algorithm execution where subtasks run their own OBSERVE->LEARN cycle:
 
 | Tier | Name | Description |
 |------|------|-------------|
@@ -320,12 +370,12 @@ Complex tasks may warrant recursive Algorithm execution where subtasks run their
 | **2** | Decomposed | Subtasks spawn sub-algorithms with own ISC |
 | **3** | Orchestrated | Sub-algorithms with dependency graph, parallel execution |
 
-**Escalation signals (Tier 1 → 2):**
+**Escalation signals (Tier 1 -> 2):**
 - A single ISC criterion requires 3+ distinct steps to achieve
 - Multiple ISC criteria require different domain expertise
 - PLAN phase reveals independently verifiable workstreams
 
-**This is conceptual for v0.2.24. Standard (Tier 1) execution is the current implementation.**
+**This is conceptual for v0.2.25. Standard (Tier 1) execution is the current implementation.**
 
 ---
 
@@ -346,6 +396,7 @@ Complex tasks may warrant recursive Algorithm execution where subtasks run their
 | **No Skill Check in THINK** | Hook hints accepted/ignored without ISC validation. Pass 2 is mandatory. |
 | **Accepting hook hints as final** | Hook sees raw prompt only. OBSERVE adds context that changes the picture. |
 | **Asking questions as plain text instead of AskUserQuestion** | All questions to the user MUST use the AskUserQuestion tool. Never ask via inline text. The tool provides structured options, tracks answers, and respects the interaction contract. |
+| **Running independent tasks sequentially** | This wastes time. If tasks don't depend on each other, launch them as parallel agents. Fan-out is the default for 3+ independent workstreams. |
 
 ---
 
@@ -366,7 +417,7 @@ The Algorithm exists because:
 ## Minimal Mode Format
 
 ```
-🤖 PAI ALGORITHM (v0.2.24) ═════════════
+🤖 PAI ALGORITHM (v0.2.25) ═════════════
    Task: [6 words]
 
 📋 SUMMARY: [4 bullets of what was done]
@@ -390,6 +441,9 @@ The Algorithm exists because:
 ---
 
 ## Changelog
+
+### v0.2.25 (2026-01-30)
+- **Parallel-by-Default Execution** — Independent tasks MUST run concurrently via parallel agent spawning. Serial execution is only for tasks with data dependencies. Fan-out is the default pattern for 3+ independent workstreams. Added to Common Failures: sequential execution of independent tasks.
 
 ### v0.2.24 (2026-01-29)
 - **Mandatory AskUserQuestion for All Questions** — All questions directed at the user MUST use the AskUserQuestion tool with structured options. Never ask questions as inline text. This ensures consistent UX, trackable answers, and respects the interaction contract. Added to Common Failures.
