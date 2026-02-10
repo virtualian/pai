@@ -258,6 +258,52 @@ function installBun(): void {
 }
 
 // ============================================================================
+// RECOMMENDED CLI TOOLS
+// ============================================================================
+
+interface CliTool {
+  cmd: string;
+  description: string;
+  brewPkg: string;
+  cargoPkg: string;
+}
+
+const RECOMMENDED_CLI_TOOLS: CliTool[] = [
+  { cmd: 'fd',   description: 'file search',       brewPkg: 'fd',      cargoPkg: 'fd-find' },
+  { cmd: 'rg',   description: 'text search',       brewPkg: 'ripgrep', cargoPkg: 'ripgrep' },
+  { cmd: 'bat',  description: 'file viewer',       brewPkg: 'bat',     cargoPkg: 'bat' },
+  { cmd: 'eza',  description: 'directory listing',  brewPkg: 'eza',     cargoPkg: 'eza' },
+  { cmd: 'dust', description: 'disk usage',         brewPkg: 'dust',    cargoPkg: 'du-dust' },
+];
+
+function checkCliTools(): void {
+  print('');
+  print(`${c.bold}Checking Recommended CLI Tools${c.reset}`);
+  print(`${c.gray}─────────────────────────────────────────────────${c.reset}`);
+
+  const missing: CliTool[] = [];
+
+  for (const tool of RECOMMENDED_CLI_TOOLS) {
+    try {
+      execSync(`which ${tool.cmd} 2>/dev/null`, { stdio: 'pipe' });
+      printSuccess(`${tool.cmd} (${tool.description})`);
+    } catch {
+      printError(`${tool.cmd} (${tool.description})`);
+      missing.push(tool);
+    }
+  }
+
+  if (missing.length > 0) {
+    print('');
+    const brewPkgs = missing.map(t => t.brewPkg).join(' ');
+    const cargoPkgs = missing.map(t => t.cargoPkg).join(' ');
+    printWarning(`${missing.length} recommended tool${missing.length > 1 ? 's' : ''} missing. Install with:`);
+    printInfo(`macOS:  brew install ${brewPkgs}`);
+    printInfo(`Linux:  cargo install ${cargoPkgs}`);
+  }
+}
+
+// ============================================================================
 // ZSH ALIAS
 // ============================================================================
 
@@ -477,6 +523,9 @@ async function main(): Promise<void> {
 
   // Step 1: Ensure Bun is installed/updated
   installBun();
+
+  // Step 1b: Check recommended CLI tools
+  checkCliTools();
 
   // Step 2: Fix permissions so we can write files
   fixPermissions(CLAUDE_DIR);
