@@ -128,21 +128,21 @@ dir_name=$(basename "$current_dir")
 skills_count=$(ls -d "$PAI_DIR/skills"/*/ 2>/dev/null | wc -l | tr -d ' ')
 workflows_count=$(ls "$PAI_DIR/skills"/*/workflows/*.md 2>/dev/null | wc -l | tr -d ' ')
 hooks_count=$(ls "$PAI_DIR/hooks"/*.ts 2>/dev/null | wc -l | tr -d ' ')
-learnings_count=$(find "$PAI_DIR/MEMORY/LEARNING" -type f -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
-work_count=$(find "$PAI_DIR/MEMORY/WORK" -mindepth 2 -maxdepth 2 -type d 2>/dev/null | wc -l | tr -d ' ')
+learnings_count=$(fd --no-ignore -e md . "$PAI_DIR/MEMORY/LEARNING" 2>/dev/null | wc -l | tr -d ' ')
+work_count=$(fd --no-ignore -t d -d 1 . "$PAI_DIR/MEMORY/WORK" 2>/dev/null | wc -l | tr -d ' ')
 
 # Count learning files
-learning_count=$(find "$PAI_DIR/MEMORY/LEARNING" -type f -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+learning_count=$(fd --no-ignore -e md . "$PAI_DIR/MEMORY/LEARNING" 2>/dev/null | wc -l | tr -d ' ')
 
 # Count ratings (dynamic learning signal)
 ratings_count=0
 [ -f "$RATINGS_FILE" ] && ratings_count=$(wc -l < "$RATINGS_FILE" 2>/dev/null | tr -d ' ')
 
 # Count session logs (captured experience)
-sessions_count=$(find "$PAI_DIR/MEMORY" -name "*.jsonl" 2>/dev/null | wc -l | tr -d ' ')
+sessions_count=$(fd --no-ignore -e jsonl . "$PAI_DIR/MEMORY" 2>/dev/null | wc -l | tr -d ' ')
 
 # Count research files
-research_count=$(find "$PAI_DIR/MEMORY/RESEARCH" -type f \( -name "*.md" -o -name "*.json" \) 2>/dev/null | wc -l | tr -d ' ')
+research_count=$(fd --no-ignore -e md -e json . "$PAI_DIR/MEMORY/RESEARCH" 2>/dev/null | wc -l | tr -d ' ')
 
 # ─────────────────────────────────────────────────────────────────────────────
 # COLOR PALETTE

@@ -248,9 +248,9 @@ GITEOF
             "files_count=" + (.counts.files // 0 | tostring)
         ' "$SETTINGS_FILE" > "$_parallel_tmp/counts.sh" 2>/dev/null
         # Add work/sessions/research/ratings counts (not in settings.json counts section)
-        work_count=$(fd -t d -d 1 . "$PAI_DIR/MEMORY/WORK" 2>/dev/null | wc -l | tr -d ' ')
-        sessions_count=$(fd -e jsonl . "$PAI_DIR/MEMORY" 2>/dev/null | wc -l | tr -d ' ')
-        research_count=$(fd -e md -e json . "$PAI_DIR/MEMORY/RESEARCH" 2>/dev/null | wc -l | tr -d ' ')
+        work_count=$(fd --no-ignore -t d -d 1 . "$PAI_DIR/MEMORY/WORK" 2>/dev/null | wc -l | tr -d ' ')
+        sessions_count=$(fd --no-ignore -e jsonl . "$PAI_DIR/MEMORY" 2>/dev/null | wc -l | tr -d ' ')
+        research_count=$(fd --no-ignore -e md -e json . "$PAI_DIR/MEMORY/RESEARCH" 2>/dev/null | wc -l | tr -d ' ')
         ratings_count=$([ -f "$RATINGS_FILE" ] && wc -l < "$RATINGS_FILE" 2>/dev/null | tr -d ' ' || echo 0)
         echo "work_count=$work_count" >> "$_parallel_tmp/counts.sh"
         echo "sessions_count=$sessions_count" >> "$_parallel_tmp/counts.sh"
