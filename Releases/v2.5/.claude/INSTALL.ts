@@ -376,8 +376,8 @@ function generateSettingsJson(config: InstallConfig): object {
       ],
       "SessionEnd": [
         { "hooks": [
-          { "type": "command", "command": "${PAI_DIR}/hooks/WorkCompletionLearning.hook.ts" },
-          { "type": "command", "command": "${PAI_DIR}/hooks/SessionSummary.hook.ts" }
+          { "type": "command", "command": "$HOME/.claude/hooks/WorkCompletionLearning.hook.ts" },
+          { "type": "command", "command": "$HOME/.claude/hooks/SessionSummary.hook.ts" }
         ]}
       ],
       "UserPromptSubmit": [
