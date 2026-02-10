@@ -163,11 +163,11 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${PAI_DIR}/hooks/WorkCompletionLearning.hook.ts"
+            "command": "$HOME/.claude/hooks/WorkCompletionLearning.hook.ts"
           },
           {
             "type": "command",
-            "command": "${PAI_DIR}/hooks/SessionSummary.hook.ts"
+            "command": "$HOME/.claude/hooks/SessionSummary.hook.ts"
           }
         ]
       }
