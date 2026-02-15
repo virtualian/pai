@@ -20,6 +20,65 @@ Fill a documentation scaffold with content:
 
 ## Workflow Steps
 
+### Step 0: Validate Configuration
+
+**CRITICAL: Run before any other step. See SKILL.md "Config Change Detection" for full reference.**
+
+**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
+
+```bash
+# 1. Read config
+cat ./docs/.diataxis.md
+
+# 2. Extract structural fields
+TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./docs/.diataxis.md | head -1)
+CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./docs/.diataxis.md | head -1)
+ROLES=$(grep -E '^\| \w' ./docs/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
+
+# 3. Determine docs content path
+case "$TECHNOLOGY" in
+  *Docusaurus*) [ "$CONTEXT" = "within_project" ] && DOCS_PATH="website/docs" || DOCS_PATH="docs" ;;
+  *MkDocs*)     DOCS_PATH="docs" ;;
+  *Starlight*)  [ "$CONTEXT" = "within_project" ] && DOCS_PATH="docs/src/content/docs" || DOCS_PATH="src/content/docs" ;;
+  *)            [ "$CONTEXT" = "within_project" ] && DOCS_PATH="docs" || DOCS_PATH="." ;;
+esac
+
+# 4. Check for missing role directories
+MISSING_DIRS=""
+ORPHANED_DIRS=""
+for role in $ROLES; do
+  [ ! -d "$DOCS_PATH/$role" ] && MISSING_DIRS="$MISSING_DIRS $role"
+done
+
+# 5. Check for orphaned role directories (dirs that exist but aren't in config)
+if [ -d "$DOCS_PATH" ]; then
+  for dir in "$DOCS_PATH"/*/; do
+    [ ! -d "$dir" ] && continue
+    dirname=$(basename "$dir")
+    case "$dirname" in _*|node_modules|.git|src|static|build) continue ;; esac
+    echo "$ROLES" | grep -qw "$dirname" || ORPHANED_DIRS="$ORPHANED_DIRS $dirname"
+  done
+fi
+
+echo "MISSING_DIRS:$MISSING_DIRS"
+echo "ORPHANED_DIRS:$ORPHANED_DIRS"
+```
+
+**If drift detected (MISSING_DIRS or ORPHANED_DIRS non-empty):**
+
+Present changes to user via AskUserQuestion (see SKILL.md "Config Change Detection" → User Confirmation).
+
+**On "Apply changes":**
+- Create missing role directories with their content type subdirectories
+- For orphaned empty directories: remove silently
+- For orphaned directories with content: ask user (archive to `docs/_archive/`, delete, or keep)
+
+**On "Skip validation":** Proceed to Step 1 with current filesystem as-is.
+
+**On "Re-initialize":** Route to `InitializeProject.md`.
+
+---
+
 ### Step 1: Identify Scaffold and Type
 
 Read the existing scaffold file to determine:

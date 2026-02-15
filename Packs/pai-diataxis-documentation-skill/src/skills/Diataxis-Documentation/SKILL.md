@@ -1,6 +1,6 @@
 ---
 name: Diataxis-Documentation
-version: 2.4.0
+version: 2.5.0
 install_source: __INSTALL_SOURCE__
 last_updated_from: __LAST_UPDATED_FROM__
 official_source: https://github.com/danielmiessler/Personal_AI_Infrastructure
@@ -209,6 +209,115 @@ Always read `docs/.diataxis.md` at the start of documentation tasks. It contains
 ```
 
 **If `docs/.diataxis.md` doesn't exist:** Route to `Workflows/InitializeProject.md` first.
+
+## Config Change Detection (CRITICAL)
+
+**Every post-init workflow MUST validate configuration against filesystem before proceeding.**
+
+When `docs/.diataxis.md` is modified after initialization, the filesystem may no longer match the config. Workflows detect this drift and require user confirmation before continuing.
+
+### What Gets Checked
+
+| Config Field | Filesystem Check | Drift Example |
+|-------------|-----------------|---------------|
+| **Roles** | Role directories exist under docs content path | Config has `operators` but no `operators/` directory |
+| **Diataxis elements** | Content type subdirectories exist per role | Config says `developers` has tutorials but no `developers/tutorials/` |
+| **Technology** | Correct site scaffolding present | Config says Docusaurus but no `docusaurus.config.js` |
+| **Context** | Content in expected location | Config says `within_project` but docs at root level |
+
+### Detection Flow
+
+```
+Read docs/.diataxis.md
+    │
+    ├── Extract: roles, diataxis priorities, technology, context
+    │
+    ├── Determine DOCS_PATH from technology + context
+    │
+    ├── For each role in config:
+    │   ├── Does role directory exist? (e.g., DOCS_PATH/developers/)
+    │   └── For each enabled content type:
+    │       └── Does content type subdir exist? (e.g., DOCS_PATH/developers/tutorials/)
+    │
+    ├── Check for orphaned role directories:
+    │   └── Directories in DOCS_PATH that are NOT in config roles
+    │
+    └── Compile change report
+```
+
+### Change Types
+
+| Change Type | Detection | Action Required |
+|-------------|-----------|----------------|
+| **Role added** | Config role has no directory | Create role + content type directories |
+| **Role removed** | Directory exists but role not in config | Archive/remove orphaned directory (with confirmation) |
+| **Content type added** | Config enables type but subdir missing | Create content type subdirectory |
+| **Content type removed** | Subdir exists but config disables type | Archive/remove (with confirmation if non-empty) |
+| **Technology changed** | Site scaffolding doesn't match config | Flag for manual migration — too destructive to automate |
+
+### User Confirmation
+
+When drift is detected, present changes via AskUserQuestion:
+
+```json
+{
+  "header": "Config Drift",
+  "question": "Configuration has changed since docs were last set up. Detected: [summary]. Apply these changes?",
+  "multiSelect": false,
+  "options": [
+    {"label": "Apply changes (Recommended)", "description": "Create missing directories, clean up orphaned content"},
+    {"label": "Review details first", "description": "Show full diff of what will change"},
+    {"label": "Skip validation", "description": "Proceed with current filesystem as-is"},
+    {"label": "Re-initialize", "description": "Run InitializeProject to reconfigure from scratch"}
+  ]
+}
+```
+
+### Cleanup Actions
+
+**On "Apply changes":**
+
+1. **Create missing role directories** with their content type subdirectories
+2. **For orphaned directories that are empty:** Remove silently
+3. **For orphaned directories with content:** Present file list and ask:
+
+```json
+{
+  "header": "Orphaned Docs",
+  "question": "[role]/ contains [N] files but role was removed from config. What should I do?",
+  "multiSelect": false,
+  "options": [
+    {"label": "Archive to docs/_archive/", "description": "Move files to archive, preserving content"},
+    {"label": "Delete", "description": "Permanently remove the directory and its contents"},
+    {"label": "Keep", "description": "Leave directory in place despite config mismatch"}
+  ]
+}
+```
+
+4. **Update last_actioned timestamp** in config after successful cleanup
+
+### Technology Change Warning
+
+Technology changes (e.g., Plain Markdown → Docusaurus) are too destructive to automate. When detected:
+
+```
+"⚠️ Technology change detected: [old] → [new]
+
+This requires manual migration:
+- Current scaffolding is for [old]
+- Config now specifies [new]
+
+Options:
+1. Run InitializeProject to re-scaffold (preserves docs/.diataxis.md answers)
+2. Manually migrate site infrastructure
+3. Revert config change"
+```
+
+### Workflow Integration
+
+All post-init workflows include this as **Step 0** before their main logic. See each workflow's "Step 0: Validate Configuration" section.
+
+---
 
 ## Update Check
 
