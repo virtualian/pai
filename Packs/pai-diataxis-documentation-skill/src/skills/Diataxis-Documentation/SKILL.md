@@ -5,7 +5,7 @@ install_source: __INSTALL_SOURCE__
 last_updated_from: __LAST_UPDATED_FROM__
 official_source: https://github.com/danielmiessler/Personal_AI_Infrastructure
 official_source_path: Packs/pai-diataxis-documentation-skill
-description: Diataxis-based documentation methodology. USE WHEN creating, modifying, or organizing documentation in docs/, setting up documentation sites, planning documentation, or structuring guides/tutorials/reference/explanation docs.
+description: Diataxis-based documentation methodology for creating, organizing, and planning documentation. USE WHEN user says 'set up docs', 'create documentation', 'document this project', 'plan documentation', 'organize docs', 'restructure docs', 'getting started guide', 'write a tutorial', 'write a how-to', 'API docs', 'API reference', OR mentions Docusaurus, MkDocs, Astro Starlight, documentation site, docs site, tutorials, how-to guides, reference docs, explanation docs, OR any request to create, plan, organize, or structure documentation in docs/. NOTE: For simple doc edits or typo fixes, no skill needed — this is for documentation methodology and structure. SkillSearch('diataxis-documentation') for docs.
 ---
 
 ## Customization
