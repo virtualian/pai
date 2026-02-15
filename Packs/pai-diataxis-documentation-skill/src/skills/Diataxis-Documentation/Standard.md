@@ -340,9 +340,10 @@ PAI skill files (`SKILL.md`) are NOT Diataxis. They follow skill conventions:
 - Examples section
 - Quick reference
 
-### Scope Exclusions
+### Files Exempt from Diataxis Reorganization
 
-These repo files are NOT Diataxis content:
+These repo files serve platform purposes and should NOT be reorganized into Diataxis content type directories. **They remain valid source material** — a README often contains useful context for generating Diataxis content.
+
 - `README.md` - Project overview (hybrid: part explanation, part quick-start)
 - `CONTRIBUTING.md` - Contribution process
 - `CHANGELOG.md` - Version history

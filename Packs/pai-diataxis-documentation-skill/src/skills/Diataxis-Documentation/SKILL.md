@@ -1,6 +1,6 @@
 ---
 name: Diataxis-Documentation
-version: 2.3.2
+version: 2.4.0
 install_source: __INSTALL_SOURCE__
 last_updated_from: __LAST_UPDATED_FROM__
 official_source: https://github.com/danielmiessler/Personal_AI_Infrastructure
@@ -160,9 +160,11 @@ User: "Organize my docs into Diataxis structure"
 - Structuring guides, tutorials, reference docs
 - Questions about documentation methodology
 
-### Excluded from Diataxis scope
+### Files Exempt from Diataxis Reorganization
 
-Standard repo files at project root (NOT Diataxis):
+These repo files serve platform/tooling purposes and should NOT be reorganized into Diataxis content type directories. **They may still be used as source material** when generating documentation content.
+
+Common exempt files:
 - `README.md` - Project overview
 - `LICENSE` / `LICENSE.md` - Legal
 - `CONTRIBUTING.md` - Contribution guide
@@ -172,7 +174,7 @@ Standard repo files at project root (NOT Diataxis):
 - `.github/*.md` - GitHub templates
 - `SKILL.md` files - PAI skill definitions
 
-**Rule:** If it serves a platform/tooling purpose, it's not Diataxis.
+**Rule:** If it serves a platform/tooling purpose, don't reorganize it into Diataxis structure — but DO use it as source material when relevant.
 
 ## Project Configuration Reference
 
@@ -201,9 +203,9 @@ Always read `docs/.diataxis.md` at the start of documentation tasks. It contains
 1. existing docs/ directory
 2. code comments
 
-## Scope Exclusions
-- Standard: README.md, LICENSE, CONTRIBUTING.md, etc.
-- Custom: (user-defined)
+## Files Exempt from Diataxis Reorganization
+- README.md, LICENSE (only files that exist in this project)
+- Note: Exempt files may still be used as source material
 ```
 
 **If `docs/.diataxis.md` doesn't exist:** Route to `Workflows/InitializeProject.md` first.

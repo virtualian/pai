@@ -39,7 +39,7 @@ This pack provides a complete documentation methodology:
 - Wizard captures your documentation roles/audiences
 - Configures priority Diataxis elements per role
 - Defines documentation sources and priorities
-- Sets scope exclusions (what's NOT Diataxis)
+- Sets reorganization exemptions (files to leave in place)
 
 **Core Philosophy:** Documentation serves specific roles. Each role needs specific content types. Configure once at install, apply consistently thereafter.
 
@@ -129,17 +129,17 @@ pai-diataxis-documentation-skill/
 - API documentation
 - Architecture documentation
 
-### What is NOT Diataxis Scope
+### Files Exempt from Reorganization
 
-Standard repo files live at project root, outside Diataxis:
-- `README.md` - Project overview (not Diataxis)
-- `LICENSE` / `LICENSE.md` - Legal (not Diataxis)
-- `CONTRIBUTING.md` - Contribution guide (not Diataxis)
-- `CHANGELOG.md` - Version history (not Diataxis)
-- `CODE_OF_CONDUCT.md` - Community standards (not Diataxis)
-- `SECURITY.md` - Security policy (not Diataxis)
-- `.github/*.md` - GitHub templates (not Diataxis)
-- `SKILL.md` files - PAI skill definitions (not Diataxis)
+Standard repo files at project root are NOT reorganized into Diataxis structure, but **may still be used as source material** when generating documentation:
+- `README.md` - Project overview
+- `LICENSE` / `LICENSE.md` - Legal
+- `CONTRIBUTING.md` - Contribution guide
+- `CHANGELOG.md` - Version history
+- `CODE_OF_CONDUCT.md` - Community standards
+- `SECURITY.md` - Security policy
+- `.github/*.md` - GitHub templates
+- `SKILL.md` files - PAI skill definitions
 
 ## Quick Start
 
