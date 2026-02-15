@@ -80,17 +80,19 @@ Create an inventory table with **temporal awareness**:
 
 ---
 
-### Step 4: Apply Scope Exclusions
+### Step 4: Apply Reorganization Exemptions
 
-Remove from inventory:
-- Files in `docs/.diataxis.md` exclusions (standard + custom)
-- Files serving platform purposes
+Remove from the reorganization inventory (these files stay where they are):
+- Files listed in `docs/.diataxis.md` exemptions
+- Files serving platform/tooling purposes
 
-**Standard exclusions:**
+**Common exempt files:**
 - README.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md
 - CODE_OF_CONDUCT.md, SECURITY.md
 - .github/*.md
 - SKILL.md files
+
+> **Note:** Exempt files are excluded from reorganization only. They may still be used as **source material** in Step 5 when generating documentation content.
 
 ---
 

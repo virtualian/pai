@@ -123,7 +123,10 @@ init_status: in_progress
 
 ## Saved Answers (in progress)
 
-sources: [list of selected sources]
+sources:
+1. **Primary:** [url/path] — [description]
+2. **[category]:** [url/path] — [description]
+
 purpose: [selected purpose]
 roles: [list of selected roles]
 diataxis_developers: [list of content types]
@@ -134,7 +137,7 @@ EOF
 ```
 
 **Questions are saved with these keys:**
-- Phase 1 → `sources:`
+- Phase 1 → `sources:` (multi-line, numbered, with priority and description)
 - Phase 2 → `context:` (within_project | standalone_docs)
 - Q2 → `purpose:`
 - Q3 → `roles:`
@@ -144,97 +147,281 @@ EOF
 
 ---
 
-## Phase 1: Ask Sources First
+## Phase 1: Discover Sources
 
-**CRITICAL:** Ask what sources the user wants to use BEFORE analyzing the project. Only analyze selected sources.
+**CRITICAL:** Discover sources automatically BEFORE asking the user. Scan the project environment, then present findings for confirmation.
 
-### Question 1: Sources
+The old approach (static checklist of 5 filesystem options) is replaced by intelligent discovery that proposes prioritized sources with descriptions — matching the quality of a hand-curated source list.
 
-**After answer, save immediately:**
-```bash
-# Example: user selected "Existing docs/" and "Code comments"
-mkdir -p ./docs
-cat > ./docs/.diataxis.md << 'EOF'
-init_status: in_progress
-sources: Existing docs/, Code comments
-EOF
-```
+### 1.1 Auto-Detect Project Environment
 
-```json
-{
-  "header": "Sources",
-  "question": "What sources should inform your documentation?",
-  "multiSelect": true,
-  "options": [
-    {"label": "Existing docs/", "description": "Current documentation directory (if exists)"},
-    {"label": "Code comments", "description": "JSDoc, docstrings, inline documentation"},
-    {"label": "README files", "description": "Project and package READMEs"},
-    {"label": "API specifications", "description": "OpenAPI/Swagger specs (if exists)"},
-    {"label": "Design documents", "description": "specs/, rfcs/, design/ directories"}
-  ]
-}
-```
-
----
-
-## Phase 2: Analyze Selected Sources
-
-**Only analyze sources the user selected in Phase 1.**
-
-### 2.1 Project Context Detection (always run)
+Run all detection steps in a single pass:
 
 ```bash
-# Detect if this is a code project or standalone docs repo
+# === Git & Repository Detection ===
+ORIGIN_URL=""
+UPSTREAM_URL=""
+IS_FORK=false
+REPO_NAME=""
+REPO_OWNER=""
+REPO_VISIBILITY="unknown"
+REPO_DESCRIPTION=""
+REPO_HOMEPAGE=""
+REPO_STARS=0
+REPO_HAS_DISCUSSIONS=false
+REPO_HAS_WIKI=false
+PARENT_REPO=""
+
+if [ -d ".git" ]; then
+  ORIGIN_URL=$(git remote get-url origin 2>/dev/null || echo "")
+  UPSTREAM_URL=$(git remote get-url upstream 2>/dev/null || echo "")
+
+  # Normalize git@ URLs to https
+  normalize_url() {
+    echo "$1" | sed 's|git@github.com:|https://github.com/|' | sed 's|\.git$||'
+  }
+  [ -n "$ORIGIN_URL" ] && ORIGIN_URL=$(normalize_url "$ORIGIN_URL")
+  [ -n "$UPSTREAM_URL" ] && UPSTREAM_URL=$(normalize_url "$UPSTREAM_URL")
+
+  echo "ORIGIN: ${ORIGIN_URL:-none}"
+  echo "UPSTREAM: ${UPSTREAM_URL:-none}"
+fi
+
+# GitHub API enrichment (if gh CLI available)
+if command -v gh &> /dev/null && [ -n "$ORIGIN_URL" ]; then
+  GH_JSON=$(gh repo view --json name,owner,visibility,description,homepageUrl,stargazerCount,hasDiscussionsEnabled,hasWikiEnabled,isFork,parent 2>/dev/null || echo "{}")
+
+  REPO_NAME=$(echo "$GH_JSON" | jq -r '.name // empty')
+  REPO_OWNER=$(echo "$GH_JSON" | jq -r '.owner.login // empty')
+  REPO_VISIBILITY=$(echo "$GH_JSON" | jq -r '.visibility // "unknown"')
+  REPO_DESCRIPTION=$(echo "$GH_JSON" | jq -r '.description // empty')
+  REPO_HOMEPAGE=$(echo "$GH_JSON" | jq -r '.homepageUrl // empty')
+  REPO_STARS=$(echo "$GH_JSON" | jq -r '.stargazerCount // 0')
+  REPO_HAS_DISCUSSIONS=$(echo "$GH_JSON" | jq -r '.hasDiscussionsEnabled // false')
+  REPO_HAS_WIKI=$(echo "$GH_JSON" | jq -r '.hasWikiEnabled // false')
+  IS_FORK=$(echo "$GH_JSON" | jq -r '.isFork // false')
+  PARENT_REPO=$(echo "$GH_JSON" | jq -r '.parent.owner.login + "/" + .parent.name // empty' 2>/dev/null)
+
+  # If this is a fork but no upstream remote, infer it
+  if [ "$IS_FORK" = "true" ] && [ -z "$UPSTREAM_URL" ] && [ -n "$PARENT_REPO" ]; then
+    UPSTREAM_URL="https://github.com/$PARENT_REPO"
+  fi
+
+  echo "REPO: $REPO_OWNER/$REPO_NAME"
+  echo "VISIBILITY: $REPO_VISIBILITY"
+  echo "DESCRIPTION: $REPO_DESCRIPTION"
+  echo "HOMEPAGE: ${REPO_HOMEPAGE:-none}"
+  echo "STARS: $REPO_STARS"
+  echo "IS_FORK: $IS_FORK"
+  [ "$IS_FORK" = "true" ] && echo "PARENT: $PARENT_REPO"
+  echo "DISCUSSIONS: $REPO_HAS_DISCUSSIONS"
+  echo "WIKI: $REPO_HAS_WIKI"
+fi
+
+# === Project Type Detection ===
 HAS_CODE=false
 PROJECT_TYPE="Unknown"
 
 if [ -f "package.json" ]; then
-  HAS_CODE=true
-  PROJECT_TYPE="Node.js"
+  HAS_CODE=true; PROJECT_TYPE="Node.js"
 elif [ -f "pyproject.toml" ] || [ -f "setup.py" ] || [ -f "requirements.txt" ]; then
-  HAS_CODE=true
-  PROJECT_TYPE="Python"
+  HAS_CODE=true; PROJECT_TYPE="Python"
 elif [ -f "go.mod" ]; then
-  HAS_CODE=true
-  PROJECT_TYPE="Go"
+  HAS_CODE=true; PROJECT_TYPE="Go"
 elif [ -f "Cargo.toml" ]; then
-  HAS_CODE=true
-  PROJECT_TYPE="Rust"
+  HAS_CODE=true; PROJECT_TYPE="Rust"
 elif [ -f "pom.xml" ] || [ -f "build.gradle" ]; then
-  HAS_CODE=true
-  PROJECT_TYPE="Java"
+  HAS_CODE=true; PROJECT_TYPE="Java"
 elif [ -d "src" ] || [ -d "lib" ] || [ -d "app" ]; then
-  HAS_CODE=true
-  PROJECT_TYPE="Unknown (has src/lib/app)"
+  HAS_CODE=true; PROJECT_TYPE="Unknown (has src/lib/app)"
 fi
 
-# Check for existing docs infrastructure
-HAS_DOCS_SITE=false
-[ -f "docusaurus.config.js" ] && HAS_DOCS_SITE=true && DOCS_TECH="Docusaurus"
+echo "PROJECT_TYPE: $PROJECT_TYPE"
+echo "HAS_CODE: $HAS_CODE"
+
+# === Author/Maintainer Detection ===
+AUTHOR_NAME=""
+AUTHOR_URL=""
+
+# Try package.json
+if [ -f "package.json" ]; then
+  AUTHOR_NAME=$(jq -r '.author // .author.name // empty' package.json 2>/dev/null)
+  AUTHOR_URL=$(jq -r '.author.url // .homepage // empty' package.json 2>/dev/null)
+fi
+
+# Try pyproject.toml
+if [ -z "$AUTHOR_NAME" ] && [ -f "pyproject.toml" ]; then
+  AUTHOR_NAME=$(grep -E "^authors" pyproject.toml 2>/dev/null | head -1 | sed 's/.*"\(.*\)".*/\1/')
+fi
+
+# Try GitHub repo owner profile
+if [ -z "$AUTHOR_URL" ] && [ -n "$REPO_OWNER" ] && command -v gh &> /dev/null; then
+  OWNER_JSON=$(gh api "users/$REPO_OWNER" --jq '{blog: .blog, bio: .bio}' 2>/dev/null || echo "{}")
+  AUTHOR_URL=$(echo "$OWNER_JSON" | jq -r '.blog // empty')
+fi
+
+echo "AUTHOR: ${AUTHOR_NAME:-unknown}"
+echo "AUTHOR_URL: ${AUTHOR_URL:-none}"
+
+# === Local Content Detection ===
+DOC_COUNT=0; README_COUNT=0; HAS_OPENAPI=false; HAS_DESIGN_DOCS=false
+HAS_DOCS_SITE=false; DOCS_TECH=""
+
+[ -d "./docs" ] && DOC_COUNT=$(find ./docs -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+README_COUNT=$(find . -maxdepth 3 -name "README*.md" 2>/dev/null | wc -l | tr -d ' ')
+([ -f "openapi.yaml" ] || [ -f "openapi.json" ] || [ -f "swagger.yaml" ]) && HAS_OPENAPI=true
+([ -d "./specs" ] || [ -d "./rfcs" ] || [ -d "./design" ]) && HAS_DESIGN_DOCS=true
+[ -f "docusaurus.config.js" ] || [ -f "docusaurus.config.ts" ] && HAS_DOCS_SITE=true && DOCS_TECH="Docusaurus"
 [ -f "mkdocs.yml" ] && HAS_DOCS_SITE=true && DOCS_TECH="MkDocs"
+[ -f "astro.config.mjs" ] && HAS_DOCS_SITE=true && DOCS_TECH="Astro"
 
-# Determine likely context
-if [ "$HAS_CODE" = "true" ]; then
-  echo "CONTEXT_GUESS: within_project"
-  echo "PROJECT_TYPE: $PROJECT_TYPE"
-else
-  echo "CONTEXT_GUESS: standalone_docs"
-fi
-
-echo "HAS_EXISTING_DOCS_SITE: $HAS_DOCS_SITE"
-
-# Check repo visibility (for hosting recommendations)
-if command -v gh &> /dev/null && [ -d ".git" ]; then
-  REPO_VISIBILITY=$(gh repo view --json visibility -q '.visibility' 2>/dev/null || echo "unknown")
-  echo "REPO_VISIBILITY: $REPO_VISIBILITY"
-else
-  echo "REPO_VISIBILITY: unknown"
-fi
+echo "DOCS: $DOC_COUNT files"
+echo "READMES: $README_COUNT"
+echo "OPENAPI: $HAS_OPENAPI"
+echo "DESIGN_DOCS: $HAS_DESIGN_DOCS"
+echo "DOCS_SITE: $HAS_DOCS_SITE ($DOCS_TECH)"
 ```
 
-### 2.2 Confirm Documentation Context
+### 1.2 Build Proposed Source List
 
-**Based on detection, confirm with user:**
+**Using the detection results, construct a prioritized source list.** The AI agent assembles this — it is not a bash script. Use the following logic:
+
+#### Source Categories
+
+| Category | When to Include | Priority |
+|----------|----------------|----------|
+| **Primary repo** | Always (if git repo detected) | 1 (highest) |
+| **Upstream/parent repo** | If fork detected or upstream remote exists | 1 or 2 |
+| **Author content** | If author website/blog found, or repo owner has public profile | 2-3 |
+| **Local content** | If existing docs, code comments, API specs, design docs found | included in primary repo description |
+| **Community/third-party** | If public repo with significant stars (>100) | 3-4 |
+| **Fork additions** | If this is a fork with local changes | 3-4 |
+
+#### Construction Rules
+
+1. **Primary source gets the richest description.** Include sub-sources: repo documentation, code, GitHub Discussions (if enabled), Issues, Wiki (if enabled). Mention key contributors if detectable.
+
+2. **For forks:** The upstream/parent repo is typically the primary source. The fork itself becomes a secondary source for local additions/changes. Example:
+   ```
+   1. **Primary:** https://github.com/owner/project — repo documentation, code, GitHub Discussions, Issues
+   2. **Fork additions:** https://github.com/you/project — updates and additions by @you
+   ```
+
+3. **Author content:** If the repo owner or author has a website, blog, or YouTube channel, include it. These provide context, rationale, and explanations that code alone doesn't capture.
+   ```
+   2. **Author content:** author's website, blog posts, articles, YouTube videos
+   ```
+
+4. **Third-party coverage:** For popular public projects (>100 stars), suggest including external analysis. For private/small projects, omit this category.
+   ```
+   3. **Third-party coverage:** High-quality reviews, commentary, articles, videos by well-regarded sources
+   ```
+
+5. **Local content details** are folded into the primary repo description, not listed separately. Instead of "Code comments: 45 JSDoc blocks", describe what's available:
+   ```
+   1. **Primary:** https://github.com/owner/project — repo documentation (23 docs), code (JSDoc), Issues, Discussions
+   ```
+
+#### Example Proposed Source Lists
+
+**For a fork of a popular project:**
+```
+## Documentation Sources (Priority Order)
+
+1. **Primary:** https://github.com/danielmiessler/PAI — repo documentation, code, GitHub Discussions, Issues (especially Daniel Miessler's contributions)
+2. **Author content:** Daniel Miessler's website, blog posts, articles, YouTube videos
+3. **Third-party coverage:** High-quality reviews, commentary, articles, videos by well-regarded sources
+4. **Fork additions:** https://github.com/virtualian/pai — updates and additions by @virtualian
+```
+
+**For a standalone project:**
+```
+## Documentation Sources (Priority Order)
+
+1. **Primary:** https://github.com/acme/widget-sdk — repo documentation (12 docs), code (JSDoc, 156 blocks), README files (4), OpenAPI spec
+2. **Design documents:** specs/ directory (3 RFCs), architecture decision records
+```
+
+**For a private internal project:**
+```
+## Documentation Sources (Priority Order)
+
+1. **Primary:** local project — code (Python docstrings, 89 found), existing docs/ (7 files)
+2. **Design documents:** design/ directory, internal wiki
+```
+
+### 1.3 Present Proposed Sources for Confirmation
+
+**Show the user what you discovered and the proposed source list:**
+
+```
+"I've analyzed your project environment and built a proposed source list:
+
+🔧 Project: [owner/name] ([visibility])
+🔀 Fork of: [parent] (if applicable)
+📄 Local content: [X docs, Y code comments, etc.]
+🌐 Author: [name] ([website if found])
+
+Here's my proposed source list:
+
+## Documentation Sources (Priority Order)
+
+1. **Primary:** [...]
+2. **[category]:** [...]
+[etc.]
+
+Does this look right? You can adjust priorities, add sources, or remove any."
+```
+
+**Then ask for confirmation:**
+
+```json
+{
+  "header": "Sources",
+  "question": "How should I handle this proposed source list?",
+  "multiSelect": false,
+  "options": [
+    {"label": "Use as-is (Recommended)", "description": "The proposed sources and priorities look correct"},
+    {"label": "Modify sources", "description": "I want to add, remove, or reprioritize sources"},
+    {"label": "Start from scratch", "description": "Ignore detection, I'll specify sources manually"}
+  ]
+}
+```
+
+**If "Modify sources":** Ask the user what to change. Use follow-up AskUserQuestion calls for each modification (add source, remove source, change priority, edit description).
+
+**If "Start from scratch":** Ask the user to describe their sources as free text, then format into the prioritized structure.
+
+### 1.4 Save Sources
+
+**After confirmation, save immediately:**
+
+```bash
+mkdir -p ./docs
+cat > ./docs/.diataxis.md << 'SOURCES_EOF'
+init_status: in_progress
+sources:
+1. **Primary:** [url/path] — [description with sub-sources]
+2. **[category]:** [url/path or description] — [details]
+SOURCES_EOF
+```
+
+**The sources block is multi-line.** It starts after `sources:` and continues until the next config key. The final Phase 5 config reads it with:
+
+```bash
+# Read multi-line sources block (from "sources:" until next config key or EOF)
+SOURCES=$(sed -n '/^sources:/,/^[a-z_]*:/{ /^sources:/d; /^[a-z_]*:/d; p; }' ./docs/.diataxis.md)
+```
+
+---
+
+## Phase 2: Analyze Sources and Detect Context
+
+**Using the discovered sources and detection results from Phase 1.**
+
+### 2.1 Confirm Documentation Context
+
+**Based on Phase 1 detection, confirm with user:**
 
 ```json
 {
@@ -264,69 +451,26 @@ echo "context: [within_project | standalone_docs]" >> ./docs/.diataxis.md
 | Within project | `docs/` | `website/` (Docusaurus) or `site/` (MkDocs) |
 | Standalone docs | root or `docs/` | root level build |
 
-### 2.3 Analyze Selected Sources Only
-
-**If user selected "Existing docs/":**
-```bash
-if [ -d "./docs" ]; then
-  DOC_COUNT=$(find ./docs -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
-  echo "EXISTING_DOCS: $DOC_COUNT markdown files"
-  find ./docs -name "*.md" -type f | head -20
-else
-  echo "EXISTING_DOCS: No docs/ directory found"
-fi
-```
-
-**If user selected "Code comments":**
-```bash
-# Check for JSDoc/TSDoc
-JSDOC_COUNT=$(grep -r "^\s*/\*\*" --include="*.ts" --include="*.js" . 2>/dev/null | wc -l | tr -d ' ')
-echo "JSDOC_COMMENTS: $JSDOC_COUNT blocks found"
-
-# Check for Python docstrings
-DOCSTRING_COUNT=$(grep -r '"""' --include="*.py" . 2>/dev/null | wc -l | tr -d ' ')
-echo "PYTHON_DOCSTRINGS: $DOCSTRING_COUNT found"
-```
-
-**If user selected "README files":**
-```bash
-README_COUNT=$(find . -maxdepth 3 -name "README*.md" 2>/dev/null | wc -l | tr -d ' ')
-echo "README_FILES: $README_COUNT"
-[ -f "README.md" ] && head -50 README.md
-```
-
-**If user selected "API specifications":**
-```bash
-[ -f "openapi.yaml" ] && echo "OPENAPI_SPEC: openapi.yaml found"
-[ -f "openapi.json" ] && echo "OPENAPI_SPEC: openapi.json found"
-[ -f "swagger.yaml" ] && echo "OPENAPI_SPEC: swagger.yaml found"
-```
-
-**If user selected "Design documents":**
-```bash
-[ -d "./specs" ] && echo "DESIGN_DOCS: specs/ found" && ls ./specs/
-[ -d "./rfcs" ] && echo "DESIGN_DOCS: rfcs/ found" && ls ./rfcs/
-[ -d "./design" ] && echo "DESIGN_DOCS: design/ found" && ls ./design/
-```
-
-### 2.4 Check for Existing Docs Site
+### 2.2 Check for Existing Docs Site
 
 ```bash
-[ -f "docusaurus.config.js" ] && echo "EXISTING_SITE: Docusaurus"
+[ -f "docusaurus.config.js" ] || [ -f "docusaurus.config.ts" ] && echo "EXISTING_SITE: Docusaurus"
 [ -f "mkdocs.yml" ] && echo "EXISTING_SITE: MkDocs"
+[ -f "astro.config.mjs" ] && echo "EXISTING_SITE: Astro Starlight"
 ```
 
-### 2.5 Present Analysis
+### 2.3 Present Analysis Summary
 
 ```
-"Based on your selected sources, here's what I found:
+"Based on source discovery:
 
 🔧 Project type: [Node.js | Python | Go | etc.]
 🔒 Repo visibility: [Public | Private | Unknown]
+🔀 Fork: [Yes (parent: owner/repo) | No]
+📄 Local content: [X docs, Y code comment blocks, Z READMEs]
+🌐 Docs site: [Docusaurus | MkDocs | None detected]
 
-[For each selected source, show what was found]
-
-Note: Private repos require GitHub Enterprise for GitHub Pages, or use Vercel/Netlify instead."
+Sources configured — moving to documentation purpose and roles."
 ```
 
 ---
@@ -833,7 +977,8 @@ docs-repo/
 SKILL_VERSION=$(grep -E "^version:" "${PAI_DIR:-$HOME/.claude}/skills/Diataxis-Documentation/SKILL.md" | cut -d' ' -f2)
 
 # Read saved answers from progressive saves
-SOURCES=$(grep -E "^sources:" ./docs/.diataxis.md | sed 's/^sources: //')
+# Sources are multi-line: read from "sources:" until next config key
+SOURCES=$(sed -n '/^sources:/,/^[a-z_]*:/{/^sources:/d; /^[a-z_]*:/d; p;}' ./docs/.diataxis.md)
 CONTEXT=$(grep -E "^context:" ./docs/.diataxis.md | sed 's/^context: //')
 PURPOSE=$(grep -E "^purpose:" ./docs/.diataxis.md | sed 's/^purpose: //')
 ROLES=$(grep -E "^roles:" ./docs/.diataxis.md | sed 's/^roles: //')
@@ -869,7 +1014,7 @@ init_status: complete
 - **Hosting:** $HOSTING
 - **Technology:** $TECHNOLOGY
 
-## Documentation Sources
+## Documentation Sources (Priority Order)
 
 $SOURCES
 
@@ -920,15 +1065,14 @@ $(echo "$ROLES" | tr ',' '\n' | tr '[:upper:]' '[:lower:]' | while read role; do
   fi
 done)
 
-## Scope Exclusions
+## Files Exempt from Diataxis Reorganization
 
-Standard repo files (outside Diataxis scope):
-- README.md, LICENSE, CONTRIBUTING.md, CHANGELOG.md
-- CODE_OF_CONDUCT.md, SECURITY.md, .github/*.md
-- SKILL.md files (PAI skills)
+These files serve platform/repo purposes and should NOT be reorganized into Diataxis content type directories. They may still be used as **source material** when generating documentation.
 
-Custom exclusions:
-- (none configured)
+Exempt files in this project:
+$(ls -1 README.md LICENSE CONTRIBUTING.md CHANGELOG.md CODE_OF_CONDUCT.md SECURITY.md 2>/dev/null | while read f; do echo "- $f"; done)
+
+> **Note:** Files in source repositories (listed in Documentation Sources above) are valid sources regardless of this exemption list. This list only governs local file reorganization.
 EOF
 
 echo "✓ Configuration finalized: ./docs/.diataxis.md"

@@ -20,7 +20,7 @@ Restructure existing documentation into Diataxis categories:
 ### Step 1: Read Project Configuration
 
 **Read the project's `docs/.diataxis.md` first.** Extract:
-- Scope exclusions (what NOT to reorganize)
+- Reorganization exemptions (files to leave in place — these may still be used as source material)
 - Documentation location
 - Role priorities (affects where to place docs)
 
