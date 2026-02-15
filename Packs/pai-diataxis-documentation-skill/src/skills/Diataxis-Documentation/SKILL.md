@@ -8,9 +8,36 @@ official_source_path: Packs/pai-diataxis-documentation-skill
 description: Diataxis-based documentation methodology. USE WHEN creating, modifying, or organizing documentation in docs/, setting up documentation sites, planning documentation, or structuring guides/tutorials/reference/explanation docs.
 ---
 
+## Customization
+
+**Before executing, check for user customizations at:**
+`~/.claude/skills/CORE/USER/SKILLCUSTOMIZATIONS/Diataxis-Documentation/`
+
+If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
+
 # Diataxis-Documentation - Documentation Methodology Skill
 
 **Invoke when:** documentation planning, creating docs, organizing documentation, setting up Docusaurus/docs sites, writing tutorials, how-to guides, reference docs, or explanations.
+
+
+## Voice Notification
+
+**When executing a workflow, do BOTH:**
+
+1. **Send voice notification**:
+   ```bash
+   curl -s -X POST http://localhost:8888/notify \
+     -H "Content-Type: application/json" \
+     -d '{"message": "Running the WORKFLOWNAME workflow from the Diataxis-Documentation skill"}' \
+     > /dev/null 2>&1 &
+   ```
+
+2. **Output text notification**:
+   ```
+   Running the **WorkflowName** workflow from the **Diataxis-Documentation** skill...
+   ```
+
+**Full documentation:** `~/.claude/skills/CORE/SkillNotifications.md`
 
 ## Overview
 
