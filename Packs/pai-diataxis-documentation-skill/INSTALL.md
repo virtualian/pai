@@ -112,7 +112,7 @@ fi
   "question": "Update available (X.X.X → Y.Y.Y). How should I proceed?",
   "multiSelect": false,
   "options": [
-    {"label": "Update skill files (Recommended)", "description": "Updates skill files only. Project configs (docs/.diataxis.md) are preserved."},
+    {"label": "Update skill files (Recommended)", "description": "Updates skill files only. Project configs (.prd/.diataxis.md) are preserved."},
     {"label": "Skip update", "description": "Keep current version"}
   ]
 }
@@ -121,7 +121,7 @@ fi
 **If user chooses Update:**
 - Skip to Phase 3 (Installation) - just overwrite skill files
 - No backup needed for minor updates (skill files only)
-- Project configs (`docs/.diataxis.md`) are NOT touched
+- Project configs (`.prd/.diataxis.md`) are NOT touched
 
 ### If Already Up To Date
 
@@ -162,13 +162,13 @@ echo "Backup created at: $BACKUP_DIR"
 
 ## Updating Project Configs
 
-**Project configs (`docs/.diataxis.md`) are separate from skill updates.**
+**Project configs (`.prd/.diataxis.md`) are separate from skill updates.**
 
 If a new skill version requires config changes:
 
 1. Check config version (if present):
    ```bash
-   grep -E "^<!-- config-version:" ./docs/.diataxis.md 2>/dev/null || echo "No version found"
+   grep -E "^<!-- config-version:" ./.prd/.diataxis.md 2>/dev/null || echo "No version found"
    ```
 
 2. If migration needed, the skill will prompt during next use:
@@ -382,7 +382,7 @@ Try it in any project:
 What changed:
 - [List key changes from changelog]
 
-Your existing project configs (docs/.diataxis.md) were preserved.
+Your existing project configs (.prd/.diataxis.md) were preserved.
 No action needed - the skill is ready to use."
 ```
 

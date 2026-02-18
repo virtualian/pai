@@ -7,7 +7,7 @@
 ## Purpose
 
 Create a comprehensive documentation plan based on:
-- User's configured roles and priorities (from `docs/.diataxis.md`)
+- User's configured roles and priorities (from `.prd/.diataxis.md`)
 - Existing documentation inventory
 - Diataxis framework requirements
 - Gap analysis
@@ -20,16 +20,16 @@ Create a comprehensive documentation plan based on:
 
 **CRITICAL: Run before any other step. See SKILL.md "Config Change Detection" for full reference.**
 
-**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
+**If `.prd/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
 
 ```bash
 # 1. Read config
-cat ./docs/.diataxis.md
+cat ./.prd/.diataxis.md
 
 # 2. Extract structural fields
-TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./docs/.diataxis.md | head -1)
-CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./docs/.diataxis.md | head -1)
-ROLES=$(grep -E '^\| \w' ./docs/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
+TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./.prd/.diataxis.md | head -1)
+CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./.prd/.diataxis.md | head -1)
+ROLES=$(grep -E '^\| \w' ./.prd/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
 
 # 3. Determine docs content path
 case "$TECHNOLOGY" in
@@ -78,7 +78,7 @@ Present changes to user via AskUserQuestion (see SKILL.md "Config Change Detecti
 
 ### Step 1: Read Project Configuration
 
-**Read the project's `docs/.diataxis.md` first.** Extract:
+**Read the project's `.prd/.diataxis.md` first.** Extract:
 - Roles and their priorities
 - Diataxis elements prioritized per role
 - Documentation sources
@@ -86,10 +86,10 @@ Present changes to user via AskUserQuestion (see SKILL.md "Config Change Detecti
 
 ```bash
 # Check project config exists
-cat ./docs/.diataxis.md
+cat ./.prd/.diataxis.md
 ```
 
-**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first.
+**If `.prd/.diataxis.md` missing:** Run `InitializeProject.md` first.
 
 ---
 
@@ -143,7 +143,7 @@ Create an inventory table with **temporal awareness**:
 ### Step 4: Apply Reorganization Exemptions
 
 Remove from the reorganization inventory (these files stay where they are):
-- Files listed in `docs/.diataxis.md` exemptions
+- Files listed in `.prd/.diataxis.md` exemptions
 - Files serving platform/tooling purposes
 
 **Common exempt files:**
@@ -158,7 +158,7 @@ Remove from the reorganization inventory (these files stay where they are):
 
 ### Step 5: Inventory Documentation Sources
 
-Scan `docs/.diataxis.md` sources to understand what content can be derived:
+Scan `.prd/.diataxis.md` sources to understand what content can be derived:
 
 ```bash
 # Check configured sources exist
@@ -188,9 +188,9 @@ grep -r "deprecated\|legacy\|planned\|experimental\|removed" --include="*.md" --
 
 ### Step 6: Gap Analysis
 
-For each role in `docs/.diataxis.md` (by priority):
+For each role in `.prd/.diataxis.md` (by priority):
 
-1. **List required content types** (from `docs/.diataxis.md` elements table)
+1. **List required content types** (from `.prd/.diataxis.md` elements table)
 2. **Check existing coverage:**
    - Tutorial coverage for this role?
    - How-to coverage for this role?
@@ -203,7 +203,7 @@ For each role in `docs/.diataxis.md` (by priority):
 ```markdown
 ## Gap Analysis: [Role]
 
-### Required (from docs/.diataxis.md)
+### Required (from .prd/.diataxis.md)
 - ✓ How-to guides
 - ✓ Reference docs
 - ✓ Explanation
@@ -226,7 +226,7 @@ For each role in `docs/.diataxis.md` (by priority):
 Order recommendations by:
 1. **Role priority** (primary > secondary > tertiary)
 2. **Gap severity** (missing > incomplete > improve)
-3. **Content type priority** (from `docs/.diataxis.md`)
+3. **Content type priority** (from `.prd/.diataxis.md`)
 
 ---
 

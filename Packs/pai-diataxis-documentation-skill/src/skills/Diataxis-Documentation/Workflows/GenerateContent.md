@@ -24,16 +24,16 @@ Fill a documentation scaffold with content:
 
 **CRITICAL: Run before any other step. See SKILL.md "Config Change Detection" for full reference.**
 
-**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
+**If `.prd/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
 
 ```bash
 # 1. Read config
-cat ./docs/.diataxis.md
+cat ./.prd/.diataxis.md
 
 # 2. Extract structural fields
-TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./docs/.diataxis.md | head -1)
-CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./docs/.diataxis.md | head -1)
-ROLES=$(grep -E '^\| \w' ./docs/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
+TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./.prd/.diataxis.md | head -1)
+CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./.prd/.diataxis.md | head -1)
+ROLES=$(grep -E '^\| \w' ./.prd/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
 
 # 3. Determine docs content path
 case "$TECHNOLOGY" in
@@ -94,7 +94,7 @@ Read the existing scaffold file to determine:
 
 #### 2.1 Identify Relevant Sources
 
-**Read `docs/.diataxis.md` to find configured sources.** The config specifies which sources to use (set during InitializeProject):
+**Read `.prd/.diataxis.md` to find configured sources.** The config specifies which sources to use (set during InitializeProject):
 
 | Source Type | What to Look For |
 |-------------|------------------|

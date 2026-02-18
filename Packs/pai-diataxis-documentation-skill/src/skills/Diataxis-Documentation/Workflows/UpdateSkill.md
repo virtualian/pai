@@ -277,7 +277,7 @@ echo "Updated to: v$NEW_VERSION"
 Updated from: $UPDATE_SOURCE
 Backup saved: $BACKUP_DIR
 
-Your project configs (docs/.diataxis.md) were preserved.
+Your project configs (.prd/.diataxis.md) were preserved.
 
 Would you like to use the skill now?"
 ```

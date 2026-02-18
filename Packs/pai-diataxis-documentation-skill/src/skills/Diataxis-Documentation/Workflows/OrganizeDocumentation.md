@@ -21,16 +21,16 @@ Restructure existing documentation into Diataxis categories:
 
 **CRITICAL: Run before any other step. See SKILL.md "Config Change Detection" for full reference.**
 
-**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
+**If `.prd/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
 
 ```bash
 # 1. Read config
-cat ./docs/.diataxis.md
+cat ./.prd/.diataxis.md
 
 # 2. Extract structural fields
-TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./docs/.diataxis.md | head -1)
-CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./docs/.diataxis.md | head -1)
-ROLES=$(grep -E '^\| \w' ./docs/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
+TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./.prd/.diataxis.md | head -1)
+CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./.prd/.diataxis.md | head -1)
+ROLES=$(grep -E '^\| \w' ./.prd/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
 
 # 3. Determine docs content path
 case "$TECHNOLOGY" in
@@ -78,16 +78,16 @@ Present changes to user via AskUserQuestion (see SKILL.md "Config Change Detecti
 
 ### Step 1: Read Project Configuration
 
-**Read the project's `docs/.diataxis.md` first.** Extract:
+**Read the project's `.prd/.diataxis.md` first.** Extract:
 - Reorganization exemptions (files to leave in place — these may still be used as source material)
 - Documentation location
 - Role priorities (affects where to place docs)
 
 ```bash
-cat ./docs/.diataxis.md
+cat ./.prd/.diataxis.md
 ```
 
-**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first.
+**If `.prd/.diataxis.md` missing:** Run `InitializeProject.md` first.
 
 ---
 
@@ -257,7 +257,7 @@ Show the user what will change (role-first structure):
 - `advanced/` (empty after moves)
 - `api/` (empty after moves)
 
-### Files Excluded (per docs/.diataxis.md)
+### Files Excluded (per .prd/.diataxis.md)
 - `README.md` - Project overview, not Diataxis
 ```
 

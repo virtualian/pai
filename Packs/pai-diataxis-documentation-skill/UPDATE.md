@@ -17,7 +17,7 @@
 
 1. **Graceful Degradation** - If update sources are unavailable, the skill continues working
 2. **Source Preference** - User chooses between their install source and canonical source
-3. **Settings Preservation** - Project configs (`docs/.diataxis.md`) are never touched
+3. **Settings Preservation** - Project configs (`.prd/.diataxis.md`) are never touched
 4. **Metadata Preservation** - `install_source` is preserved; only `last_updated_from` changes
 5. **Deprecation Handling** - Old files are removed, user is notified
 
@@ -428,7 +428,7 @@ echo "Installed version: $NEW_VERSION"
 Updated from: $UPDATE_SOURCE
 Backup saved: $BACKUP_DIR
 
-Your project configs (docs/.diataxis.md) were preserved - no changes needed.
+Your project configs (.prd/.diataxis.md) were preserved - no changes needed.
 
 What's new in this version:
 - [AI should summarize key changes if changelog available]
@@ -453,7 +453,7 @@ Would you like to use the updated skill now?"
 
 If user chooses "Use the skill now":
 - Route to the Diataxis-Documentation skill
-- The skill will check for `docs/.diataxis.md` and proceed normally
+- The skill will check for `.prd/.diataxis.md` and proceed normally
 
 If user chooses "View what changed":
 ```bash

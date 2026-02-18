@@ -47,10 +47,10 @@ This skill provides Diataxis-based documentation methodology:
 - **Site-Aware** - Purpose, hosting, and technology configuration
 - **Source-Faithful** - Extract from sources, never hallucinate
 - **Temporally Aware** - Past, present, and future capabilities distinguished
-- **Per-Project Config** - Each project has its own `docs/.diataxis.md`
+- **Per-Project Config** - Each project has its own `.prd/.diataxis.md`
 - **Workflow Automation** - Initialize, plan, organize, and create documentation
 
-**First action on any documentation task:** Check for `docs/.diataxis.md` - if missing, run InitializeProject workflow.
+**First action on any documentation task:** Check for `.prd/.diataxis.md` - if missing, run InitializeProject workflow.
 
 ## Core Principles
 
@@ -94,7 +94,7 @@ OAuth 2.0 authentication requires a client ID and secret...
 
 ### 3. Site Configuration
 
-**`docs/.diataxis.md` defines site purpose, hosting, and technology:**
+**`.prd/.diataxis.md` defines site purpose, hosting, and technology:**
 - **Purpose** - Developer Portal, Product Docs, Internal, Open Source
 - **Hosting** - GitHub Pages, Vercel/Netlify, Self-hosted, Docs platform
 - **Technology** - Docusaurus, MkDocs, Astro Starlight, Plain Markdown
@@ -105,12 +105,12 @@ Technology choice affects output format and conventions.
 
 **CRITICAL:** Before any workflow, check if project is initialized:
 ```bash
-[ -f "./docs/.diataxis.md" ] && echo "configured" || echo "needs initialization"
+[ -f "./.prd/.diataxis.md" ] && echo "configured" || echo "needs initialization"
 ```
 
 | Workflow | Trigger | File |
 |----------|---------|------|
-| **InitializeProject** | First use in project, "set up docs", "initialize documentation", no `docs/.diataxis.md` | `Workflows/InitializeProject.md` |
+| **InitializeProject** | First use in project, "set up docs", "initialize documentation", no `.prd/.diataxis.md` | `Workflows/InitializeProject.md` |
 | **PlanDocumentation** | "plan documentation", "documentation plan", "what docs do we need" | `Workflows/PlanDocumentation.md` |
 | **OrganizeDocumentation** | "organize docs", "restructure documentation", "apply diataxis" | `Workflows/OrganizeDocumentation.md` |
 | **CreateScaffold** | "create scaffold", "new doc scaffold" | `Workflows/CreateScaffold.md` |
@@ -143,7 +143,7 @@ Is the user trying to LEARN something new?
 **Example 1: Plan documentation**
 ```
 User: "Plan documentation for this project"
-→ Read docs/.diataxis.md for roles and priorities
+→ Read .prd/.diataxis.md for roles and priorities
 → Scan existing docs/
 → Map to Diataxis categories
 → Identify gaps based on role priorities
@@ -161,7 +161,7 @@ User: "What type should our 'Getting Started' guide be?"
 **Example 3: Create documentation**
 ```
 User: "Create a how-to for deploying to AWS"
-→ Read docs/.diataxis.md for role priorities
+→ Read .prd/.diataxis.md for role priorities
 → Follow How-to structure from Standard.md
 → Task-oriented: assume user knows basics
 → Numbered steps, clear success criteria
@@ -170,7 +170,7 @@ User: "Create a how-to for deploying to AWS"
 **Example 4: Organize existing docs**
 ```
 User: "Organize my docs into Diataxis structure"
-→ Read docs/.diataxis.md for scope exclusions
+→ Read .prd/.diataxis.md for scope exclusions
 → Analyze current docs/ structure
 → Classify each doc by content type
 → Propose new structure
@@ -205,9 +205,9 @@ Common exempt files:
 
 ## Project Configuration Reference
 
-**Each project has its own `docs/.diataxis.md` configuration file.** This is created by the InitializeProject workflow on first use.
+**Each project has its own `.prd/.diataxis.md` configuration file.** This is created by the InitializeProject workflow on first use.
 
-Always read `docs/.diataxis.md` at the start of documentation tasks. It contains:
+Always read `.prd/.diataxis.md` at the start of documentation tasks. It contains:
 
 ```markdown
 ## Site Configuration
@@ -235,13 +235,13 @@ Always read `docs/.diataxis.md` at the start of documentation tasks. It contains
 - Note: Exempt files may still be used as source material
 ```
 
-**If `docs/.diataxis.md` doesn't exist:** Route to `Workflows/InitializeProject.md` first.
+**If `.prd/.diataxis.md` doesn't exist:** Route to `Workflows/InitializeProject.md` first.
 
 ## Config Change Detection (CRITICAL)
 
 **Every post-init workflow MUST validate configuration against filesystem before proceeding.**
 
-When `docs/.diataxis.md` is modified after initialization, the filesystem may no longer match the config. Workflows detect this drift and require user confirmation before continuing.
+When `.prd/.diataxis.md` is modified after initialization, the filesystem may no longer match the config. Workflows detect this drift and require user confirmation before continuing.
 
 ### What Gets Checked
 
@@ -255,7 +255,7 @@ When `docs/.diataxis.md` is modified after initialization, the filesystem may no
 ### Detection Flow
 
 ```
-Read docs/.diataxis.md
+Read .prd/.diataxis.md
     │
     ├── Extract: roles, diataxis priorities, technology, context
     │
@@ -335,7 +335,7 @@ This requires manual migration:
 - Config now specifies [new]
 
 Options:
-1. Run InitializeProject to re-scaffold (preserves docs/.diataxis.md answers)
+1. Run InitializeProject to re-scaffold (preserves .prd/.diataxis.md answers)
 2. Manually migrate site infrastructure
 3. Revert config change"
 ```
@@ -362,7 +362,7 @@ The UpdateSkill workflow:
 ## References
 
 - `Standard.md` - Complete Diataxis framework documentation
-- `docs/.diataxis.md` - Per-project configuration (read this first!)
+- `.prd/.diataxis.md` - Per-project configuration (read this first!)
 - `Workflows/InitializeProject.md` - First-use project setup
 - `Workflows/PlanDocumentation.md` - Planning workflow
 - `Workflows/OrganizeDocumentation.md` - Restructuring workflow

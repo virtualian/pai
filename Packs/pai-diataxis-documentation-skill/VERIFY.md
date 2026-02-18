@@ -102,7 +102,7 @@ Ask your AI:
 
 ### Test 2: Project Initialization Detection
 
-In a project without `docs/.diataxis.md`, ask your AI:
+In a project without `.prd/.diataxis.md`, ask your AI:
 ```
 "Plan documentation for this project"
 ```
@@ -111,12 +111,12 @@ In a project without `docs/.diataxis.md`, ask your AI:
 
 ### Test 3: Workflow Invocation (after initialization)
 
-In a project with `docs/.diataxis.md`, ask your AI:
+In a project with `.prd/.diataxis.md`, ask your AI:
 ```
 "Plan documentation for this project"
 ```
 
-**Expected:** Should read `docs/.diataxis.md` and invoke PlanDocumentation workflow.
+**Expected:** Should read `.prd/.diataxis.md` and invoke PlanDocumentation workflow.
 
 ---
 
@@ -151,11 +151,11 @@ If workflows aren't being triggered:
 
 ### Project Not Detecting Configuration
 
-If the skill doesn't detect existing `docs/.diataxis.md`:
+If the skill doesn't detect existing `.prd/.diataxis.md`:
 
 1. Check the file exists in the project:
    ```bash
-   cat ./docs/.diataxis.md
+   cat ./.prd/.diataxis.md
    ```
 
 2. Ensure you're in the correct working directory
@@ -172,4 +172,4 @@ All of the following should pass:
 - [ ] All four workflow files exist in Workflows/
 - [ ] Skill responds to documentation-related queries
 - [ ] InitializeProject runs in unconfigured projects
-- [ ] Other workflows read `docs/.diataxis.md` when it exists
+- [ ] Other workflows read `.prd/.diataxis.md` when it exists

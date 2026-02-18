@@ -12,7 +12,7 @@ Create the structural skeleton for a new documentation file:
 - Create file in correct location
 - Ready for content generation
 
-**Design Principle:** This workflow is agnostic to project type, tech stack, hosting, and content domain. All project-specific configuration comes from `docs/.diataxis.md`.
+**Design Principle:** This workflow is agnostic to project type, tech stack, hosting, and content domain. All project-specific configuration comes from `.prd/.diataxis.md`.
 
 ---
 
@@ -22,16 +22,16 @@ Create the structural skeleton for a new documentation file:
 
 **CRITICAL: Run before any other step. See SKILL.md "Config Change Detection" for full reference.**
 
-**If `docs/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
+**If `.prd/.diataxis.md` missing:** Run `InitializeProject.md` first, then return here.
 
 ```bash
 # 1. Read config
-cat ./docs/.diataxis.md
+cat ./.prd/.diataxis.md
 
 # 2. Extract structural fields
-TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./docs/.diataxis.md | head -1)
-CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./docs/.diataxis.md | head -1)
-ROLES=$(grep -E '^\| \w' ./docs/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
+TECHNOLOGY=$(grep -oP '(?<=\*\*Technology:\*\* ).*' ./.prd/.diataxis.md | head -1)
+CONTEXT=$(grep -oP '(?<=\*\*Context:\*\* ).*' ./.prd/.diataxis.md | head -1)
+ROLES=$(grep -E '^\| \w' ./.prd/.diataxis.md | grep -v 'Role' | awk -F'|' '{print $2}' | xargs)
 
 # 3. Determine docs content path
 case "$TECHNOLOGY" in
@@ -79,7 +79,7 @@ Present changes to user via AskUserQuestion (see SKILL.md "Config Change Detecti
 
 ### Step 1: Read Project Configuration
 
-**Read the project's `docs/.diataxis.md` first.** This file defines:
+**Read the project's `.prd/.diataxis.md` first.** This file defines:
 - Documentation directory structure
 - File naming conventions
 - Folder paths per content type
@@ -87,10 +87,10 @@ Present changes to user via AskUserQuestion (see SKILL.md "Config Change Detecti
 
 ```bash
 # Project-specific config (created by InitializeProject)
-cat ./docs/.diataxis.md
+cat ./.prd/.diataxis.md
 ```
 
-If `docs/.diataxis.md` doesn't exist, run `InitializeProject.md` first.
+If `.prd/.diataxis.md` doesn't exist, run `InitializeProject.md` first.
 
 ---
 
@@ -128,7 +128,7 @@ Is the user trying to LEARN something new?
 
 ### Step 3: Determine File Location
 
-**Read paths from `docs/.diataxis.md`** - do not assume folder names.
+**Read paths from `.prd/.diataxis.md`** - do not assume folder names.
 
 **Role-first structure:** Documentation is organized by role first, then content type:
 - `users/tutorials/` - Tutorials for end users
@@ -319,5 +319,5 @@ Use the Write tool to create the file.
 ## Related Workflows
 
 - `GenerateContent.md` - Fill scaffold with content
-- `InitializeProject.md` - Creates `docs/.diataxis.md` config
+- `InitializeProject.md` - Creates `.prd/.diataxis.md` config
 - `PlanDocumentation.md` - Plan what docs to create
