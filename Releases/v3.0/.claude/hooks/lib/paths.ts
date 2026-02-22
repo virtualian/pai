@@ -32,7 +32,8 @@ export function expandPath(path: string): string {
 export function getPaiDir(): string {
   const envPaiDir = process.env.PAI_DIR;
 
-  if (envPaiDir) {
+  // Reject unresolved env placeholders (e.g. "${PAI_DIR}" literal from settings.json)
+  if (envPaiDir && !envPaiDir.includes('${')) {
     return expandPath(envPaiDir);
   }
 

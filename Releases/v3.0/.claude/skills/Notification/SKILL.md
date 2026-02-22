@@ -33,7 +33,7 @@ This skill implements `/notification` with per-channel toggle control:
 **When user requests toggling voice notifications:**
 Examples: "/notification voice on", "/notification voice off", "turn off voice", "mute voice", "unmute voice", "disable voice notifications", "enable voice", "silence the curls", "stop voice announcements"
 -> **Action:** Read `~/.claude/settings.json`, set `notifications.voice` to `true` or `false`, write back. Confirm the change.
--> **Feedback:** "Voice notifications [enabled/disabled]. Phase announcements will [play normally/be suppressed]."
+-> **Feedback:** "Voice notifications [enabled/disabled]. Verbal announcements [on/off]."
 
 **When user requests toggling desktop notifications:**
 Examples: "/notification desktop on", "/notification desktop off", "turn off desktop", "mute desktop", "disable desktop notifications"
@@ -46,7 +46,7 @@ Examples: "/notification status", "notification status", "what notifications are
 -> **Output format:**
 ```
 Notification Channel Status:
-  voice:   [ON/OFF]  — Phase announcements
+  voice:   [ON/OFF]  — Verbal announcements
   desktop: [ON/OFF]  — Desktop alerts
   ntfy:    [ON/OFF]  — Push notifications (mobile)
   discord: [ON/OFF]  — Discord webhook
@@ -80,7 +80,7 @@ Notification state is stored in `~/.claude/settings.json` under the `notificatio
 }
 ```
 
-- `voice.enabled` (boolean): Controls phase announcements. When `false`, Notify.ts exits silently without contacting the voice server.
+- `voice.enabled` (boolean): Controls verbal announcements. When `false`, Notify.ts exits silently without contacting the voice server.
 - `desktop.enabled` (boolean): Controls desktop notification delivery.
 
 Both boolean format (`"voice": true`) and object format (`"voice": { "enabled": true }`) are supported for backwards compatibility.

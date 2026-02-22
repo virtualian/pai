@@ -136,6 +136,7 @@ interface LoadedVoiceConfig {
   voices: Record<string, VoiceEntry>;     // keyed by name ("main", "algorithm")
   voicesByVoiceId: Record<string, VoiceEntry>;  // keyed by voiceId for lookup
   desktopNotifications: boolean;  // whether to show macOS notification banners
+  voiceEnabled: boolean;          // whether to play TTS audio (global toggle)
 }
 
 // Last-resort defaults if settings.json is entirely missing or unparseable
@@ -155,7 +156,7 @@ function loadVoiceConfig(): LoadedVoiceConfig {
   try {
     if (!existsSync(settingsPath)) {
       console.warn('⚠️  settings.json not found — using fallback voice defaults');
-      return { defaultVoiceId: '', voices: {}, voicesByVoiceId: {}, desktopNotifications: true };
+      return { defaultVoiceId: '', voices: {}, voicesByVoiceId: {}, desktopNotifications: true, voiceEnabled: true };
     }
 
     const content = readFileSync(settingsPath, 'utf-8');
@@ -163,6 +164,7 @@ function loadVoiceConfig(): LoadedVoiceConfig {
     const daidentity = settings.daidentity || {};
     const voicesSection = daidentity.voices || {};
     const desktopNotifications = settings.notifications?.desktop?.enabled !== false;
+    const voiceEnabled = settings.notifications?.voice?.enabled !== false;
 
     // Build lookup maps
     const voices: Record<string, VoiceEntry> = {};
@@ -195,16 +197,22 @@ function loadVoiceConfig(): LoadedVoiceConfig {
       console.log(`   ${name}: ${entry.voiceName || entry.voiceId} (speed: ${entry.speed}, stability: ${entry.stability})`);
     }
 
-    return { defaultVoiceId, voices, voicesByVoiceId, desktopNotifications };
+    return { defaultVoiceId, voices, voicesByVoiceId, desktopNotifications, voiceEnabled };
   } catch (error) {
     console.error('⚠️  Failed to load settings.json voice config:', error);
-    return { defaultVoiceId: '', voices: {}, voicesByVoiceId: {}, desktopNotifications: true };
+    return { defaultVoiceId: '', voices: {}, voicesByVoiceId: {}, desktopNotifications: true, voiceEnabled: true };
   }
 }
 
-// Load config at startup
-const voiceConfig = loadVoiceConfig();
+// Load config at startup (for DEFAULT_VOICE_ID and initial state)
+let voiceConfig = loadVoiceConfig();
 const DEFAULT_VOICE_ID = voiceConfig.defaultVoiceId || process.env.ELEVENLABS_VOICE_ID || "{YOUR_ELEVENLABS_VOICE_ID}";
+
+// Reload config per-request so settings.json changes take effect without restart
+function getVoiceConfig(): LoadedVoiceConfig {
+  voiceConfig = loadVoiceConfig();
+  return voiceConfig;
+}
 
 // Look up a voice entry by voice ID
 function lookupVoiceByVoiceId(voiceId: string): VoiceEntry | null {
@@ -458,7 +466,12 @@ async function sendNotification(
   let voicePlayed = false;
   let voiceError: string | undefined;
 
-  if (voiceEnabled && ELEVENLABS_API_KEY) {
+  // Reload config so settings.json changes take effect without restart
+  const currentConfig = getVoiceConfig();
+
+  // Global voice toggle from settings.json: notifications.voice.enabled
+  // Per-request voice_enabled can still override (but global off = off)
+  if (voiceEnabled && currentConfig.voiceEnabled && ELEVENLABS_API_KEY) {
     try {
       const voice = voiceId || DEFAULT_VOICE_ID;
 
@@ -479,7 +492,7 @@ async function sendNotification(
         console.log(`🔗 Voice settings: pass-through from caller`);
       } else {
         // Tier 2/3: Look up by voiceId, fall back to main
-        const voiceEntry = lookupVoiceByVoiceId(voice) || voiceConfig.voices.main;
+        const voiceEntry = lookupVoiceByVoiceId(voice) || currentConfig.voices.main;
         if (voiceEntry) {
           resolvedSettings = voiceEntryToSettings(voiceEntry);
           resolvedVolume = callerVolume ?? voiceEntry.volume ?? FALLBACK_VOLUME;
@@ -513,7 +526,7 @@ async function sendNotification(
   }
 
   // Display macOS notification (can be disabled via settings.json: notifications.desktop.enabled: false)
-  if (voiceConfig.desktopNotifications) {
+  if (currentConfig.desktopNotifications) {
     try {
       const escapedTitle = escapeForAppleScript(safeTitle);
       const escapedMessage = escapeForAppleScript(safeMessage);
