@@ -71,15 +71,6 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${PAI_DIR}/hooks/VoiceGate.hook.ts"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
             "command": "${PAI_DIR}/hooks/SecurityValidator.hook.ts"
           }
         ]
