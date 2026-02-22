@@ -5,6 +5,51 @@
 This system provides:
 - Voice feedback when workflows start
 - Consistent user experience across all skills
+- **Per-channel notification control** via `/notification` skill
+
+---
+
+## Per-Channel Notification Control
+
+**Granular toggle control over notification channels.** Use the `/notification` skill:
+
+```
+/notification voice on       # Enable voice (curl) notifications
+/notification voice off      # Disable voice notifications — suppresses ALL curl calls
+/notification desktop on     # Enable desktop notifications
+/notification desktop off    # Disable desktop notifications
+/notification status         # Show current notification channel states
+/notification all off        # Disable all notification channels
+/notification all on         # Enable all notification channels
+```
+
+### Settings Persistence
+
+Notification state is stored in `settings.json`:
+
+```json
+{
+  "notifications": {
+    "voice": { "enabled": true },
+    "desktop": { "enabled": true }
+  }
+}
+```
+
+Both boolean (`"voice": false`) and object (`"voice": { "enabled": false }`) formats are supported.
+
+### Voice Curl Suppression
+
+When `notifications.voice` is `false`, the `VoiceGate.hook.ts` PreToolUse hook blocks ALL `curl` commands targeting `localhost:8888` before they execute. This means:
+
+- **Zero terminal noise** — no curl commands appear in output
+- **Zero execution** — the voice server is never contacted
+- **Zero changes to Algorithm template** — curls remain `[VERBATIM]` in the prompt; gating happens at hook level
+- **Background agents inherit the setting** — VoiceGate reads from `settings.json` which is shared across all sessions
+
+### Skill Reference
+
+Full documentation: `~/.claude/skills/Notification/SKILL.md`
 
 ---
 

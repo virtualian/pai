@@ -802,6 +802,12 @@
   },
   "max_tokens": 16000,
   "notifications": {
+    "voice": {
+      "enabled": true
+    },
+    "desktop": {
+      "enabled": true
+    },
     "ntfy": {
       "enabled": true,
       "topic": "${NTFY_TOPIC}",
