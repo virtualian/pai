@@ -17,8 +17,8 @@ If this directory exists, load and apply any PREFERENCES.md, configurations, or 
 This skill implements `/notification` with per-channel toggle control:
 
 ```
-/notification voice on       # Enable voice (curl) notifications
-/notification voice off      # Disable voice notifications — suppresses ALL curl calls
+/notification voice on       # Enable voice notifications
+/notification voice off      # Disable voice notifications
 /notification desktop on     # Enable desktop notifications
 /notification desktop off    # Disable desktop notifications
 /notification status         # Show current notification channel states
@@ -33,7 +33,7 @@ This skill implements `/notification` with per-channel toggle control:
 **When user requests toggling voice notifications:**
 Examples: "/notification voice on", "/notification voice off", "turn off voice", "mute voice", "unmute voice", "disable voice notifications", "enable voice", "silence the curls", "stop voice announcements"
 -> **Action:** Read `~/.claude/settings.json`, set `notifications.voice` to `true` or `false`, write back. Confirm the change.
--> **Feedback:** "Voice notifications [enabled/disabled]. Phase announcement curls will [fire normally/be suppressed]."
+-> **Feedback:** "Voice notifications [enabled/disabled]. Phase announcements will [play normally/be suppressed]."
 
 **When user requests toggling desktop notifications:**
 Examples: "/notification desktop on", "/notification desktop off", "turn off desktop", "mute desktop", "disable desktop notifications"
@@ -46,10 +46,15 @@ Examples: "/notification status", "notification status", "what notifications are
 -> **Output format:**
 ```
 Notification Channel Status:
-  Voice:   [ON/OFF]  — Phase announcement curls
-  Desktop: [ON/OFF]  — Desktop alerts
+  voice:   [ON/OFF]  — Phase announcements
+  desktop: [ON/OFF]  — Desktop alerts
   ntfy:    [ON/OFF]  — Push notifications (mobile)
-  Discord: [ON/OFF]  — Discord webhook
+  discord: [ON/OFF]  — Discord webhook
+  twilio:  [ON/OFF]  — SMS notifications
+
+Available commands:
+  /notification [channel] on/off
+  /notification all on/off
 ```
 
 **When user requests toggling all notifications:**
@@ -75,7 +80,7 @@ Notification state is stored in `~/.claude/settings.json` under the `notificatio
 }
 ```
 
-- `voice.enabled` (boolean): Controls phase announcement curl commands. When `false`, VoiceGate.hook.ts blocks all curls to localhost:8888.
+- `voice.enabled` (boolean): Controls phase announcements. When `false`, Notify.ts exits silently without contacting the voice server.
 - `desktop.enabled` (boolean): Controls desktop notification delivery.
 
 Both boolean format (`"voice": true`) and object format (`"voice": { "enabled": true }`) are supported for backwards compatibility.
@@ -88,16 +93,16 @@ Settings persist across sessions automatically since they live in settings.json.
 
 ### Voice Suppression Mechanism
 
-The voice toggle works through `VoiceGate.hook.ts` (PreToolUse hook on Bash):
+The voice toggle works through `Notify.ts` (self-gating CLI tool):
 
-1. Algorithm emits a `curl -s -X POST http://localhost:8888/notify ...` command
-2. VoiceGate intercepts it before execution
-3. If `notifications.voice` is `false` in settings.json -> **BLOCK** (curl never executes)
-4. If `notifications.voice` is `true` (or missing) -> proceed to subagent check
-5. If main session -> **PASS** (curl executes)
-6. If subagent -> **BLOCK** (subagent curls always blocked)
+1. Algorithm emits `bun ~/.claude/skills/PAI/Tools/Notify.ts "message"`
+2. Notify.ts reads `notifications.voice` from settings.json
+3. If `false` -> exits silently (no network call made)
+4. If `true` (or missing) -> checks session context
+5. If main session -> POSTs to voice server
+6. If subagent -> exits silently (subagent announcements always suppressed)
 
-This means the Algorithm template's `[VERBATIM]` curl directives remain unchanged. The gating happens at infrastructure level, not prompt level.
+Gating happens at the source — Notify.ts decides whether to call the voice server, no external hook needed.
 
 ### Desktop Suppression
 
@@ -127,5 +132,5 @@ Desktop notifications are sent via macOS `osascript` or notification hooks. When
 ## Related Documentation
 
 - **Notification System:** `~/.claude/skills/PAI/THENOTIFICATIONSYSTEM.md`
-- **VoiceGate Hook:** `~/.claude/hooks/VoiceGate.hook.ts`
+- **Notify.ts:** `~/.claude/skills/PAI/Tools/Notify.ts`
 - **Settings:** `~/.claude/settings.json` → `notifications` section

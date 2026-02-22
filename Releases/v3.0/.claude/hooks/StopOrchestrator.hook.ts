@@ -13,6 +13,7 @@
  * - TabState.ts: Resets Kitty tab to default UL blue
  * - RebuildSkill.ts: Auto-rebuilds SKILL.md from Components/ if modified
  * - DocCrossRefIntegrity.ts: Checks if system docs/hooks were modified, updates cross-refs if so
+ * - ReflectionCapture.ts: Extracts LEARN phase Q1/Q2/Q3 reflections → algorithm-reflections.jsonl
  *
  * ERROR HANDLING:
  * - Handler failures: Isolated via Promise.allSettled
@@ -27,6 +28,7 @@ import { handleTabState } from './handlers/TabState';
 import { handleRebuildSkill } from './handlers/RebuildSkill';
 import { handleAlgorithmEnrichment } from './handlers/AlgorithmEnrichment';
 import { handleDocCrossRefIntegrity } from './handlers/DocCrossRefIntegrity';
+import { handleReflectionCapture } from './handlers/ReflectionCapture';
 import { existsSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
@@ -38,14 +40,25 @@ interface HookInput {
 }
 
 /**
- * Voice gate: only main terminal sessions get voice.
+ * Voice gate: checks both settings.json toggle AND main-session detection.
  * Subagents spawned via Task tool have no kitty-sessions file → voice blocked.
- * One existsSync check. No regex. No transcript parsing.
  */
+function isVoiceEnabled(): boolean {
+  try {
+    const paiDir = process.env.PAI_DIR || join(homedir(), '.claude');
+    const raw = JSON.parse(require('fs').readFileSync(join(paiDir, 'settings.json'), 'utf-8'));
+    const voice = raw?.notifications?.voice;
+    if (voice === undefined || voice === null) return true;
+    if (typeof voice === 'boolean') return voice;
+    if (typeof voice === 'object') return voice.enabled !== false;
+  } catch {}
+  return true;
+}
+
 function isMainSession(sessionId: string): boolean {
   const paiDir = process.env.PAI_DIR || join(homedir(), '.claude');
   const kittySessionsDir = join(paiDir, 'MEMORY', 'STATE', 'kitty-sessions');
-  if (!existsSync(kittySessionsDir)) return true; // Non-Kitty terminal: allow all sessions
+  if (!existsSync(kittySessionsDir)) return true;
   return existsSync(join(kittySessionsDir, `${sessionId}.json`));
 }
 
@@ -93,7 +106,7 @@ async function main() {
   const parsed = parseTranscript(hookInput.transcript_path);
 
   // Voice gate: only main terminal sessions get voice
-  const voiceEnabled = isMainSession(hookInput.session_id);
+  const voiceEnabled = isVoiceEnabled() && isMainSession(hookInput.session_id);
 
   if (voiceEnabled) {
     console.error(`[StopOrchestrator] Voice ON (main session): ${parsed.plainCompletion.slice(0, 50)}...`);
@@ -107,8 +120,9 @@ async function main() {
     handleRebuildSkill(),
     handleAlgorithmEnrichment(parsed, hookInput.session_id),
     handleDocCrossRefIntegrity(parsed, hookInput),
+    handleReflectionCapture(parsed, hookInput.session_id),
   ];
-  const handlerNames = ['TabState', 'RebuildSkill', 'AlgorithmEnrichment', 'DocCrossRefIntegrity'];
+  const handlerNames = ['TabState', 'RebuildSkill', 'AlgorithmEnrichment', 'DocCrossRefIntegrity', 'ReflectionCapture'];
 
   if (voiceEnabled) {
     handlers.unshift(handleVoice(parsed, hookInput.session_id));
