@@ -42,15 +42,13 @@ else
     pct_color='\033[38;2;251;113;133m'   # rose 80%+
 fi
 
-# ── Project folder + Git branch + PR ─────────────────────────────────────────
+# ── Project folder + Git branch ───────────────────────────────────────────────
 
 folder_name=$(basename "$current_dir")
 
 branch=""
-pr_num=""
 if git rev-parse --git-dir > /dev/null 2>&1; then
     branch=$(git branch --show-current 2>/dev/null || echo "detached")
-    pr_num=$(gh pr view --json number -q .number 2>/dev/null)
 fi
 
 # ── Output (single line) ─────────────────────────────────────────────────────
@@ -58,9 +56,7 @@ fi
 RST='\033[0m'
 DIM='\033[38;2;148;163;184m'
 BLUE='\033[38;2;96;165;250m'
-GREEN='\033[38;2;74;222;128m'
 
 printf "${pct_color}${context_pct}%%${RST} ${BLUE}${folder_name}${RST}"
 [ -n "$branch" ] && printf " ${DIM}${branch}${RST}"
-[ -n "$pr_num" ] && printf " ${GREEN}#${pr_num}${RST}"
 printf "\n"
