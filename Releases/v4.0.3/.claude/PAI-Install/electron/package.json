@@ -1,6 +1,6 @@
 {
   "name": "pai-installer",
-  "version": "4.0.3",
+  "version": "4.0.0",
   "description": "PAI Installer — Electron wrapper",
   "main": "main.js",
   "scripts": {

@@ -7,7 +7,6 @@ import { existsSync, readFileSync, writeFileSync, mkdirSync, unlinkSync } from "
 import { homedir } from "os";
 import { join, dirname } from "path";
 import type { InstallState, StepId } from "./types";
-import { INSTALLER_VERSION } from "./types";
 
 const STATE_FILE = join(
   process.env.PAI_CONFIG_DIR || join(homedir(), ".config", "PAI"),
@@ -19,7 +18,7 @@ const STATE_FILE = join(
  */
 export function createFreshState(mode: "cli" | "web"): InstallState {
   return {
-    version: INSTALLER_VERSION,
+    version: "4.0.0",
     startedAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
     currentStep: "system-detect",

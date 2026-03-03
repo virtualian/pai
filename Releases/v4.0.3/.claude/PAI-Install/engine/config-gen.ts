@@ -7,7 +7,7 @@
  */
 
 import type { PAIConfig } from "./types";
-import { DEFAULT_VOICES, PAI_VERSION, ALGORITHM_VERSION } from "./types";
+import { DEFAULT_VOICES } from "./types";
 
 /**
  * Generate a minimal fallback settings.json from installer-collected data.
@@ -58,8 +58,7 @@ export function generateSettingsJson(config: PAIConfig): Record<string, any> {
 
     pai: {
       repoUrl: "https://github.com/danielmiessler/PAI",
-      version: PAI_VERSION,
-      algorithmVersion: ALGORITHM_VERSION,
+      version: "4.0.0",
     },
   };
 }
