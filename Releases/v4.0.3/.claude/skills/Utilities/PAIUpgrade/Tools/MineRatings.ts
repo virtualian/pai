@@ -25,7 +25,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { spawn } from 'child_process';
+import { inference } from '../../../../PAI/Tools/Inference.ts';
 
 // Types
 interface RatingEntry {
@@ -60,9 +60,6 @@ const HOME = homedir();
 const RATINGS_FILE = join(HOME, '.claude', 'MEMORY', 'LEARNING', 'SIGNALS', 'ratings.jsonl');
 const STATE_DIR = join(HOME, '.claude', 'MEMORY', 'LEARNING', 'SIGNALS');
 const HWM_FILE = join(STATE_DIR, 'mine-ratings-hwm.json');
-
-// Resolve Inference.ts path (4 levels up from Tools/ -> PAI/Tools/)
-const INFERENCE_PATH = join(__dirname, '..', '..', '..', '..', 'PAI', 'Tools', 'Inference.ts');
 
 // Parse args
 const args = process.argv.slice(2);
@@ -235,43 +232,13 @@ function buildAnalysisSummary(
 }
 
 async function runInference(systemPrompt: string, userPrompt: string): Promise<{ success: boolean; output: string }> {
-  return new Promise((resolve) => {
-    const proc = spawn('bun', [
-      INFERENCE_PATH,
-      '--level', 'standard',
-      '--timeout', '300000',
-      systemPrompt,
-      userPrompt,
-    ], {
-      stdio: ['pipe', 'pipe', 'pipe'],
-      env: { ...process.env },
-    });
-
-    let stdout = '';
-    let stderr = '';
-
-    proc.stdout.on('data', (data: Buffer) => { stdout += data.toString(); });
-    proc.stderr.on('data', (data: Buffer) => { stderr += data.toString(); });
-
-    const timeoutId = setTimeout(() => {
-      proc.kill('SIGTERM');
-      resolve({ success: false, output: 'Inference timed out after 300s' });
-    }, 310000); // Slightly longer than inference timeout
-
-    proc.on('close', (code: number | null) => {
-      clearTimeout(timeoutId);
-      if (code !== 0) {
-        resolve({ success: false, output: stderr || `Inference exited with code ${code}` });
-      } else {
-        resolve({ success: true, output: stdout.trim() });
-      }
-    });
-
-    proc.on('error', (err: Error) => {
-      clearTimeout(timeoutId);
-      resolve({ success: false, output: err.message });
-    });
+  const result = await inference({
+    systemPrompt,
+    userPrompt,
+    level: 'standard',
+    timeout: 300000,
   });
+  return { success: result.success, output: result.success ? result.output : (result.error || 'Inference failed') };
 }
 
 // --- Main ---
