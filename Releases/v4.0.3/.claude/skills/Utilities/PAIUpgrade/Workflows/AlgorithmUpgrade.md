@@ -84,7 +84,7 @@ Use Task tool with subagent_type=general-purpose:
 
 "Mine algorithm reflections specifically for Algorithm improvement patterns.
 
-Read MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+Read ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 Parse each line as JSON.
 
 For EACH entry, analyze Q2 (algorithm improvements) and classify the theme using this routing table:
