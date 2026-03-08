@@ -5,11 +5,11 @@
 ```bash
 curl -s -X POST http://localhost:8888/notify \
   -H "Content-Type: application/json" \
-  -d '{"message": "Running the Algorithm Upgrade workflow to analyze and propose improvements to the PAI Algorithm"}' \
+  -d '{"message": "Running the Algorithm Upgrade workflow in the Learning skill to analyze and propose improvements to the PAI Algorithm"}' \
   > /dev/null 2>&1 &
 ```
 
-Running the **AlgorithmUpgrade** workflow in the **PAIUpgrade** skill to propose Algorithm improvements...
+Running the **AlgorithmUpgrade** workflow in the **Learning** skill to propose Algorithm improvements...
 
 **Dedicated self-improvement workflow for the PAI Algorithm.** Combines internal reflection mining with Algorithm spec analysis to produce concrete, section-targeted upgrade proposals.
 
@@ -82,12 +82,13 @@ Spawn 1 agent:
 ```
 Use Task tool with subagent_type=general-purpose:
 
-"Mine algorithm reflections specifically for Algorithm improvement patterns.
+"Mine algorithm reflections for Algorithm improvement patterns.
 
-Read ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
-Parse each line as JSON.
+FIRST: Read and follow the base methodology in ~/.claude/skills/Utilities/Learning/Workflows/MineReflections.md
+— that workflow defines the data source, signal prioritization weights, and theme extraction process.
 
-For EACH entry, analyze Q2 (algorithm improvements) and classify the theme using this routing table:
+THEN: Apply this additional Algorithm-specific classification. For EACH Q2 theme, classify using this
+section routing table to map reflections to Algorithm spec sections:
 
 SECTION ROUTING:
 - ISC quality/criteria issues → 'ISC'
@@ -104,12 +105,7 @@ SECTION ROUTING:
 - Silent stall issues → 'NO_STALLS'
 - Other → 'OTHER'
 
-Weight by signal:
-- implied_sentiment <= 5 → HIGH signal
-- within_budget: false → BOOST
-- criteria_failed > 0 → BOOST
-
-Return format:
+Return format (extends MineReflections output with section classification):
 {
   'entries_analyzed': N,
   'date_range': '[earliest] to [latest]',
@@ -230,8 +226,8 @@ Ideas that require fundamental changes, not just spec edits:
 
 ---
 
-## Integration Notes
+## Integration
 
 - **Standalone:** User says "algorithm upgrade" or "improve the algorithm"
 - **From MineReflections:** If MineReflections finds Algorithm-related themes, it can suggest running this workflow for deeper analysis
-- **From Upgrade:** The main Upgrade workflow's Thread 3 provides a summary; this workflow goes deeper with section-level mapping
+- **From PAIUpgrade:** The Upgrade workflow's Thread 3 provides a summary via Synthesize; this workflow goes deeper with section-level mapping

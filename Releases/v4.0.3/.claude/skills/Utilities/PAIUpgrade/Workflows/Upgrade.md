@@ -251,88 +251,24 @@ EFFORT LEVEL: Return within 90 seconds. If queries are slow, reduce per_page to 
 
 ### Step 2b: Launch Thread 3 - Internal Signal Mining
 
-Spawn 2 parallel agents alongside Threads 1 and 2:
+Spawn 1 agent alongside Threads 1 and 2:
 
 ```
-Use Task tool with subagent_type=general-purpose, run 2 agents in parallel with above:
+Use Task tool with subagent_type=general-purpose, run 1 agent in parallel with above:
 
-Agent - Reflection Miner:
-"Mine internal algorithm reflections for recurring improvement patterns.
+Agent - Learning Synthesizer:
+"Run the Synthesize workflow from the Learning skill.
 
-Read ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
-Parse each line as JSON. For the full MineReflections methodology, see Workflows/MineReflections.md.
+Read and follow: ~/.claude/skills/Utilities/Learning/Workflows/Synthesize.md
 
-Quick summary of what to do:
-1. Read all entries from the JSONL file
-2. Prioritize entries with implied_sentiment <= 5, within_budget: false, or criteria_failed > 0
-3. Cluster Q2 answers (algorithm improvements) into themes by similarity
-4. Cluster Q1 answers (execution patterns) into themes
-5. For themes with 2+ occurrences (or 1 if sentiment <= 4), create upgrade candidates
+Return the full output from that workflow.
 
-Return format:
-{
-  'entries_analyzed': N,
-  'date_range': '[earliest] to [latest]',
-  'upgrade_candidates': [
-    {
-      'theme': '[Theme name]',
-      'frequency': N,
-      'signal': 'HIGH/MEDIUM/LOW',
-      'root_cause': '[Structural issue]',
-      'proposed_fix': '[What to change]',
-      'target_files': ['[paths]'],
-      'supporting_quotes': ['[Q2 excerpts]']
-    }
-  ],
-  'execution_warnings': ['[Recurring Q1 mistakes]'],
-  'aspirational_insights': ['[Q3 patterns]']
-}
-
-If the reflections file doesn't exist or is empty, return:
-{ 'entries_analyzed': 0, 'note': 'No reflections found yet — reflections accumulate after Standard+ Algorithm runs' }
-
-EFFORT LEVEL: Return within 60 seconds."
-
-Agent - Ratings Miner:
-"Mine user ratings for behavioral patterns — what to STOP doing and what to DO MORE of.
-
-Read ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
-Parse each line as JSON.
-
-Analysis steps:
-1. Group entries by session_id, compute per-session average rating
-2. Identify sessions with average rating <= 4 (problem sessions)
-3. Extract ALL explicit feedback (source='explicit') — these are highest signal
-4. Cluster sentiment_summary text from low-rated entries (rating <= 4) for patterns
-5. Cluster sentiment_summary text from high-rated entries (rating >= 8) for positive patterns
-
-Return format:
-{
-  'entries_analyzed': N,
-  'date_range': '[earliest] to [latest]',
-  'explicit_feedback': [
-    { 'timestamp': '...', 'rating': N, 'comment': '...', 'response_preview': '...' }
-  ],
-  'stop_patterns': [
-    { 'pattern': '[behavior to stop]', 'frequency': N, 'avg_rating': N, 'examples': ['...'] }
-  ],
-  'do_more_patterns': [
-    { 'pattern': '[behavior to continue]', 'frequency': N, 'avg_rating': N, 'examples': ['...'] }
-  ],
-  'problem_sessions': [
-    { 'session_id': '...', 'avg_rating': N, 'entry_count': N, 'themes': ['...'] }
-  ]
-}
-
-If the ratings file doesn't exist or is empty, return:
-{ 'entries_analyzed': 0, 'note': 'No ratings found yet' }
-
-EFFORT LEVEL: Return within 60 seconds."
+EFFORT LEVEL: Return within 120 seconds."
 ```
 
 ### Step 3: Wait and Collect Results
 
-Wait for all 10 agents (4 context + 4 source + 1 reflection + 1 ratings) to complete. Collect their outputs.
+Wait for all 9 agents (4 context + 4 source + 1 learning synthesizer) to complete. Collect their outputs.
 
 ### Step 4: Synthesize User Context
 
