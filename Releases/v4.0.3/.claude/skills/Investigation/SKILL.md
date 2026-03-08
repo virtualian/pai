@@ -12,4 +12,4 @@ Unified skill for OSINT and investigation workflows.
 | Request Pattern | Route To |
 |---|---|
 | OSINT, due diligence, company intel, background check, entity intel, threat intel | `OSINT/SKILL.md` |
-| Find person, locate, people search, reconnect, public records, reverse lookup | `PrivateInvestigator/SKILL.md` |
+| PrivateInvestigator, find person, locate, people search, reconnect, public records, reverse lookup | `PrivateInvestigator/SKILL.md` |

@@ -12,7 +12,7 @@ Unified skill for security assessment and intelligence workflows.
 | Request Pattern | Route To |
 |---|---|
 | Recon, reconnaissance, port scan, subdomain, DNS, WHOIS, ASN | `Recon/SKILL.md` |
-| Web assessment, OWASP, pentest, ffuf, app security, threat modeling | `WebAssessment/SKILL.md` |
-| Prompt injection, jailbreak, LLM security, guardrail bypass | `PromptInjection/SKILL.md` |
-| Security news, sec updates, breaches, tldrsec, security research | `SECUpdates/SKILL.md` |
-| Annual reports, security trends, threat landscape, vendor reports | `AnnualReports/SKILL.md` |
+| WebAssessment, web assessment, OWASP, pentest, ffuf, app security, threat modeling | `WebAssessment/SKILL.md` |
+| PromptInjection, prompt injection, jailbreak, LLM security, guardrail bypass | `PromptInjection/SKILL.md` |
+| SECUpdates, security news, sec updates, breaches, tldrsec, security research | `SECUpdates/SKILL.md` |
+| AnnualReports, annual reports, security trends, threat landscape, vendor reports | `AnnualReports/SKILL.md` |

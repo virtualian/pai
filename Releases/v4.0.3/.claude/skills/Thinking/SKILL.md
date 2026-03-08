@@ -11,10 +11,10 @@ Unified skill for all analytical and creative thinking modes.
 
 | Request Pattern | Route To |
 |---|---|
-| First principles, decompose, challenge assumptions, rebuild from scratch | `FirstPrinciples/SKILL.md` |
-| Iterative depth, deep exploration, multi-angle analysis, multiple perspectives | `IterativeDepth/SKILL.md` |
-| Be creative, brainstorm, divergent ideas, creative solutions, deep thinking | `BeCreative/SKILL.md` |
+| FirstPrinciples, first principles, decompose, challenge assumptions, rebuild from scratch | `FirstPrinciples/SKILL.md` |
+| IterativeDepth, iterative depth, deep exploration, multi-angle analysis, multiple perspectives | `IterativeDepth/SKILL.md` |
+| BeCreative, be creative, brainstorm, divergent ideas, creative solutions, deep thinking | `BeCreative/SKILL.md` |
 | Council, debate, perspectives, weigh options, deliberate, multiple viewpoints | `Council/SKILL.md` |
-| Red team, attack idea, counterarguments, critique, stress test, devil's advocate | `RedTeam/SKILL.md` |
-| Threat model, world model, test idea, future analysis, test investment, time horizons | `WorldThreatModelHarness/SKILL.md` |
-| Think about, figure out, experiment, iterate, improve, optimize, hypothesis | `Science/SKILL.md` |
+| RedTeam, red team, attack idea, counterarguments, critique, stress test, devil's advocate | `RedTeam/SKILL.md` |
+| WorldThreatModelHarness, threat model, world model, test idea, future analysis, test investment, time horizons | `WorldThreatModelHarness/SKILL.md` |
+| Science, think about, figure out, experiment, iterate, improve, optimize, hypothesis | `Science/SKILL.md` |

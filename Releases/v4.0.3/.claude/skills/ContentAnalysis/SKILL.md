@@ -11,4 +11,4 @@ Unified skill for content extraction and analysis workflows.
 
 | Request Pattern | Route To |
 |---|---|
-| Extract wisdom, content analysis, insight report, analyze content | `ExtractWisdom/SKILL.md` |
+| ExtractWisdom, extract wisdom, content analysis, insight report, analyze content | `ExtractWisdom/SKILL.md` |

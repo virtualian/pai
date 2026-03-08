@@ -11,5 +11,5 @@ Unified skill for web scraping workflows.
 
 | Request Pattern | Route To |
 |---|---|
-| Bright Data, scrape URL, proxy, crawl, progressive scraping, Chrome headers | `BrightData/SKILL.md` |
-| Twitter, Instagram, LinkedIn, TikTok, YouTube, Facebook, Google Maps, Amazon scraping, Apify | `Apify/SKILL.md` |
+| BrightData, Bright Data, scrape URL, proxy, crawl, progressive scraping, Chrome headers | `BrightData/SKILL.md` |
+| Apify, Twitter, Instagram, LinkedIn, TikTok, YouTube, Facebook, Google Maps, Amazon scraping | `Apify/SKILL.md` |
