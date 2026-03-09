@@ -69,12 +69,16 @@ export async function inference(options: InferenceOptions): Promise<InferenceRes
   const timeout = options.timeout || config.defaultTimeout;
 
   return new Promise((resolve) => {
-    // Build environment WITHOUT ANTHROPIC_API_KEY to force subscription auth
-    // Also unset CLAUDECODE so nested `claude` invocations don't trigger the
-    // nested-session guard (hooks run inside Claude Code's environment).
+    // Build clean environment: strip ANTHROPIC_API_KEY (force subscription auth)
+    // and all CLAUDE/CLAUDECODE env vars so nested `claude --print` doesn't
+    // detect a parent session and hang (CC 2.1.71+ sets CLAUDE_CODE_* vars).
     const env = { ...process.env };
     delete env.ANTHROPIC_API_KEY;
-    delete env.CLAUDECODE;
+    for (const key of Object.keys(env)) {
+      if (key === 'CLAUDECODE' || key.startsWith('CLAUDE_CODE_')) {
+        delete env[key];
+      }
+    }
 
     const args = [
       '--print',
