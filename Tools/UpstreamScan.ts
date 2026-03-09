@@ -209,7 +209,7 @@ function fetchOurPrs(): { number: number; title: string; state: string; comments
 }
 
 function fetchDiscussions(): GitHubItem[] {
-  const query = `{ repository(owner:"danielmiessler", name:"Personal_AI_Infrastructure") { discussions(first:15, orderBy:{field:CREATED_AT, direction:DESC}) { nodes { number title createdAt author { login } category { name } comments { totalCount nodes { author { login } replies(first:10) { nodes { author { login } } } } } } } } }`;
+  const query = `{ repository(owner:"danielmiessler", name:"Personal_AI_Infrastructure") { discussions(first:15, orderBy:{field:CREATED_AT, direction:DESC}) { nodes { number title createdAt author { login } category { name } comments(first:20) { totalCount nodes { author { login } replies(first:10) { nodes { author { login } } } } } } } } }`;
   const raw = ghCmd(`gh api graphql -f query='${query}'`);
   if (!raw) return [];
   try {
