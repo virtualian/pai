@@ -254,8 +254,8 @@ function getRecentWorkSessions(paiDir: string): WorkSession[] {
         // v4.0: Read from PRD.md frontmatter
         try {
           const prdHead = readFileSync(prdPath, 'utf-8').substring(0, 600);
-          const statusMatch = prdHead.match(/^status:\s*"?(\w+)"?/m);
-          const titleMatch = prdHead.match(/^title:\s*"?(.+?)"?\s*$/m);
+          const statusMatch = prdHead.match(/^(?:phase|status):\s*"?(\w+)"?/m);
+          const titleMatch = prdHead.match(/^(?:task|title):\s*"?(.+?)"?\s*$/m);
           const sessionIdMatch = prdHead.match(/^session_id:\s*"?(.+?)"?\s*$/m);
           if (statusMatch) status = statusMatch[1];
           if (titleMatch) rawTitle = titleMatch[1];
@@ -278,7 +278,7 @@ function getRecentWorkSessions(paiDir: string): WorkSession[] {
 
       try {
 
-        if (status === 'COMPLETED') continue;
+        if (status === 'COMPLETED' || status === 'complete') continue;
         if (rawTitle.toLowerCase().startsWith('tasknotification') || rawTitle.length < 10) continue;
         if (sessionId && seenSessionIds.has(sessionId)) continue;
         if (sessionId) seenSessionIds.add(sessionId);
@@ -299,13 +299,13 @@ function getRecentWorkSessions(paiDir: string): WorkSession[] {
           }
           if (prdFile) {
             const prdContent = readFileSync(prdFile, 'utf-8');
-            const prdIdMatch = prdContent.match(/^id:\s*(.+)$/m);
-            const prdStatusMatch = prdContent.match(/^status:\s*(.+)$/m);
-            const prdVerifyMatch = prdContent.match(/^verification_summary:\s*"?(.+?)"?$/m);
+            const prdIdMatch = prdContent.match(/^(?:slug|id):\s*(.+)$/m);
+            const prdStatusMatch = prdContent.match(/^(?:phase|status):\s*(.+)$/m);
+            const prdProgressMatch = prdContent.match(/^(?:progress|verification_summary):\s*"?(.+?)"?$/m);
             prd = {
               id: prdIdMatch?.[1]?.trim() || 'PRD',
               status: prdStatusMatch?.[1]?.trim() || 'UNKNOWN',
-              progress: prdVerifyMatch?.[1]?.trim() || '0/0'
+              progress: prdProgressMatch?.[1]?.trim() || '0/0'
             };
           }
         } catch { /* no PRDs */ }
