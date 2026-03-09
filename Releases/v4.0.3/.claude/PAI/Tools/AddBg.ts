@@ -14,10 +14,10 @@
  */
 
 import { existsSync } from "node:fs";
-import { exec } from "node:child_process";
+import { execFile } from "node:child_process";
 import { promisify } from "node:util";
 
-const execAsync = promisify(exec);
+const execFileAsync = promisify(execFile);
 
 // Brand background color for thumbnails/social previews
 const BRAND_COLOR = "#EAE9DF";
@@ -100,10 +100,8 @@ async function addBackground(
   console.log(`🎨 Adding background ${hexColor} to ${inputPath}`);
 
   // Use ImageMagick to composite the transparent image onto a colored background
-  const command = `magick "${inputPath}" -background "${hexColor}" -flatten "${outputPath}"`;
-
   try {
-    await execAsync(command);
+    await execFileAsync("magick", [inputPath, "-background", hexColor, "-flatten", outputPath]);
     console.log(`✅ Saved: ${outputPath}`);
   } catch (error) {
     console.error(

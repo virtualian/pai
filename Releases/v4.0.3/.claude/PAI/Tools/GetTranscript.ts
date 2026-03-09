@@ -15,7 +15,7 @@
  * @version 1.0.0
  */
 
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { writeFileSync } from 'fs';
 
 const HELP = `
@@ -47,12 +47,24 @@ if (args.includes('--help') || args.length === 0) {
   process.exit(0);
 }
 
-// Find URL (first arg that looks like a URL)
+// Find URL (first arg that looks like a URL) and validate
 const url = args.find(arg => arg.includes('youtube.com') || arg.includes('youtu.be'));
 
 if (!url) {
   console.error('❌ Error: No YouTube URL provided');
   console.log('\nUsage: bun GetTranscript.ts <youtube-url>');
+  process.exit(1);
+}
+
+// Validate URL to prevent command injection
+try {
+  const parsed = new URL(url);
+  if (!['www.youtube.com', 'youtube.com', 'youtu.be', 'm.youtube.com', 'music.youtube.com'].includes(parsed.hostname)) {
+    console.error('❌ Error: URL must be a YouTube domain');
+    process.exit(1);
+  }
+} catch {
+  console.error('❌ Error: Invalid URL format');
   process.exit(1);
 }
 
@@ -64,7 +76,7 @@ const outputFile = saveIndex !== -1 ? args[saveIndex + 1] : null;
 console.log(`📺 Extracting transcript from: ${url}`);
 
 try {
-  const transcript = execSync(`fabric -y "${url}"`, {
+  const transcript = execFileSync('fabric', ['-y', url], {
     encoding: 'utf-8',
     timeout: 120000, // 2 minute timeout
     maxBuffer: 10 * 1024 * 1024 // 10MB buffer for long transcripts

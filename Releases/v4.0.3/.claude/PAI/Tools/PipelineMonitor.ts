@@ -374,6 +374,11 @@ const HTML = `<!DOCTYPE html>
       }
     }
 
+    function esc(s) {
+      if (!s) return '';
+      return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
     function getCurrentStepIndex(exec) {
       if (exec.status === 'completed' || exec.status === 'failed') return exec.steps.length;
       for (let i = 0; i < exec.steps.length; i++) {
@@ -446,7 +451,7 @@ const HTML = `<!DOCTYPE html>
           <div class="kanban-column \${isCompleted ? 'completed' : ''} \${isFailed ? 'failed' : ''}">
             <div class="column-header">
               <div class="column-title">
-                \${col.type === 'action' ? \`<code>\${col.action}</code>\` : col.action}
+                \${col.type === 'action' ? \`<code>\${esc(col.action)}</code>\` : esc(col.action)}
                 <span class="column-count">\${cards.length}</span>
               </div>
             </div>
@@ -459,20 +464,20 @@ const HTML = `<!DOCTYPE html>
                 return \`
                   <div class="card \${exec.status}">
                     <div class="card-header">
-                      <span class="card-pipeline">\${exec.pipeline}</span>
-                      <span class="card-agent">\${exec.agent}</span>
+                      <span class="card-pipeline">\${esc(exec.pipeline)}</span>
+                      <span class="card-agent">\${esc(exec.agent)}</span>
                     </div>
                     \${exec.status === 'running' && currentStep ? \`
                       <div class="card-step">
                         \${currentStep.status === 'running' ? '◉' : '○'}
-                        Step: <code>\${currentStep.id}</code>
+                        Step: <code>\${esc(currentStep.id)}</code>
                       </div>
                     \` : ''}
                     <div class="card-progress">
                       \${exec.steps.map(s => \`<div class="progress-dot \${s.status}"></div>\`).join('')}
                     </div>
                     \${duration ? \`<div class="card-time">\${duration}</div>\` : ''}
-                    \${exec.error ? \`<div class="card-error">\${exec.error}</div>\` : ''}
+                    \${exec.error ? \`<div class="card-error">\${esc(exec.error)}</div>\` : ''}
                   </div>
                 \`;
               }).join('')}

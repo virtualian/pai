@@ -57,8 +57,12 @@ interface FeatureRegistry {
 
 const REGISTRY_DIR = join(process.env.HOME || '', '.claude', 'MEMORY', 'progress');
 
+function sanitizeName(name: string): string {
+  return name.replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
 function getRegistryPath(project: string): string {
-  return join(REGISTRY_DIR, `${project}-features.json`);
+  return join(REGISTRY_DIR, `${sanitizeName(project)}-features.json`);
 }
 
 function loadRegistry(project: string): FeatureRegistry | null {

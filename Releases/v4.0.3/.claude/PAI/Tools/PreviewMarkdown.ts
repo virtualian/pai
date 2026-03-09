@@ -27,6 +27,7 @@ const html = `<!DOCTYPE html>
   <meta charset="UTF-8">
   <title>${title}</title>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
   <style>
     body {
       max-width: 800px;
@@ -50,7 +51,7 @@ const html = `<!DOCTYPE html>
 <body>
   <div id="content"></div>
   <script>
-    document.getElementById('content').innerHTML = marked.parse(${JSON.stringify(content)});
+    document.getElementById('content').innerHTML = DOMPurify.sanitize(marked.parse(${JSON.stringify(content)}));
   </script>
 </body>
 </html>`;

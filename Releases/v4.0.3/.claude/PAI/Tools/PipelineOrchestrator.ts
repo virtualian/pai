@@ -73,9 +73,13 @@ async function reportStep(executionId: string, stepId: string, status: string, o
   }
 }
 
+function sanitizeName(name: string): string {
+  return name.replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
 // Load pipeline YAML
 async function loadPipeline(name: string): Promise<Pipeline> {
-  const path = join(PIPELINES_DIR, `${name}.pipeline.yaml`);
+  const path = join(PIPELINES_DIR, `${sanitizeName(name)}.pipeline.yaml`);
   const content = await readFile(path, "utf-8");
   return parseYaml(content) as Pipeline;
 }
@@ -119,7 +123,7 @@ function resolvePath(path: string, context: Record<string, unknown>): unknown {
 // Run an action
 async function runAction(actionName: string, input: unknown): Promise<{ success: boolean; output?: unknown; error?: string }> {
   const [category, name] = actionName.split("/");
-  const actionPath = join(ACTIONS_DIR, category, `${name}.action.ts`);
+  const actionPath = join(ACTIONS_DIR, sanitizeName(category), `${sanitizeName(name)}.action.ts`);
 
   try {
     const module = await import(actionPath);

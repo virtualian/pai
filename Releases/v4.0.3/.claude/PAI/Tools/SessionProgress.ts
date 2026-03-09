@@ -46,8 +46,12 @@ interface SessionProgress {
 // Progress files are now in STATE/progress/ (consolidated from MEMORY/PROGRESS/)
 const PROGRESS_DIR = join(process.env.HOME || '', '.claude', 'MEMORY', 'STATE', 'progress');
 
+function sanitizeName(name: string): string {
+  return name.replace(/[^a-zA-Z0-9_-]/g, '_');
+}
+
 function getProgressPath(project: string): string {
-  return join(PROGRESS_DIR, `${project}-progress.json`);
+  return join(PROGRESS_DIR, `${sanitizeName(project)}-progress.json`);
 }
 
 function loadProgress(project: string): SessionProgress | null {
