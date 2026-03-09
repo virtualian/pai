@@ -1,0 +1,21 @@
+{
+  "meta": {
+    "description": "Watermark + action tracker for upstream PAI repo monitoring. Tracks data freshness (lastSeenAt, lastCommentCount) AND decision state (disposition) per item.",
+    "lastScanAt": null,
+    "scanCount": 0,
+    "schema": "2.0",
+    "dispositionValues": {
+      "new": "First seen in latest scan, not yet presented to user",
+      "open": "Presented in scan report, awaiting user's decision",
+      "ignore": "Explicitly decided: not relevant or not worth acting on",
+      "implemented": "Acted on — see action field for what was done",
+      "deferred": "Relevant but not acting now — will re-surface if new comments appear"
+    },
+    "filteringRules": {
+      "resurfaceIf": "disposition is 'new' or 'open', OR comments > lastCommentCount (regardless of disposition)",
+      "skipIf": "disposition is 'ignore' or 'implemented' AND comments == lastCommentCount"
+    },
+    "lastDispositionUpdate": null
+  },
+  "items": {}
+}
