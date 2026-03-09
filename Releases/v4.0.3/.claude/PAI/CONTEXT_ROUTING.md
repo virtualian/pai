@@ -21,7 +21,7 @@ Load context on-demand by reading the file at the path listed. Only load what th
 | Behavioral rules | `PAI/AISTEERINGRULES.md` |
 | PRD format spec | `PAI/PRDFORMAT.md` |
 
-## {PRINCIPAL.NAME} — Personal Context
+## Ian — Personal Context
 
 | Topic | Path |
 |-------|------|
