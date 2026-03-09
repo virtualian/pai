@@ -1086,24 +1086,24 @@ printf "${SLATE_600}────────────────────
 
 case "$MODE" in
     nano)
-        printf "${LEARN_PRIMARY}◎${RESET} ${LEARN_WORK}📁${RESET}${SLATE_300}${work_count}${RESET} ${LEARN_SIGNALS}✦${RESET}${SLATE_300}${ratings_count}${RESET} ${LEARN_SESSIONS}⊕${RESET}${SLATE_300}${sessions_count}${RESET} ${LEARN_RESEARCH}◇${RESET}${SLATE_300}${research_count}${RESET}\n"
+        printf "${LEARN_PRIMARY}◎${RESET} ${LEARN_WORK}📁 ${RESET}${SLATE_300}${work_count}${RESET} ${LEARN_SIGNALS}✦ ${RESET}${SLATE_300}${ratings_count}${RESET} ${LEARN_SESSIONS}⊕ ${RESET}${SLATE_300}${sessions_count}${RESET} ${LEARN_RESEARCH}◇ ${RESET}${SLATE_300}${research_count}${RESET}\n"
         ;;
     micro)
-        printf "${LEARN_PRIMARY}◎${RESET} ${LEARN_WORK}📁${RESET}${SLATE_300}${work_count}${RESET} ${LEARN_SIGNALS}✦${RESET}${SLATE_300}${ratings_count}${RESET} ${LEARN_SESSIONS}⊕${RESET}${SLATE_300}${sessions_count}${RESET} ${LEARN_RESEARCH}◇${RESET}${SLATE_300}${research_count}${RESET}\n"
+        printf "${LEARN_PRIMARY}◎${RESET} ${LEARN_WORK}📁 ${RESET}${SLATE_300}${work_count}${RESET} ${LEARN_SIGNALS}✦ ${RESET}${SLATE_300}${ratings_count}${RESET} ${LEARN_SESSIONS}⊕ ${RESET}${SLATE_300}${sessions_count}${RESET} ${LEARN_RESEARCH}◇ ${RESET}${SLATE_300}${research_count}${RESET}\n"
         ;;
     mini)
         printf "${LEARN_PRIMARY}◎${RESET} ${LEARN_SECONDARY}MEMORY:${RESET} "
-        printf "${LEARN_WORK}📁${RESET}${SLATE_300}${work_count}${RESET} "
-        printf "${SLATE_600}│${RESET} ${LEARN_SIGNALS}✦${RESET}${SLATE_300}${ratings_count}${RESET} "
-        printf "${SLATE_600}│${RESET} ${LEARN_SESSIONS}⊕${RESET}${SLATE_300}${sessions_count}${RESET} "
-        printf "${SLATE_600}│${RESET} ${LEARN_RESEARCH}◇${RESET}${SLATE_300}${research_count}${RESET}\n"
+        printf "${LEARN_WORK}📁 ${RESET}${SLATE_300}${work_count}${RESET} "
+        printf "${SLATE_600}│${RESET} ${LEARN_SIGNALS}✦ ${RESET}${SLATE_300}${ratings_count}${RESET} "
+        printf "${SLATE_600}│${RESET} ${LEARN_SESSIONS}⊕ ${RESET}${SLATE_300}${sessions_count}${RESET} "
+        printf "${SLATE_600}│${RESET} ${LEARN_RESEARCH}◇ ${RESET}${SLATE_300}${research_count}${RESET}\n"
         ;;
     normal)
         printf "${LEARN_PRIMARY}◎${RESET} ${LEARN_SECONDARY}MEMORY:${RESET} "
-        printf "${LEARN_WORK}📁${RESET}${SLATE_300}${work_count}${RESET} ${LEARN_WORK}Work${RESET} "
-        printf "${SLATE_600}│${RESET} ${LEARN_SIGNALS}✦${RESET}${SLATE_300}${ratings_count}${RESET} ${LEARN_SIGNALS}Ratings${RESET} "
-        printf "${SLATE_600}│${RESET} ${LEARN_SESSIONS}⊕${RESET}${SLATE_300}${sessions_count}${RESET} ${LEARN_SESSIONS}Sessions${RESET} "
-        printf "${SLATE_600}│${RESET} ${LEARN_RESEARCH}◇${RESET}${SLATE_300}${research_count}${RESET} ${LEARN_RESEARCH}Research${RESET}\n"
+        printf "${LEARN_WORK}📁 ${RESET}${SLATE_300}${work_count}${RESET} ${LEARN_WORK}Work${RESET} "
+        printf "${SLATE_600}│${RESET} ${LEARN_SIGNALS}✦ ${RESET}${SLATE_300}${ratings_count}${RESET} ${LEARN_SIGNALS}Ratings${RESET} "
+        printf "${SLATE_600}│${RESET} ${LEARN_SESSIONS}⊕ ${RESET}${SLATE_300}${sessions_count}${RESET} ${LEARN_SESSIONS}Sessions${RESET} "
+        printf "${SLATE_600}│${RESET} ${LEARN_RESEARCH}◇ ${RESET}${SLATE_300}${research_count}${RESET} ${LEARN_RESEARCH}Research${RESET}\n"
         ;;
 esac
 printf "${SLATE_600}────────────────────────────────────────────────────────────────────────${RESET}\n"
