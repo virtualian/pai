@@ -349,6 +349,85 @@ brew install trufflehog
 
 ---
 
+## UpstreamScan.ts - Upstream Repository Monitor
+
+**Location:** `~/.claude/PAI/Tools/UpstreamScan.ts`
+
+Monitor the upstream PAI repo for new issues, PRs, and discussions. Uses disposition-based tracking to avoid re-processing already-decided items while surfacing new activity.
+
+**Usage:**
+```bash
+# Full scan (issues, PRs, discussions)
+bun ~/.claude/PAI/Tools/UpstreamScan.ts
+
+# Set GitHub username (for participation detection)
+bun ~/.claude/PAI/Tools/UpstreamScan.ts --author myuser
+
+# Report digest state only (no GitHub API calls)
+bun ~/.claude/PAI/Tools/UpstreamScan.ts --no-gh
+
+# Custom relevance keywords
+bun ~/.claude/PAI/Tools/UpstreamScan.ts --keywords-file keywords.json
+```
+
+**Environment Variables:**
+- `PAI_GITHUB_USER` - GitHub username for participation detection
+
+**When to Use:**
+- "upstream scan"
+- "check upstream"
+- "new issues upstream"
+- "what's new in the PAI repo"
+- "scan for upstream changes"
+
+**Workflow:** Read `~/.claude/PAI/Tools/ScanWorkflow.md` for the full 9-step scan workflow including deep-dive analysis and disposition recording.
+
+**Technical Details:**
+- Tracks items in `~/.claude/UPSTREAM-DIGEST.json` with dispositions (new/open/ignore/implemented/deferred)
+- Uses GitHub CLI (`gh`) for API access
+- GraphQL for discussions, REST for issues and PRs
+- Atomic digest writes (tmp + rename) for crash safety
+
+---
+
+## UpgradeCheck.ts - Pre-Upgrade Patch Analysis
+
+**Location:** `~/.claude/PAI/Tools/UpgradeCheck.ts`
+
+Analyze locally patched files against a target release. Classifies each active patch as SAFE (carries forward), CONFLICT (merge needed), or RETIRE (upstream fixed it).
+
+**Usage:**
+```bash
+# Analyze patches against a target version
+bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4
+
+# Analyze + create backup first
+bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4 --backup
+
+# Skip GitHub API calls
+bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4 --no-gh
+
+# Custom repo path
+bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4 --repo ~/projects/pai
+```
+
+**Environment Variables:**
+- `PAI_REPO` - Path to local PAI repo clone (default: `~/projects/pai`)
+- `PAI_DIR` - PAI installation directory (default: `~/.claude`)
+
+**When to Use:**
+- "check patches"
+- "upgrade check"
+- "pre-upgrade analysis"
+- "will my patches survive the upgrade"
+- "check compatibility with new release"
+
+**Prerequisites:**
+- `~/.claude/LOCAL_PATCHES.md` must exist (copy from `Tools/templates/LOCAL_PATCHES-TEMPLATE.md`)
+- Local PAI repo clone with git tags
+
+---
+
 ## Integration with Other Skills
 
 ### Art Skill
@@ -409,4 +488,4 @@ Archived skill files have been removed.
 
 ---
 
-**Last Updated:** 2026-01-12
+**Last Updated:** 2026-03-09
