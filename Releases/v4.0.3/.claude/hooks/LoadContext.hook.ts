@@ -36,7 +36,7 @@ import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { getPaiDir } from './lib/paths';
 import { recordSessionStart } from './lib/notifications';
-import { loadLearningDigest, loadWisdomFrames, loadFailurePatterns, loadSignalTrends, loadLatestSynthesis, loadCorrectionTrends } from './lib/learning-readback';
+import { loadLearningDigest, loadWisdomFrames, loadFailurePatterns, loadSignalTrends, loadLatestSynthesis, loadBehavioralTrends } from './lib/learning-readback';
 
 interface DynamicContextConfig {
   relationshipContext?: boolean;
@@ -482,11 +482,11 @@ async function main() {
       const failurePatterns = loadFailurePatterns(paiDir);
       const signalTrends = loadSignalTrends(paiDir);
       const latestSynthesis = loadLatestSynthesis(paiDir);
-      const correctionTrends = loadCorrectionTrends(paiDir);
+      const behavioralTrends = loadBehavioralTrends(paiDir);
 
       const learningParts: string[] = [];
       if (signalTrends) learningParts.push(signalTrends);
-      if (correctionTrends) learningParts.push(correctionTrends);
+      if (behavioralTrends) learningParts.push(behavioralTrends);
       if (wisdomFrames) learningParts.push(wisdomFrames);
       if (latestSynthesis) learningParts.push(latestSynthesis);
       if (learningDigest) learningParts.push(learningDigest);

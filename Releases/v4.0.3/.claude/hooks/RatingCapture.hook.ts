@@ -67,10 +67,10 @@ const LAST_RESPONSE_CACHE = join(BASE_DIR, 'MEMORY', 'STATE', 'last-response.txt
 const MIN_PROMPT_LENGTH = 3;
 const MIN_CONFIDENCE = 0.5;
 
-// ── CorrectionMode Constants ──
+// ── Behavioral Feedback Constants ──
 
-const CORRECTION_MODE_STATE = join(BASE_DIR, 'MEMORY', 'STATE', 'correction-mode.json');
-const CORRECTIONS_FILE = join(SIGNALS_DIR, 'corrections.jsonl');
+const BEHAVIORAL_FEEDBACK_STATE = join(BASE_DIR, 'MEMORY', 'STATE', 'behavioral-feedback.json');
+const BEHAVIORAL_SIGNALS_FILE = join(SIGNALS_DIR, 'behavioral-signals.jsonl');
 const CORRECTION_CONFIDENCE_THRESHOLD = 0.8;
 
 /**
@@ -98,16 +98,56 @@ interface CorrectionDetection {
   promptPreview: string;
 }
 
-interface CorrectionModeState {
+type BehaviorType =
+  | 'thorough-verification'
+  | 'clear-documentation'
+  | 'surgical-precision'
+  | 'iterative-improvement'
+  | 'evidence-based'
+  | 'working-output'
+  | 'good-communication'
+  | 'unclassified';
+
+interface BehavioralSignal {
+  timestamp: string;
+  session_id: string;
+  signal_id: string;
+  signal_type: 'correction' | 'reinforcement';
+  phase: 'triggered' | 'verified' | 'rated';
+  confidence: number;
+  pattern_matched?: 'negation_correction' | 'redirect' | 'behavioral' | 'repeated_request';
+  suppressed?: boolean;
+  suppressed_reason?: string;
+  rating?: number;
+  rating_source?: 'explicit' | 'implicit';
+  behavior_type?: BehaviorType;
+  behavior_summary?: string;
+  prompt_preview: string;
+  response_preview?: string;
+  outcome?: { delta_from_trigger: string };
+}
+
+interface BehavioralFeedbackState {
   enabled: boolean;
-  review_period_days: number;
   verbose: boolean;
-  auto_disabled_at: string | null;
-  auto_disabled_reason: string | null;
-  lifetime_corrections: number;
-  lifetime_false_positives: number;
-  review_started_at: string;
-  next_review_at: string;
+  correction: {
+    enabled: boolean;
+    review_period_days: number;
+    auto_disabled_at: string | null;
+    auto_disabled_reason: string | null;
+    lifetime_corrections: number;
+    lifetime_false_positives: number;
+    review_started_at: string;
+    next_review_at: string;
+  };
+  reinforcement: {
+    enabled: boolean;
+    lifetime_reinforcements: number;
+    behavior_frequency: Record<string, number>;
+    top_behaviors: BehaviorType[];
+    last_reinforcement_at: string | null;
+    saturation_threshold: number;
+  };
 }
 
 // Correction patterns — high-precision regexes for explicit corrections only
@@ -141,6 +181,131 @@ const REFINEMENT_PATTERNS: RegExp[] = [
   /^(instead|rather),?\s+(let'?s?|can\s+we|how\s+about)/i,
 ];
 
+// ── ReinforcementMode: Behavior Classification ──
+
+const BEHAVIOR_MARKERS: Array<{
+  pattern: RegExp;
+  behavior: BehaviorType;
+  confidence: number;
+}> = [
+  { pattern: /✅\s*VERIFY/, behavior: 'thorough-verification', confidence: 0.90 },
+  { pattern: /\b(diff|verified|confirmed|checked|tested)\b/i, behavior: 'thorough-verification', confidence: 0.85 },
+  { pattern: /\b(report|doc|summary|wrote|documented)\b.*\b(created|saved|written)\b/i, behavior: 'clear-documentation', confidence: 0.80 },
+  { pattern: /\b(1-line|single|minimal|targeted|surgical)\b.*\b(fix|change|patch|diff)\b/i, behavior: 'surgical-precision', confidence: 0.85 },
+  { pattern: /🔄\s*ITERATION/, behavior: 'iterative-improvement', confidence: 0.85 },
+  { pattern: /\b(cited|referenced|linked|source|evidence|API response)\b/i, behavior: 'evidence-based', confidence: 0.80 },
+  { pattern: /\b(deployed|running|working|functional|live|posted)\b/i, behavior: 'working-output', confidence: 0.75 },
+];
+
+function classifyBehavior(
+  responsePreview: string,
+  prompt: string,
+  comment?: string
+): { behavior_type: BehaviorType; behavior_summary: string; confidence: number } {
+  const text = [responsePreview, prompt, comment].filter(Boolean).join(' ');
+
+  for (const { pattern, behavior, confidence } of BEHAVIOR_MARKERS) {
+    if (pattern.test(text)) {
+      return {
+        behavior_type: behavior,
+        behavior_summary: safeSlice(text, 80),
+        confidence,
+      };
+    }
+  }
+
+  return { behavior_type: 'unclassified', behavior_summary: '', confidence: 0.5 };
+}
+
+// Track session reinforcement count (in-memory, resets per hook invocation)
+let sessionReinforcementCount = 0;
+
+function shouldCaptureReinforcement(
+  state: BehavioralFeedbackState,
+  behaviorType: BehaviorType,
+  confidence: number,
+): { capture: boolean; reason?: string } {
+  if (!state.enabled || !state.reinforcement.enabled) {
+    return { capture: false, reason: 'disabled' };
+  }
+  if (confidence < 0.7) {
+    return { capture: false, reason: 'low_confidence' };
+  }
+  if (sessionReinforcementCount >= 3) {
+    return { capture: false, reason: 'session_cap' };
+  }
+  const freq = state.reinforcement.behavior_frequency[behaviorType] || 0;
+  if (freq >= state.reinforcement.saturation_threshold) {
+    return { capture: false, reason: 'saturated' };
+  }
+  return { capture: true };
+}
+
+function generateReinforcementId(): string {
+  return generateSignalId('reinf');
+}
+
+function updateReinforcementState(state: BehavioralFeedbackState, behaviorType: BehaviorType): void {
+  state.reinforcement.lifetime_reinforcements++;
+  state.reinforcement.behavior_frequency[behaviorType] =
+    (state.reinforcement.behavior_frequency[behaviorType] || 0) + 1;
+  state.reinforcement.last_reinforcement_at = getISOTimestamp();
+
+  // Recalculate top_behaviors (sorted by frequency, top 5)
+  const sorted = Object.entries(state.reinforcement.behavior_frequency)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([type]) => type as BehaviorType);
+  state.reinforcement.top_behaviors = sorted;
+
+  writeFileSync(BEHAVIORAL_FEEDBACK_STATE, JSON.stringify(state, null, 2), 'utf-8');
+}
+
+async function captureReinforcement(
+  rating: number,
+  source: 'explicit' | 'implicit',
+  prompt: string,
+  responsePreview: string,
+  sessionId: string,
+  comment?: string,
+): Promise<void> {
+  if (rating < 8) return;
+
+  const state = loadBehavioralFeedbackState();
+  if (!state?.reinforcement?.enabled) return;
+
+  const classification = classifyBehavior(responsePreview, prompt, comment);
+
+  const guard = shouldCaptureReinforcement(state, classification.behavior_type, classification.confidence);
+  if (!guard.capture) {
+    console.error(`[ReinforcementMode] Skipped (${guard.reason})`);
+    return;
+  }
+
+  writeBehavioralSignal({
+    timestamp: getISOTimestamp(),
+    session_id: sessionId,
+    signal_id: generateReinforcementId(),
+    signal_type: 'reinforcement',
+    phase: 'triggered',
+    confidence: classification.confidence,
+    rating,
+    rating_source: source,
+    behavior_type: classification.behavior_type,
+    behavior_summary: classification.behavior_summary,
+    prompt_preview: safeSlice(prompt.trim(), 60),
+    response_preview: safeSlice(responsePreview, 500),
+  });
+
+  sessionReinforcementCount++;
+  updateReinforcementState(state, classification.behavior_type);
+
+  console.error(
+    `[ReinforcementMode] Captured: ${classification.behavior_type} ` +
+    `(${classification.confidence}) for rating ${rating}`
+  );
+}
+
 function detectCorrection(prompt: string): CorrectionDetection {
   const trimmed = prompt.trim();
   const preview = trimmed.length > 60 ? safeSlice(trimmed, 57) + '...' : trimmed;
@@ -162,31 +327,31 @@ function detectCorrection(prompt: string): CorrectionDetection {
   return { matched: false, confidence: 0, pattern: null, promptPreview: preview };
 }
 
-function loadCorrectionModeState(): CorrectionModeState | null {
+function loadBehavioralFeedbackState(): BehavioralFeedbackState | null {
   try {
-    if (!existsSync(CORRECTION_MODE_STATE)) return null;
-    return JSON.parse(readFileSync(CORRECTION_MODE_STATE, 'utf-8'));
+    if (!existsSync(BEHAVIORAL_FEEDBACK_STATE)) return null;
+    return JSON.parse(readFileSync(BEHAVIORAL_FEEDBACK_STATE, 'utf-8'));
   } catch {
     return null;
   }
 }
 
-function checkKillSwitch(): { active: boolean; reason?: string; state?: CorrectionModeState } {
-  const state = loadCorrectionModeState();
+function checkKillSwitch(): { active: boolean; reason?: string; state?: BehavioralFeedbackState } {
+  const state = loadBehavioralFeedbackState();
   if (!state) return { active: false, reason: 'no_state_file' };
-  if (!state.enabled) return { active: false, reason: state.auto_disabled_reason || 'disabled' };
+  if (!state.enabled || !state.correction.enabled) return { active: false, reason: state.correction.auto_disabled_reason || 'disabled' };
 
   // Check rolling 20 rated entries for kill-switch
   try {
-    if (!existsSync(CORRECTIONS_FILE)) return { active: true, state };
+    if (!existsSync(BEHAVIORAL_SIGNALS_FILE)) return { active: true, state };
 
     // Tail-read optimization: read only the last ~4KB instead of the entire file.
     // Each JSONL line is ~300 bytes, so 4KB covers ~13 entries — enough for rolling checks.
-    const fd = Bun.file(CORRECTIONS_FILE);
+    const fd = Bun.file(BEHAVIORAL_SIGNALS_FILE);
     const fileSize = fd.size;
     const tailSize = Math.min(fileSize, 4096);
     const buffer = new Uint8Array(tailSize);
-    const fh = openSync(CORRECTIONS_FILE, 'r');
+    const fh = openSync(BEHAVIORAL_SIGNALS_FILE, 'r');
     readSync(fh, buffer, 0, tailSize, Math.max(0, fileSize - tailSize));
     closeSync(fh);
 
@@ -226,14 +391,18 @@ function checkKillSwitch(): { active: boolean; reason?: string; state?: Correcti
   }
 }
 
-function writeCorrectionEntry(entry: Record<string, unknown>): void {
-  if (!existsSync(SIGNALS_DIR)) mkdirSync(SIGNALS_DIR, { recursive: true });
-  appendFileSync(CORRECTIONS_FILE, JSON.stringify(entry) + '\n', 'utf-8');
+function writeBehavioralSignal(entry: Record<string, unknown>): void {
+  mkdirSync(SIGNALS_DIR, { recursive: true });
+  appendFileSync(BEHAVIORAL_SIGNALS_FILE, JSON.stringify(entry) + '\n', 'utf-8');
+}
+
+function generateSignalId(prefix: string): string {
+  const { year, month, day, hours, minutes, seconds } = getPSTComponents();
+  return `${prefix}_${year}${month}${day}_${hours}${minutes}${seconds}`;
 }
 
 function generateCorrectionId(): string {
-  const { year, month, day, hours, minutes, seconds } = getPSTComponents();
-  return `corr_${year}${month}${day}_${hours}${minutes}${seconds}`;
+  return generateSignalId('corr');
 }
 
 /**
@@ -246,10 +415,11 @@ function runCorrectionMode(prompt: string, sessionId: string): boolean {
   if (!detection.matched || detection.confidence < CORRECTION_CONFIDENCE_THRESHOLD) {
     // Log suppressed detection if it was close (confidence 0.6-0.79)
     if (detection.matched && detection.confidence >= 0.6) {
-      writeCorrectionEntry({
+      writeBehavioralSignal({
         timestamp: getISOTimestamp(),
         session_id: sessionId,
-        correction_id: generateCorrectionId(),
+        signal_id: generateCorrectionId(),
+        signal_type: 'correction',
         phase: 'triggered',
         confidence: detection.confidence,
         suppressed: true,
@@ -265,10 +435,11 @@ function runCorrectionMode(prompt: string, sessionId: string): boolean {
   // Kill-switch check
   const killSwitch = checkKillSwitch();
   if (!killSwitch.active) {
-    writeCorrectionEntry({
+    writeBehavioralSignal({
       timestamp: getISOTimestamp(),
       session_id: sessionId,
-      correction_id: generateCorrectionId(),
+      signal_id: generateCorrectionId(),
+      signal_type: 'correction',
       phase: 'triggered',
       confidence: detection.confidence,
       suppressed: true,
@@ -287,10 +458,11 @@ CORRECTION DETECTED — verify before editing. Use Read/Grep to confirm current 
 </system-reminder>`);
 
   // Log triggered entry
-  writeCorrectionEntry({
+  writeBehavioralSignal({
     timestamp: getISOTimestamp(),
     session_id: sessionId,
-    correction_id: correctionId,
+    signal_id: correctionId,
+    signal_type: 'correction',
     phase: 'triggered',
     confidence: detection.confidence,
     suppressed: false,
@@ -302,8 +474,8 @@ CORRECTION DETECTED — verify before editing. Use Read/Grep to confirm current 
   try {
     const state = killSwitch.state;
     if (state) {
-      state.lifetime_corrections++;
-      writeFileSync(CORRECTION_MODE_STATE, JSON.stringify(state, null, 2), 'utf-8');
+      state.correction.lifetime_corrections++;
+      writeFileSync(BEHAVIORAL_FEEDBACK_STATE, JSON.stringify(state, null, 2), 'utf-8');
     }
   } catch {
     console.error('[CorrectionMode] Failed to update state file');
@@ -650,6 +822,8 @@ async function main() {
 
       writeRating(entry);
 
+      // ReinforcementMode: capture positive explicit ratings
+      await captureReinforcement(explicitResult.rating, 'explicit', prompt, cachedResponse || '', data.session_id, explicitResult.comment);
 
       if (explicitResult.rating < 5) {
         // Read cached last response (written by LastResponseCache.hook.ts on previous Stop event)
@@ -735,7 +909,10 @@ async function main() {
           confidence: 0.95,
           ...(cachedResponse ? { response_preview: safeSlice(cachedResponse, 500) } : {}),
         });
-  
+
+        // ReinforcementMode: capture praise fast-path
+        await captureReinforcement(8, 'implicit', prompt, cachedResponse || '', data.session_id);
+
         process.exit(0);
       }
     }
@@ -777,6 +954,8 @@ async function main() {
 
       writeRating(entry);
 
+      // ReinforcementMode: capture positive implicit ratings
+      await captureReinforcement(sentiment.rating, 'implicit', prompt, implicitCachedResponse || '', data.session_id, undefined);
 
       if (sentiment.rating < 5) {
         captureLowRatingLearning(

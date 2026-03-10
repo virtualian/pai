@@ -3,7 +3,7 @@
 **Issue:** #73 (Continuous HITL Learning Cycle)
 **Branch:** `73-continuous-hitl-learning-cycle`
 **Date:** 2026-03-10
-**Status:** Design complete, implementation pending
+**Status:** Implemented (2026-03-10)
 
 ---
 
@@ -59,9 +59,9 @@ RatingCapture.hook.ts
 
 | Source | Trigger Point | Line in RatingCapture.hook.ts | Data Available |
 |--------|--------------|-------------------------------|----------------|
-| Explicit rating >= 8 | After `writeRating()` in Path 1 | ~651 (after line 651) | rating, comment, response_preview |
-| Positive praise fast-path | After `writeRating()` in praise block | ~738 (after line 738) | rating=8, prompt, response_preview |
-| Implicit sentiment >= 8 | After `writeRating()` in Path 2 | ~778 (after line 778) | rating, sentiment_summary, detailed_context, response_preview |
+| Explicit rating >= 8 | After `writeRating()` in Path 1 | ~826 | rating, comment, response_preview |
+| Positive praise fast-path | After `writeRating()` in praise block | ~914 | rating=8, prompt, response_preview |
+| Implicit sentiment >= 8 | After `writeRating()` in Path 2 | ~958 | rating, sentiment_summary, response_preview |
 
 ### Confidence thresholds
 
@@ -79,9 +79,11 @@ RatingCapture.hook.ts
 
 ## Component 2: Behavior Classification
 
-### Approach: Regex-first, inference fallback
+### Approach: Regex-only (inference fallback deferred)
 
-The existing PAI output format (NATIVE/ALGORITHM) contains structured markers that reveal what the AI was doing. Extract behavior type from these markers with regex (~5ms), falling back to Haiku inference (~1s) only for unstructured responses.
+The existing PAI output format (NATIVE/ALGORITHM) contains structured markers that reveal what the AI was doing. Extract behavior type from these markers with regex (~5ms). Unclassified responses get confidence 0.5, which falls below the 0.7 capture threshold and are silently skipped.
+
+> **Design note:** Inference fallback was in the original design but deferred from implementation. The `unclassified` type returns confidence 0.5 which is filtered by `shouldCaptureReinforcement()`. This is intentional — we collect data on how often classification fails before investing in inference overhead.
 
 ### Regex extraction from structured output
 
@@ -91,33 +93,17 @@ const BEHAVIOR_MARKERS: Array<{
   behavior: BehaviorType;
   confidence: number;
 }> = [
-  // Verification behaviors
-  { pattern: /\b(diff|verified|confirmed|checked|tested)\b/i,
-    behavior: 'thorough-verification', confidence: 0.85 },
-  { pattern: /✅\s*VERIFY/,
-    behavior: 'thorough-verification', confidence: 0.90 },
-
-  // Documentation behaviors
-  { pattern: /\b(report|doc|summary|wrote|documented)\b.*\b(created|saved|written)\b/i,
-    behavior: 'clear-documentation', confidence: 0.80 },
-
-  // Surgical precision
-  { pattern: /\b(1-line|single|minimal|targeted|surgical)\b.*\b(fix|change|patch|diff)\b/i,
-    behavior: 'surgical-precision', confidence: 0.85 },
-
-  // Iterative improvement
-  { pattern: /🔄\s*ITERATION/,
-    behavior: 'iterative-improvement', confidence: 0.85 },
-
-  // Evidence-based work
-  { pattern: /\b(cited|referenced|linked|source|evidence|API response)\b/i,
-    behavior: 'evidence-based', confidence: 0.80 },
-
-  // Working output
-  { pattern: /\b(deployed|running|working|functional|live|posted)\b/i,
-    behavior: 'working-output', confidence: 0.75 },
+  { pattern: /✅\s*VERIFY/, behavior: 'thorough-verification', confidence: 0.90 },
+  { pattern: /\b(diff|verified|confirmed|checked|tested)\b/i, behavior: 'thorough-verification', confidence: 0.85 },
+  { pattern: /\b(report|doc|summary|wrote|documented)\b.*\b(created|saved|written)\b/i, behavior: 'clear-documentation', confidence: 0.80 },
+  { pattern: /\b(1-line|single|minimal|targeted|surgical)\b.*\b(fix|change|patch|diff)\b/i, behavior: 'surgical-precision', confidence: 0.85 },
+  { pattern: /🔄\s*ITERATION/, behavior: 'iterative-improvement', confidence: 0.85 },
+  { pattern: /\b(cited|referenced|linked|source|evidence|API response)\b/i, behavior: 'evidence-based', confidence: 0.80 },
+  { pattern: /\b(deployed|running|working|functional|live|posted)\b/i, behavior: 'working-output', confidence: 0.75 },
 ];
 ```
+
+Patterns are evaluated in order — higher-confidence structured markers (✅ VERIFY) match before broader word-level patterns.
 
 ### Behavior taxonomy
 
@@ -130,35 +116,9 @@ const BEHAVIOR_MARKERS: Array<{
 | `evidence-based` | Cited sources, showed proof, linked references | "Every quote verified against actual API responses" (9/10) |
 | `working-output` | Produced functional, usable output | "great. that works" — posted to issue (9/10) |
 | `good-communication` | Clear format, right level of detail, concise | "the site is looking great now" — skill listing (9/10) |
-| `unclassified` | Fallback when no markers match | Triggers Haiku inference |
+| `unclassified` | Fallback when no markers match | Returns confidence 0.5, filtered by 0.7 threshold |
 
-### Inference fallback (for `unclassified`)
-
-```typescript
-const BEHAVIOR_CLASSIFICATION_PROMPT = `
-Classify the AI behavior that earned positive feedback.
-
-RESPONSE PREVIEW:
-{response_preview}
-
-USER FEEDBACK:
-{prompt_or_comment}
-
-Classify into exactly ONE behavior type:
-- thorough-verification: Checked/verified/tested/diffed before claiming done
-- clear-documentation: Created well-structured reports or summaries
-- surgical-precision: Minimal, targeted change that fixed the exact issue
-- iterative-improvement: Successfully improved based on prior feedback
-- evidence-based: Cited sources, showed proof, linked references
-- working-output: Produced functional, usable, deployed output
-- good-communication: Clear format, concise, right level of detail
-
-OUTPUT (JSON only):
-{"behavior_type": "...", "behavior_summary": "...", "confidence": 0.0-1.0}
-`;
-```
-
-Uses `inference({ level: 'fast', timeout: 5000 })` — same as sentiment analysis but with tighter timeout since this is non-blocking.
+> **Deferred:** Haiku inference fallback for `unclassified` was designed but not implemented. If regex classification miss rate is high (observable in behavioral-signals.jsonl), add inference at that point.
 
 ---
 
@@ -177,7 +137,7 @@ interface BehavioralSignal {
   confidence: number;
 
   // Correction-specific
-  pattern_matched?: 'negation_correction' | 'behavioral' | 'repeated_request';
+  pattern_matched?: 'negation_correction' | 'redirect' | 'behavioral' | 'repeated_request';
   suppressed?: boolean;
   suppressed_reason?: string;
 
@@ -263,6 +223,8 @@ interface BehavioralFeedbackState {
     auto_disabled_reason: string | null;
     lifetime_corrections: number;
     lifetime_false_positives: number;
+    review_started_at: string;
+    next_review_at: string;
   };
 
   // Reinforcement tracking (NEW)
@@ -289,7 +251,9 @@ interface BehavioralFeedbackState {
     "auto_disabled_at": null,
     "auto_disabled_reason": null,
     "lifetime_corrections": 0,
-    "lifetime_false_positives": 0
+    "lifetime_false_positives": 0,
+    "review_started_at": "2026-03-10T00:45:00Z",
+    "next_review_at": "2026-03-17T00:45:00Z"
   },
   "reinforcement": {
     "enabled": true,
@@ -319,12 +283,15 @@ CorrectionMode has a kill-switch that auto-disables when corrections aren't help
 
 ### Implementation
 
+Session reinforcement count is tracked via a module-level `let sessionReinforcementCount = 0` variable. Since the hook runs as a separate bun process per `UserPromptSubmit` event, this naturally resets per invocation — no cross-session leakage.
+
 ```typescript
+let sessionReinforcementCount = 0;
+
 function shouldCaptureReinforcement(
   state: BehavioralFeedbackState,
   behaviorType: BehaviorType,
   confidence: number,
-  sessionReinforcementCount: number
 ): { capture: boolean; reason?: string } {
   if (!state.enabled || !state.reinforcement.enabled) {
     return { capture: false, reason: 'disabled' };
@@ -352,10 +319,13 @@ function shouldCaptureReinforcement(
 ```typescript
 export function loadBehavioralTrends(paiDir: string): string | null {
   // Reads behavioral-feedback.json state
-  // Reads last ~4KB of behavioral-signals.jsonl (tail-read)
+  // Reads behavioral-signals.jsonl (full file read)
+  // Filters by signal_type to compute correction + reinforcement stats
   // Returns compact summary for session context injection
 }
 ```
+
+> **Future optimization:** Currently reads the entire `behavioral-signals.jsonl` file. When the file grows large (10K+ entries), apply the same tail-read optimization used by `checkKillSwitch()` (4KB buffer, ~13 entries). Deferred since the file currently has zero entries.
 
 ### Output format (target: <=400 chars)
 
@@ -376,22 +346,14 @@ When only reinforcements exist:
 
 ### LoadContext.hook.ts wiring
 
-Replace the existing import and call:
-
 ```typescript
-// BEFORE (line 39):
-import { ..., loadCorrectionTrends } from './lib/learning-readback';
-// AFTER:
+// Line 39:
 import { ..., loadBehavioralTrends } from './lib/learning-readback';
 
-// BEFORE (line 485):
-const correctionTrends = loadCorrectionTrends(paiDir);
-// AFTER:
+// Line 485:
 const behavioralTrends = loadBehavioralTrends(paiDir);
 
-// BEFORE (line 489):
-if (correctionTrends) learningParts.push(correctionTrends);
-// AFTER:
+// Line 489:
 if (behavioralTrends) learningParts.push(behavioralTrends);
 ```
 
@@ -399,9 +361,9 @@ if (behavioralTrends) learningParts.push(behavioralTrends);
 
 ## Component 7: RatingCapture Integration Points
 
-### New function: captureReinforcement()
+### captureReinforcement()
 
-Inserted after each rating write point. Runs async (non-blocking) so it doesn't delay the hook exit.
+Inserted after each rating write point. Awaited before `process.exit(0)` to ensure writes complete. Early exit (`rating < 8`) resolves immediately with negligible overhead.
 
 ```typescript
 async function captureReinforcement(
@@ -411,23 +373,17 @@ async function captureReinforcement(
   responsePreview: string,
   sessionId: string,
   comment?: string,
-  sentimentSummary?: string
 ): Promise<void> {
   if (rating < 8) return;
 
   const state = loadBehavioralFeedbackState();
   if (!state?.reinforcement?.enabled) return;
 
-  // Classify behavior (regex-first, inference fallback)
+  // Classify behavior (regex-only, no inference fallback)
   const classification = classifyBehavior(responsePreview, prompt, comment);
 
   // Check saturation guard
-  const guard = shouldCaptureReinforcement(
-    state,
-    classification.behavior_type,
-    classification.confidence,
-    getSessionReinforcementCount(sessionId)
-  );
+  const guard = shouldCaptureReinforcement(state, classification.behavior_type, classification.confidence);
   if (!guard.capture) {
     console.error(`[ReinforcementMode] Skipped (${guard.reason})`);
     return;
@@ -449,7 +405,7 @@ async function captureReinforcement(
     response_preview: safeSlice(responsePreview, 500),
   });
 
-  // Update state
+  sessionReinforcementCount++;
   updateReinforcementState(state, classification.behavior_type);
 
   console.error(
@@ -463,28 +419,25 @@ async function captureReinforcement(
 
 | Location | After Line | Context |
 |----------|-----------|---------|
-| Explicit rating path | ~674 (before `process.exit(0)`) | `await captureReinforcement(explicitResult.rating, 'explicit', prompt, cachedResponse, data.session_id, explicitResult.comment);` |
-| Praise fast-path | ~739 (before `process.exit(0)`) | `await captureReinforcement(8, 'implicit', prompt, cachedResponse, data.session_id);` |
-| Implicit sentiment path | ~778 (after `writeRating()`) | `await captureReinforcement(sentiment.rating, 'implicit', prompt, implicitCachedResponse, data.session_id, undefined, sentiment.summary);` |
+| Explicit rating path | ~826 (after `writeRating`, before low rating check) | `await captureReinforcement(explicitResult.rating, 'explicit', prompt, cachedResponse \|\| '', data.session_id, explicitResult.comment);` |
+| Praise fast-path | ~914 (before `process.exit(0)`) | `await captureReinforcement(8, 'implicit', prompt, cachedResponse \|\| '', data.session_id);` |
+| Implicit sentiment path | ~958 (after `writeRating()`) | `await captureReinforcement(sentiment.rating, 'implicit', prompt, implicitCachedResponse \|\| '', data.session_id, undefined);` |
 
 ---
 
-## Migration Plan
+## Migration (Completed)
 
-### CorrectionMode data migration
+CorrectionMode had zero production entries. Clean rename with no backward compatibility needed:
 
-Since CorrectionMode was just built on this branch with zero production entries:
-
-1. Rename `corrections.jsonl` → `behavioral-signals.jsonl`
-2. Rename `correction-mode.json` → `behavioral-feedback.json`
-3. Add `signal_type: 'correction'` field to correction entries
-4. Wrap correction state under `correction:` key in state file
-5. Rename `loadCorrectionTrends()` → `loadBehavioralTrends()`
-6. Update all internal references (3 files: RatingCapture, learning-readback, LoadContext)
-
-### Backward compatibility
-
-No backward compatibility needed — CorrectionMode has zero production entries (lifetime_corrections: 0 in current state file). Clean rename.
+1. ✅ Constants renamed: `CORRECTIONS_FILE` → `BEHAVIORAL_SIGNALS_FILE`, `CORRECTION_MODE_STATE` → `BEHAVIORAL_FEEDBACK_STATE`
+2. ✅ `signal_type: 'correction'` added to all correction signal writes
+3. ✅ `signal_id` field replaces `correction_id` in signal entries
+4. ✅ State restructured: flat `CorrectionModeState` → nested `BehavioralFeedbackState` with `correction:` and `reinforcement:` sections
+5. ✅ `loadCorrectionTrends()` → `loadBehavioralTrends()` in learning-readback.ts
+6. ✅ `writeCorrectionEntry()` → `writeBehavioralSignal()` (shared by both signal types)
+7. ✅ `generateCorrectionId()` and `generateReinforcementId()` consolidated into shared `generateSignalId(prefix)` helper
+8. ✅ `behavioral-feedback.json` created at `~/.claude/MEMORY/STATE/`
+9. ✅ Zero references to old names remain in hooks directory
 
 ---
 
@@ -505,24 +458,32 @@ Delta: +260 chars. Well within the 2500 char budget.
 
 ---
 
-## Files Changed (Implementation)
+## Files Changed
 
 | File | Change |
 |------|--------|
-| `RatingCapture.hook.ts` | Add `captureReinforcement()`, `classifyBehavior()`, `shouldCaptureReinforcement()`. Rename correction output paths. (~+150 lines) |
-| `learning-readback.ts` | Replace `loadCorrectionTrends()` with `loadBehavioralTrends()`. (~+30 lines, -40 lines) |
-| `LoadContext.hook.ts` | Update import and call (3-line change) |
-| `behavioral-feedback.json` | New unified state file (replaces correction-mode.json) |
+| `RatingCapture.hook.ts` | +130 lines: `BehaviorType`, `BehavioralSignal`, `BehavioralFeedbackState` types; `BEHAVIOR_MARKERS` array (7 patterns); `classifyBehavior()`, `shouldCaptureReinforcement()`, `captureReinforcement()`, `updateReinforcementState()`, `generateSignalId()` functions; renamed constants/functions to unified naming; wired `captureReinforcement` at 3 `writeRating` points |
+| `learning-readback.ts` | Replaced `loadCorrectionTrends()` with `loadBehavioralTrends()` — reads both correction and reinforcement data from unified signals file, produces combined output |
+| `LoadContext.hook.ts` | 3-line change: import rename + call rename |
+| `behavioral-feedback.json` | New unified state file at `~/.claude/MEMORY/STATE/` (replaces `correction-mode.json`) |
 
-**Estimated implementation effort:** Standard (< 2 hours)
+### Post-implementation cleanup (/simplify)
+
+- Removed unused `CorrectionModeState` type alias (dead code)
+- Fixed redundant `text.substring(0, 80)` before `safeSlice(text, 80)` — simplified to `safeSlice(text, 80)`
+- Removed TOCTOU `existsSync` check before `mkdirSync({ recursive: true })` in `writeBehavioralSignal`
+- Consolidated `generateCorrectionId()` + `generateReinforcementId()` into shared `generateSignalId(prefix)` helper
 
 ---
 
-## What This Does NOT Include
+## What This Does NOT Include (Deferred)
 
 | Item | Why Deferred |
 |------|-------------|
 | Real-time system-reminder for positive signals | Low value — "keep doing that" doesn't change behavior like "stop and verify" does |
+| Haiku inference fallback for `unclassified` behaviors | Collect data on regex miss rate first; `unclassified` returns confidence 0.5 which is filtered by the 0.7 threshold |
+| Tail-read optimization in `loadBehavioralTrends()` | File has zero entries — premature optimization; apply when file grows (use same 4KB tail-read as `checkKillSwitch()`) |
+| `BehavioralSignal` type enforcement on `writeBehavioralSignal()` | Function accepts `Record<string, unknown>` — would require changing all correction write call sites for type safety |
 | Correction `verified` phase | Needs PostToolUse observer (separate work item) |
 | Correction `rated` phase | Needs cross-hook correlation (depends on verified) |
 | Synthesis integration | Needs both correction and reinforcement data to be meaningful |

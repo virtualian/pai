@@ -299,48 +299,83 @@ export function loadLatestSynthesis(paiDir: string): string | null {
 }
 
 /**
- * Load CorrectionMode trend summary for context injection.
- * Reads correction-mode.json state and recent corrections.jsonl entries
- * to produce a compact one-liner about correction system health.
+ * Load unified behavioral feedback trends for context injection.
+ * Reads behavioral-feedback.json state and behavioral-signals.jsonl entries
+ * to produce a compact summary of correction + reinforcement system health.
  */
-export function loadCorrectionTrends(paiDir: string): string | null {
-  const statePath = join(paiDir, 'MEMORY', 'STATE', 'correction-mode.json');
+export function loadBehavioralTrends(paiDir: string): string | null {
+  const statePath = join(paiDir, 'MEMORY', 'STATE', 'behavioral-feedback.json');
   if (!existsSync(statePath)) return null;
 
   try {
     const state = JSON.parse(readFileSync(statePath, 'utf-8'));
-    if (!state.enabled && !state.auto_disabled_at) return null;
+    if (!state.enabled) return null;
 
-    const correctionsPath = join(paiDir, 'MEMORY', 'LEARNING', 'SIGNALS', 'corrections.jsonl');
-    let triggerCount = 0;
-    let verifiedCount = 0;
+    const signalsPath = join(paiDir, 'MEMORY', 'LEARNING', 'SIGNALS', 'behavioral-signals.jsonl');
+    let correctionTriggers = 0;
+    let correctionVerified = 0;
     let avgDelta = 0;
     let ratedCount = 0;
+    let reinforcementCount = 0;
+    let latestReinforcement: { summary: string; rating: number } | null = null;
 
-    if (existsSync(correctionsPath)) {
-      const lines = readFileSync(correctionsPath, 'utf-8').trim().split('\n').filter(Boolean);
+    if (existsSync(signalsPath)) {
+      const lines = readFileSync(signalsPath, 'utf-8').trim().split('\n').filter(Boolean);
       const entries = lines.map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
 
-      // Count by phase
-      triggerCount = entries.filter((e: any) => e.phase === 'triggered').length;
-      verifiedCount = entries.filter((e: any) => e.phase === 'verified').length;
-      const rated = entries.filter((e: any) => e.phase === 'rated');
+      // Correction stats
+      const corrections = entries.filter((e: any) => e.signal_type === 'correction');
+      correctionTriggers = corrections.filter((e: any) => e.phase === 'triggered' && !e.suppressed).length;
+      correctionVerified = corrections.filter((e: any) => e.phase === 'verified').length;
+      const rated = corrections.filter((e: any) => e.phase === 'rated');
       ratedCount = rated.length;
-
       if (ratedCount > 0) {
         const deltas = rated.map((e: any) => parseFloat(e.outcome?.delta_from_trigger || '0'));
         avgDelta = deltas.reduce((a: number, b: number) => a + b, 0) / deltas.length;
       }
+
+      // Reinforcement stats
+      const reinforcements = entries.filter((e: any) => e.signal_type === 'reinforcement');
+      reinforcementCount = reinforcements.length;
+      if (reinforcements.length > 0) {
+        const latest = reinforcements[reinforcements.length - 1];
+        latestReinforcement = {
+          summary: latest.behavior_summary || latest.behavior_type || 'unknown',
+          rating: latest.rating || 0,
+        };
+      }
     }
 
-    const status = state.enabled ? 'ACTIVE' : `DISABLED (${state.auto_disabled_reason || 'manual'})`;
-    const compliance = triggerCount > 0 ? Math.round((verifiedCount / triggerCount) * 100) : 0;
+    const parts: string[] = [];
 
-    if (triggerCount === 0) {
-      return `**CorrectionMode:** ${status}, no corrections yet`;
+    // Correction section
+    const corrStatus = state.correction.enabled ? 'ACTIVE' : `DISABLED (${state.correction.auto_disabled_reason || 'manual'})`;
+    if (correctionTriggers > 0) {
+      const compliance = Math.round((correctionVerified / correctionTriggers) * 100);
+      parts.push(`Corrections: ${correctionTriggers} triggers, ${compliance}% compliance, ${avgDelta > 0 ? '+' : ''}${avgDelta.toFixed(1)} delta, ${corrStatus}`);
+    } else {
+      parts.push(`Corrections: ${corrStatus}, none yet`);
     }
 
-    return `**CorrectionMode:** ${triggerCount} triggers, ${compliance}% compliance, ${avgDelta > 0 ? '+' : ''}${avgDelta.toFixed(1)} avg delta, ${status}`;
+    // Reinforcement section
+    if (reinforcementCount > 0) {
+      const topBehaviors = (state.reinforcement?.top_behaviors || []).slice(0, 3);
+      const freqs = state.reinforcement?.behavior_frequency || {};
+      const topStr = topBehaviors.map((b: string) => `${b} (${freqs[b] || 0})`).join(', ');
+      let reinfLine = `Reinforcements: ${reinforcementCount} signals`;
+      if (topStr) reinfLine += ` | Top: ${topStr}`;
+      if (latestReinforcement) {
+        const summary = latestReinforcement.summary.length > 40
+          ? latestReinforcement.summary.substring(0, 37) + '...'
+          : latestReinforcement.summary;
+        reinfLine += ` | Latest: "${summary}" (${latestReinforcement.rating}/10)`;
+      }
+      parts.push(reinfLine);
+    } else {
+      parts.push('Reinforcements: none yet');
+    }
+
+    return `**Behavioral Feedback:** ${parts.join(' | ')}`;
   } catch {
     return null;
   }
