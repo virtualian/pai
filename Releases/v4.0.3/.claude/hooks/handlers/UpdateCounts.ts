@@ -18,7 +18,7 @@
 
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join } from 'path';
-import { execSync } from 'child_process';
+import { execSync, spawn } from 'child_process';
 import { getPaiDir, getSettingsPath } from '../lib/paths';
 
 
@@ -177,7 +177,7 @@ async function refreshUsageCache(paiDir: string): Promise<void> {
     if (process.platform === 'darwin') {
       credJson = execSync(
         'security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null',
-        { encoding: 'utf-8', timeout: 3000 }
+        { encoding: 'utf-8', timeout: 1500 }
       ).trim();
     } else {
       const credPath = join(process.env.HOME || '', '.claude', '.credentials.json');
@@ -194,7 +194,7 @@ async function refreshUsageCache(paiDir: string): Promise<void> {
         'Content-Type': 'application/json',
         'anthropic-beta': 'oauth-2025-04-20',
       },
-      signal: AbortSignal.timeout(3000),
+      signal: AbortSignal.timeout(1500),
     });
 
     if (!resp.ok) return;
@@ -214,7 +214,7 @@ async function refreshUsageCache(paiDir: string): Promise<void> {
               'x-api-key': adminKey,
               'anthropic-version': '2023-06-01',
             },
-            signal: AbortSignal.timeout(5000),
+            signal: AbortSignal.timeout(2000),
           }
         );
         if (costResp.ok) {
@@ -256,16 +256,10 @@ export async function handleUpdateCounts(): Promise<void> {
   const settingsPath = getSettingsPath();
 
   try {
-    // Run counts + usage refresh in parallel
-    const [counts] = await Promise.all([
-      Promise.resolve(getCounts(paiDir)),
-      refreshUsageCache(paiDir),
-    ]);
-
-    // Read current settings
+    // Write counts to settings.json FIRST (fast, ~50ms) so they survive
+    // even if the process gets SIGTERM'd during the slower API refresh.
+    const counts = getCounts(paiDir);
     const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
-
-    // Update counts section
     settings.counts = counts;
 
     // Extract and write Algorithm version from CLAUDE.md
@@ -278,16 +272,37 @@ export async function handleUpdateCounts(): Promise<void> {
       }
     } catch {}
 
-    // Write back
     writeFileSync(settingsPath, JSON.stringify(settings, null, 2) + '\n');
     console.error(`[UpdateCounts] Updated: SK:${counts.skills} WF:${counts.workflows} HK:${counts.hooks} SIG:${counts.signals} F:${counts.files} W:${counts.work} SESS:${counts.sessions} RES:${counts.research} RAT:${counts.ratings}`);
+
+    // Spawn detached background process for usage cache refresh.
+    // The hook must exit FAST (< 200ms) to avoid Claude Code's session shutdown
+    // signal aborting it ("Hook cancelled"). A detached process runs independently
+    // and isn't killed when the hook exits.
+    try {
+      const scriptPath = join(paiDir, 'hooks', 'handlers', 'UpdateCounts.ts');
+      const child = spawn('bun', ['run', scriptPath], {
+        detached: true,
+        stdio: 'ignore',
+        env: { ...process.env, UPDATE_COUNTS_REFRESH_ONLY: '1' },
+      });
+      child.unref();
+    } catch {
+      // Non-fatal — usage cache just stays stale
+    }
   } catch (error) {
     console.error('[UpdateCounts] Failed to update counts:', error);
     // Non-fatal - don't throw, let other handlers continue
   }
 }
 
-// Allow running standalone to seed initial counts
+// Standalone modes:
+// - Default: full update (counts + refresh) — used to seed initial counts
+// - UPDATE_COUNTS_REFRESH_ONLY=1: only refresh usage cache — spawned as detached bg process by the hook
 if (import.meta.main) {
-  handleUpdateCounts().then(() => process.exit(0));
+  if (process.env.UPDATE_COUNTS_REFRESH_ONLY === '1') {
+    refreshUsageCache(getPaiDir()).then(() => process.exit(0)).catch(() => process.exit(0));
+  } else {
+    handleUpdateCounts().then(() => process.exit(0));
+  }
 }
