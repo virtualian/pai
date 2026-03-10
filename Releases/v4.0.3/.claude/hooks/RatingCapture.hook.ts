@@ -28,7 +28,7 @@
  * - Implicit sentiment path: 0.5-1.5s (Haiku inference)
  */
 
-import { appendFileSync, mkdirSync, existsSync, readFileSync, writeFileSync } from 'fs';
+import { appendFileSync, mkdirSync, existsSync, readFileSync, writeFileSync, openSync, readSync, closeSync } from 'fs';
 import { join } from 'path';
 import { inference } from '../PAI/Tools/Inference';
 import { getIdentity, getPrincipal, getPrincipalName } from './lib/identity';
@@ -66,6 +66,252 @@ const RATINGS_FILE = join(SIGNALS_DIR, 'ratings.jsonl');
 const LAST_RESPONSE_CACHE = join(BASE_DIR, 'MEMORY', 'STATE', 'last-response.txt');
 const MIN_PROMPT_LENGTH = 3;
 const MIN_CONFIDENCE = 0.5;
+
+// ── CorrectionMode Constants ──
+
+const CORRECTION_MODE_STATE = join(BASE_DIR, 'MEMORY', 'STATE', 'correction-mode.json');
+const CORRECTIONS_FILE = join(SIGNALS_DIR, 'corrections.jsonl');
+const CORRECTION_CONFIDENCE_THRESHOLD = 0.8;
+
+/**
+ * CorrectionMode — Fast-path correction detection.
+ *
+ * Detects explicit corrections in the user's prompt and emits a
+ * system-reminder forcing verification before edits. Runs BEFORE
+ * the slow sentiment analysis path.
+ *
+ * Patterns from council-approved spec (RatingCapture lines 192-195):
+ * - CORRECTIONS: "No, I meant..." / "That's not what I said" / "I said X not Y"
+ * - BEHAVIORAL CORRECTIONS: "Don't do that" / "Stop doing X" / "Never X"
+ * - REPEATED REQUESTS: Having to ask the same thing twice
+ *
+ * Explicitly excluded (refinements, not corrections):
+ * - "Actually, let's try Y" (direction change, not error correction)
+ * - "What about X?" (exploration, not correction)
+ * - "Can we also..." (addition, not correction)
+ */
+
+interface CorrectionDetection {
+  matched: boolean;
+  confidence: number;
+  pattern: 'negation_correction' | 'redirect' | 'behavioral' | 'repeated_request' | null;
+  promptPreview: string;
+}
+
+interface CorrectionModeState {
+  enabled: boolean;
+  review_period_days: number;
+  verbose: boolean;
+  auto_disabled_at: string | null;
+  auto_disabled_reason: string | null;
+  lifetime_corrections: number;
+  lifetime_false_positives: number;
+  review_started_at: string;
+  next_review_at: string;
+}
+
+// Correction patterns — high-precision regexes for explicit corrections only
+const CORRECTION_PATTERNS: Array<{
+  pattern: RegExp;
+  type: CorrectionDetection['pattern'];
+  confidence: number;
+}> = [
+  // "No, I meant X" / "No, I said X" / "That's not what I asked"
+  { pattern: /^no[,.]?\s+(i\s+(meant|said|asked|wanted)|that'?s?\s+not\s+what)/i, type: 'negation_correction', confidence: 0.92 },
+  // "I said X not Y" / "I asked for X not Y"
+  { pattern: /i\s+(said|asked\s+for|wanted|meant)\s+.+\s+not\s+/i, type: 'negation_correction', confidence: 0.88 },
+  // "That's wrong" / "That's incorrect" / "That's not right" / "That's not what I asked"
+  { pattern: /that'?s?\s+(wrong|incorrect|not\s+(right|correct|what\s+i))/i, type: 'negation_correction', confidence: 0.90 },
+  // "Don't do that" / "Stop doing X" / "Never do X" / "Don't X"
+  { pattern: /^(don'?t|stop|never)\s+(do\w*|add\w*|remov\w*|delet\w*|chang\w*|modif\w*|creat\w*|writ\w*)/i, type: 'behavioral', confidence: 0.85 },
+  // "You were supposed to X" / "You should have X"
+  { pattern: /you\s+(were\s+supposed|should\s+have|were\s+meant)\s+to/i, type: 'negation_correction', confidence: 0.87 },
+  // "This is still broken" / "This is still wrong" / "still not working"
+  { pattern: /(still\s+(broken|wrong|not\s+work|failing|happen)|keeps?\s+(happen|break|fail))/i, type: 'repeated_request', confidence: 0.85 },
+  // "How many times" / "I keep telling you" / "I already said"
+  { pattern: /(how\s+many\s+times|i\s+keep\s+tell|i\s+already\s+(said|told|asked))/i, type: 'repeated_request', confidence: 0.90 },
+];
+
+// Refinement exclusion patterns — if these match, it's NOT a correction
+const REFINEMENT_PATTERNS: RegExp[] = [
+  /^actually,?\s+let'?s?\s+(try|go\s+with|use|switch)/i,
+  /^what\s+about\s/i,
+  /^can\s+we\s+(also|add|try)/i,
+  /^let'?s?\s+(also|try|switch|change\s+to)/i,
+  /^(instead|rather),?\s+(let'?s?|can\s+we|how\s+about)/i,
+];
+
+function detectCorrection(prompt: string): CorrectionDetection {
+  const trimmed = prompt.trim();
+  const preview = trimmed.length > 60 ? safeSlice(trimmed, 57) + '...' : trimmed;
+
+  // Check refinement exclusions first
+  for (const refinement of REFINEMENT_PATTERNS) {
+    if (refinement.test(trimmed)) {
+      return { matched: false, confidence: 0, pattern: null, promptPreview: preview };
+    }
+  }
+
+  // Check correction patterns
+  for (const { pattern, type, confidence } of CORRECTION_PATTERNS) {
+    if (pattern.test(trimmed)) {
+      return { matched: true, confidence, pattern: type, promptPreview: preview };
+    }
+  }
+
+  return { matched: false, confidence: 0, pattern: null, promptPreview: preview };
+}
+
+function loadCorrectionModeState(): CorrectionModeState | null {
+  try {
+    if (!existsSync(CORRECTION_MODE_STATE)) return null;
+    return JSON.parse(readFileSync(CORRECTION_MODE_STATE, 'utf-8'));
+  } catch {
+    return null;
+  }
+}
+
+function checkKillSwitch(): { active: boolean; reason?: string; state?: CorrectionModeState } {
+  const state = loadCorrectionModeState();
+  if (!state) return { active: false, reason: 'no_state_file' };
+  if (!state.enabled) return { active: false, reason: state.auto_disabled_reason || 'disabled' };
+
+  // Check rolling 20 rated entries for kill-switch
+  try {
+    if (!existsSync(CORRECTIONS_FILE)) return { active: true, state };
+
+    // Tail-read optimization: read only the last ~4KB instead of the entire file.
+    // Each JSONL line is ~300 bytes, so 4KB covers ~13 entries — enough for rolling checks.
+    const fd = Bun.file(CORRECTIONS_FILE);
+    const fileSize = fd.size;
+    const tailSize = Math.min(fileSize, 4096);
+    const buffer = new Uint8Array(tailSize);
+    const fh = openSync(CORRECTIONS_FILE, 'r');
+    readSync(fh, buffer, 0, tailSize, Math.max(0, fileSize - tailSize));
+    closeSync(fh);
+
+    const tailContent = new TextDecoder().decode(buffer);
+    const lines = tailContent.split('\n').filter(Boolean);
+    // First line may be partial if we didn't start at file beginning
+    if (fileSize > tailSize && lines.length > 0) lines.shift();
+
+    const entries = lines
+      .map(l => { try { return JSON.parse(l); } catch { return null; } })
+      .filter(Boolean);
+
+    const rated = entries.filter((e: any) => e.phase === 'rated').slice(-20);
+
+    // Need minimum 5 rated entries for kill-switch to evaluate
+    if (rated.length < 5) return { active: true, state };
+
+    // Check rolling average delta
+    const deltas = rated.map((e: any) => parseFloat(e.outcome?.delta_from_trigger || '0'));
+    const avgDelta = deltas.reduce((a: number, b: number) => a + b, 0) / deltas.length;
+    if (avgDelta <= 0) {
+      return { active: false, reason: 'killswitch_delta', state };
+    }
+
+    // Check consecutive false positives (3 in a row)
+    const recentRated = rated.slice(-3);
+    if (recentRated.length === 3 && recentRated.every((e: any) => {
+      const delta = parseFloat(e.outcome?.delta_from_trigger || '0');
+      return delta <= 0;
+    })) {
+      return { active: false, reason: 'consecutive_false_positives', state };
+    }
+
+    return { active: true, state };
+  } catch {
+    return { active: true, state }; // Fail open on read errors
+  }
+}
+
+function writeCorrectionEntry(entry: Record<string, unknown>): void {
+  if (!existsSync(SIGNALS_DIR)) mkdirSync(SIGNALS_DIR, { recursive: true });
+  appendFileSync(CORRECTIONS_FILE, JSON.stringify(entry) + '\n', 'utf-8');
+}
+
+function generateCorrectionId(): string {
+  const { year, month, day, hours, minutes, seconds } = getPSTComponents();
+  return `corr_${year}${month}${day}_${hours}${minutes}${seconds}`;
+}
+
+/**
+ * CorrectionMode fast-path — runs BEFORE sentiment analysis.
+ * Returns true if a correction was detected (processing continues regardless).
+ */
+function runCorrectionMode(prompt: string, sessionId: string): boolean {
+  const detection = detectCorrection(prompt);
+
+  if (!detection.matched || detection.confidence < CORRECTION_CONFIDENCE_THRESHOLD) {
+    // Log suppressed detection if it was close (confidence 0.6-0.79)
+    if (detection.matched && detection.confidence >= 0.6) {
+      writeCorrectionEntry({
+        timestamp: getISOTimestamp(),
+        session_id: sessionId,
+        correction_id: generateCorrectionId(),
+        phase: 'triggered',
+        confidence: detection.confidence,
+        suppressed: true,
+        suppressed_reason: 'below_threshold',
+        prompt_preview: detection.promptPreview,
+        pattern_matched: detection.pattern,
+      });
+      console.error(`[CorrectionMode] Suppressed (confidence ${detection.confidence} < ${CORRECTION_CONFIDENCE_THRESHOLD}): "${detection.promptPreview}"`);
+    }
+    return false;
+  }
+
+  // Kill-switch check
+  const killSwitch = checkKillSwitch();
+  if (!killSwitch.active) {
+    writeCorrectionEntry({
+      timestamp: getISOTimestamp(),
+      session_id: sessionId,
+      correction_id: generateCorrectionId(),
+      phase: 'triggered',
+      confidence: detection.confidence,
+      suppressed: true,
+      suppressed_reason: killSwitch.reason,
+      prompt_preview: detection.promptPreview,
+      pattern_matched: detection.pattern,
+    });
+    console.error(`[CorrectionMode] Suppressed (kill-switch: ${killSwitch.reason}): "${detection.promptPreview}"`);
+    return false;
+  }
+
+  // EMIT system-reminder — this is the behavioral intervention
+  const correctionId = generateCorrectionId();
+  console.log(`<system-reminder>
+CORRECTION DETECTED — verify before editing. Use Read/Grep to confirm current state before any Edit/Write. Re-read the request carefully.
+</system-reminder>`);
+
+  // Log triggered entry
+  writeCorrectionEntry({
+    timestamp: getISOTimestamp(),
+    session_id: sessionId,
+    correction_id: correctionId,
+    phase: 'triggered',
+    confidence: detection.confidence,
+    suppressed: false,
+    prompt_preview: detection.promptPreview,
+    pattern_matched: detection.pattern,
+  });
+
+  // Update state file lifetime count (reuse state from kill-switch check)
+  try {
+    const state = killSwitch.state;
+    if (state) {
+      state.lifetime_corrections++;
+      writeFileSync(CORRECTION_MODE_STATE, JSON.stringify(state, null, 2), 'utf-8');
+    }
+  } catch {
+    console.error('[CorrectionMode] Failed to update state file');
+  }
+
+  console.error(`[CorrectionMode] FIRED (${detection.pattern}, confidence ${detection.confidence}): "${detection.promptPreview}"`);
+  return true;
+}
 
 /**
  * Safely slices a string, ensuring it doesn't split a UTF-16 surrogate pair.
@@ -428,6 +674,17 @@ async function main() {
       }
 
       process.exit(0);
+    }
+
+    // ── CorrectionMode Fast-Path (runs before sentiment, ~5ms) ──
+    // Detects explicit corrections and emits system-reminder.
+    // Does NOT exit — sentiment analysis continues after this.
+    if (prompt.length >= MIN_PROMPT_LENGTH) {
+      try {
+        runCorrectionMode(prompt, data.session_id);
+      } catch (err) {
+        console.error(`[CorrectionMode] Error in fast-path: ${err}`);
+      }
     }
 
     // ── Path 2: Implicit Sentiment ──
