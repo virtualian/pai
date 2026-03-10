@@ -136,6 +136,7 @@ interface LoadedVoiceConfig {
   voices: Record<string, VoiceEntry>;     // keyed by name ("main", "algorithm")
   voicesByVoiceId: Record<string, VoiceEntry>;  // keyed by voiceId for lookup
   desktopNotifications: boolean;  // whether to show macOS notification banners
+  voiceEnabled: boolean;          // whether voice TTS is globally enabled (notifications.voice.enabled)
 }
 
 // Last-resort defaults if settings.json is entirely missing or unparseable
@@ -155,7 +156,7 @@ function loadVoiceConfig(): LoadedVoiceConfig {
   try {
     if (!existsSync(settingsPath)) {
       console.warn('⚠️  settings.json not found — using fallback voice defaults');
-      return { defaultVoiceId: '', voices: {}, voicesByVoiceId: {}, desktopNotifications: true };
+      return { defaultVoiceId: '', voices: {}, voicesByVoiceId: {}, desktopNotifications: true, voiceEnabled: true };
     }
 
     const content = readFileSync(settingsPath, 'utf-8');
@@ -163,6 +164,7 @@ function loadVoiceConfig(): LoadedVoiceConfig {
     const daidentity = settings.daidentity || {};
     const voicesSection = daidentity.voices || {};
     const desktopNotifications = settings.notifications?.desktop?.enabled !== false;
+    const voiceEnabled = settings.notifications?.voice?.enabled !== false;
 
     // Build lookup maps
     const voices: Record<string, VoiceEntry> = {};
@@ -195,10 +197,14 @@ function loadVoiceConfig(): LoadedVoiceConfig {
       console.log(`   ${name}: ${entry.voiceName || entry.voiceId} (speed: ${entry.speed}, stability: ${entry.stability})`);
     }
 
-    return { defaultVoiceId, voices, voicesByVoiceId, desktopNotifications };
+    if (!voiceEnabled) {
+      console.log('🔇 Voice TTS globally DISABLED (notifications.voice.enabled: false)');
+    }
+
+    return { defaultVoiceId, voices, voicesByVoiceId, desktopNotifications, voiceEnabled };
   } catch (error) {
     console.error('⚠️  Failed to load settings.json voice config:', error);
-    return { defaultVoiceId: '', voices: {}, voicesByVoiceId: {}, desktopNotifications: true };
+    return { defaultVoiceId: '', voices: {}, voicesByVoiceId: {}, desktopNotifications: true, voiceEnabled: true };
   }
 }
 
@@ -458,6 +464,12 @@ async function sendNotification(
   let voicePlayed = false;
   let voiceError: string | undefined;
 
+  // Global voice gate: settings.json notifications.voice.enabled overrides caller's voice_enabled
+  if (voiceEnabled && !voiceConfig.voiceEnabled) {
+    console.log('🔇 Voice skipped — globally disabled in settings.json');
+    voiceEnabled = false;
+  }
+
   if (voiceEnabled && ELEVENLABS_API_KEY) {
     try {
       const voice = voiceId || DEFAULT_VOICE_ID;
@@ -689,6 +701,7 @@ const server = serve({
           status: "healthy",
           port: PORT,
           voice_system: "ElevenLabs",
+          voice_globally_enabled: voiceConfig.voiceEnabled,
           default_voice_id: DEFAULT_VOICE_ID,
           api_key_configured: !!ELEVENLABS_API_KEY,
           pronunciation_rules: pronunciationRules.length,

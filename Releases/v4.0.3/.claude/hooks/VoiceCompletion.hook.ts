@@ -18,6 +18,7 @@
 
 import { readHookInput, parseTranscriptFromInput } from './lib/hook-io';
 import { handleVoice } from './handlers/VoiceNotification';
+import { getSettings } from './lib/identity';
 
 /**
  * Voice gate: only main terminal sessions get voice.
@@ -30,6 +31,15 @@ function isMainSession(): boolean {
   return !process.env.CLAUDE_CODE_AGENT_TASK_ID;
 }
 
+/**
+ * Global voice gate: check settings.json notifications.voice.enabled.
+ * Defaults to true if the key is absent (preserves existing behavior).
+ */
+function isVoiceEnabled(): boolean {
+  const settings = getSettings();
+  return (settings as any).notifications?.voice?.enabled !== false;
+}
+
 async function main() {
   const input = await readHookInput();
   if (!input) { process.exit(0); }
@@ -37,6 +47,12 @@ async function main() {
   // Voice gate: skip subagent sessions
   if (!isMainSession()) {
     console.error('[VoiceCompletion] Voice OFF (not main session)');
+    process.exit(0);
+  }
+
+  // Voice gate: skip if globally disabled in settings.json
+  if (!isVoiceEnabled()) {
+    console.error('[VoiceCompletion] Voice OFF (notifications.voice.enabled: false)');
     process.exit(0);
   }
 
