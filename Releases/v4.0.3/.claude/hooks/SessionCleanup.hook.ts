@@ -25,8 +25,9 @@
  * - Cleans: session-names.json entry (prevents ghost entries)
  *
  * INTER-HOOK RELATIONSHIPS:
- * - COORDINATES WITH: WorkCompletionLearning (both run at SessionEnd)
- * - MUST RUN AFTER: WorkCompletionLearning (learning capture uses state before clear)
+ * - COORDINATES WITH: WorkCompletionLearning (both run at SessionEnd, in parallel)
+ * - RACE-SAFE: WorkCompletionLearning snapshots state before async work,
+ *   so this hook can delete state files without causing data loss (#75)
  *
  * PERFORMANCE:
  * - Non-blocking: Yes

@@ -24,8 +24,9 @@
  * - Reads: Current work state and work directory metadata
  *
  * INTER-HOOK RELATIONSHIPS:
- * - COORDINATES WITH: SessionCleanup (both run at SessionEnd)
- * - MUST RUN BEFORE: SessionCleanup (captures before state is cleared)
+ * - COORDINATES WITH: SessionCleanup (both run at SessionEnd, in parallel)
+ * - RACE-SAFE: Snapshots state files synchronously before async stdin read,
+ *   so SessionCleanup can delete them at any point without data loss (#75)
  * - MUST RUN AFTER: Stop handlers (captures completed work)
  *
  * SIGNIFICANT WORK CRITERIA:
@@ -49,7 +50,7 @@
  * - Typical execution: <100ms
  */
 
-import { writeFileSync, existsSync, readFileSync, mkdirSync } from 'fs';
+import { writeFileSync, existsSync, readFileSync, readdirSync, mkdirSync } from 'fs';
 import { join, dirname } from 'path';
 import { getISOTimestamp, getPSTDate } from './lib/time';
 import { getLearningCategory } from './lib/learning-utils';
@@ -254,8 +255,32 @@ ${idealContent || 'Not specified'}
 
 async function main() {
   try {
-    // Read input from stdin with timeout — SessionEnd hooks may receive
-    // empty or slow stdin. Proceed regardless since state is read from disk.
+    // RACE CONDITION FIX (#75): Snapshot ALL state files synchronously BEFORE
+    // any async work. SessionCleanup runs in parallel and may delete these files
+    // during our stdin read (up to 3s timeout). By reading eagerly, the file
+    // can be deleted at any point after this without affecting us.
+    const stateSnapshots = new Map<string, string>();
+    for (const candidate of [
+      // Glob all session-scoped files + the legacy file
+      ...(() => {
+        try {
+          return readdirSync(STATE_DIR)
+            .filter((f: string) => f.startsWith('current-work') && f.endsWith('.json'))
+            .map((f: string) => join(STATE_DIR, f));
+        } catch { return []; }
+      })(),
+    ]) {
+      try {
+        stateSnapshots.set(candidate, readFileSync(candidate, 'utf-8'));
+      } catch { /* file may already be gone — that's fine */ }
+    }
+
+    if (stateSnapshots.size === 0) {
+      console.error('[WorkCompletionLearning] No active work session');
+      process.exit(0);
+    }
+
+    // Now do the async stdin read — safe because state is already captured
     let sessionId: string | undefined;
     try {
       const input = await Promise.race([
@@ -270,15 +295,27 @@ async function main() {
       // Timeout or parse error — proceed without session_id
     }
 
-    // Check if there's an active work session (session-scoped with legacy fallback)
-    const stateFile = findStateFile(sessionId);
-    if (!stateFile) {
+    // Resolve the correct state file from our snapshots
+    let stateContent: string | undefined;
+    if (sessionId) {
+      const scoped = join(STATE_DIR, `current-work-${sessionId}.json`);
+      stateContent = stateSnapshots.get(scoped);
+    }
+    if (!stateContent) {
+      const legacy = join(STATE_DIR, 'current-work.json');
+      stateContent = stateSnapshots.get(legacy);
+    }
+    if (!stateContent) {
+      // Fall back to any snapshot we captured
+      stateContent = stateSnapshots.values().next().value;
+    }
+    if (!stateContent) {
       console.error('[WorkCompletionLearning] No active work session');
       process.exit(0);
     }
 
-    // Read current work state
-    const currentWork: CurrentWork = JSON.parse(readFileSync(stateFile, 'utf-8'));
+    // Parse from snapshot (not from disk — file may be deleted by now)
+    const currentWork: CurrentWork = JSON.parse(stateContent);
 
     // Guard: don't process another session's state
     if (sessionId && currentWork.session_id !== sessionId) {
