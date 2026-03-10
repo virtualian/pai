@@ -285,7 +285,7 @@ async function main() {
     try {
       const input = await Promise.race([
         Bun.stdin.text(),
-        new Promise<string>((_, reject) => setTimeout(() => reject(new Error('timeout')), 3000))
+        new Promise<string>((_, reject) => setTimeout(() => reject(new Error('timeout')), 500))
       ]);
       if (input && input.trim()) {
         const parsed = JSON.parse(input);

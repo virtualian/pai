@@ -56,7 +56,7 @@ interface TranscriptEntry {
 /**
  * Read stdin with timeout
  */
-async function readStdinWithTimeout(timeout: number = 5000): Promise<string> {
+async function readStdinWithTimeout(timeout: number = 500): Promise<string> {
   return new Promise((resolve, reject) => {
     let data = '';
     const timer = setTimeout(() => reject(new Error('Timeout')), timeout);
