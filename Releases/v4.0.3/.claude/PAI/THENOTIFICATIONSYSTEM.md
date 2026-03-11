@@ -14,10 +14,7 @@ This system provides:
 
 1. **Send voice notification**:
    ```bash
-   curl -s -X POST http://localhost:8888/notify \
-     -H "Content-Type: application/json" \
-     -d '{"message": "[Doing what {PRINCIPAL.NAME} asked]"}' \
-     > /dev/null 2>&1 &
+   bun ~/.claude/PAI/Tools/Notify.ts "[Doing what {PRINCIPAL.NAME} asked]"
    ```
 
 2. **Output text notification**:
@@ -25,7 +22,7 @@ This system provides:
    [Doing what {PRINCIPAL.NAME} asked]...
    ```
 
-**Skip curl for conversational responses** (greetings, acknowledgments, simple Q&A). The 🎯 COMPLETED line already drives voice output—adding curl creates redundant voice messages.
+**Skip voice for conversational responses** (greetings, acknowledgments, simple Q&A). The 🎯 COMPLETED line already drives voice output—adding Notify.ts creates redundant voice messages.
 
 ---
 
@@ -65,37 +62,31 @@ Executing the **WorkflowName** workflow within the **SkillName** skill...
 - If it's not listed in a skill's Workflow Routing, DON'T use "Executing" format
 - For non-workflow tasks, use context-appropriate gerund
 
-### The curl Pattern (Workflow-Based Skills Only)
+### The Notify Pattern (Workflow-Based Skills Only)
 
 When executing an actual workflow file from a `Workflows/` directory:
 
 ```bash
-curl -s -X POST http://localhost:8888/notify \
-  -H "Content-Type: application/json" \
-  -d '{"message": "Running the WORKFLOWNAME workflow in the SKILLNAME skill to ACTION", "voice_id": "{DAIDENTITY.VOICEID}", "title": "{DAIDENTITY.NAME}"}' \
-  > /dev/null 2>&1 &
+bun ~/.claude/PAI/Tools/Notify.ts "Running the WORKFLOWNAME workflow in the SKILLNAME skill to ACTION"
 ```
 
-**Parameters:**
-- `message` - The spoken text (workflow and skill name)
-- `voice_id` - ElevenLabs voice ID (default: {DAIDENTITY.NAME}'s voice)
-- `title` - Display name for the notification
+Notify.ts reads voice_id and voice settings from settings.json automatically. It self-gates on `notifications.voice.enabled` — when voice is disabled, it exits silently with zero output.
 
 ---
 
 ## Effort Level in Voice Notifications
 
-**Voice phase announcements are inline curls in the Algorithm template** (defined in CLAUDE.md), not hooks. Each Algorithm phase has a `curl -s -X POST http://localhost:8888/notify` call that gets spoken. The effort level determines which curls fire:
+**Voice phase announcements use `bun Notify.ts` in the Algorithm template** (defined in Algorithm/v3.7.0.md). Each Algorithm phase calls Notify.ts which self-gates on settings.json. The effort level determines which announcements fire:
 
-| Effort | Budget | Voice Curls |
-|--------|--------|-------------|
-| Standard | <2min | OBSERVE + VERIFY curls only |
-| Extended | <8min | All phase curls |
-| Advanced | <16min | All phase curls |
-| Deep | <32min | All phase curls |
-| Comprehensive | <120min | All phase curls |
+| Effort | Budget | Voice Announcements |
+|--------|--------|---------------------|
+| Standard | <2min | OBSERVE + VERIFY only |
+| Extended | <8min | All phases |
+| Advanced | <16min | All phases |
+| Deep | <32min | All phases |
+| Comprehensive | <120min | All phases |
 
-**Task completion voice** is handled by `StopOrchestrator.hook.ts` → `handlers/VoiceNotification.ts`, which extracts the `🗣️` line from the response and POSTs to the voice server.
+**Task completion voice** is handled by `VoiceCompletion.hook.ts` → `handlers/VoiceNotification.ts`, which extracts the `🗣️` line from the response and POSTs to the voice server.
 
 ---
 
@@ -123,10 +114,7 @@ For skills that have a `Workflows/` directory:
 
 1. **Send voice notification**:
    ```bash
-   curl -s -X POST http://localhost:8888/notify \
-     -H "Content-Type: application/json" \
-     -d '{"message": "Running the WORKFLOWNAME workflow in the SKILLNAME skill to ACTION"}' \
-     > /dev/null 2>&1 &
+   bun ~/.claude/PAI/Tools/Notify.ts "Running the WORKFLOWNAME workflow in the SKILLNAME skill to ACTION"
    ```
 
 2. **Output text notification**:
@@ -153,15 +141,14 @@ This skill handles requests directly without workflows. When executing, simply d
 
 ---
 
-## Why Direct curl (Not Shell Script)
+## Why Notify.ts (Not Direct curl)
 
-Direct curl is:
-- **More reliable** - No script execution dependencies
-- **Faster** - No shell script overhead
-- **Visible** - The command is explicit in the skill file
-- **Debuggable** - Easy to test in isolation
-
-The backgrounded `&` and redirected output (`> /dev/null 2>&1`) ensure the curl doesn't block workflow execution.
+Notify.ts replaced raw curl commands (see Issue #83, #27):
+- **Self-gating** — reads `notifications.voice.enabled` and exits silently when disabled
+- **Zero clutter** — no JSON output in the conversation stream
+- **Centralized config** — voice_id from settings.json, not hardcoded in templates
+- **Subagent-safe** — detects `CLAUDE_CODE_AGENT_TASK_ID` automatically
+- **Debuggable** — `bun ~/.claude/PAI/Tools/Notify.ts "test message"` to verify
 
 ---
 

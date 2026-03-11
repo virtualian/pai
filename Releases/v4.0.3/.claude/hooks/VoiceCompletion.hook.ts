@@ -16,9 +16,11 @@
  * HANDLER: handlers/VoiceNotification.ts
  */
 
+import { readFileSync, existsSync } from 'fs';
+import { join } from 'path';
+import { homedir } from 'os';
 import { readHookInput, parseTranscriptFromInput } from './lib/hook-io';
 import { handleVoice } from './handlers/VoiceNotification';
-import { getSettings } from './lib/identity';
 
 /**
  * Voice gate: only main terminal sessions get voice.
@@ -32,12 +34,18 @@ function isMainSession(): boolean {
 }
 
 /**
- * Global voice gate: check settings.json notifications.voice.enabled.
- * Defaults to true if the key is absent (preserves existing behavior).
+ * Check if voice is globally enabled in settings.json.
+ * Returns false if notifications.voice.enabled is explicitly false.
  */
 function isVoiceEnabled(): boolean {
-  const settings = getSettings();
-  return (settings as any).notifications?.voice?.enabled !== false;
+  try {
+    const settingsPath = join(homedir(), '.claude', 'settings.json');
+    if (!existsSync(settingsPath)) return true;
+    const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
+    return settings.notifications?.voice?.enabled !== false;
+  } catch {
+    return true; // Default to enabled on error
+  }
 }
 
 async function main() {
@@ -52,7 +60,7 @@ async function main() {
 
   // Voice gate: skip if globally disabled in settings.json
   if (!isVoiceEnabled()) {
-    console.error('[VoiceCompletion] Voice OFF (notifications.voice.enabled: false)');
+    console.error('[VoiceCompletion] Voice OFF (disabled in settings.json)');
     process.exit(0);
   }
 
