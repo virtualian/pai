@@ -74,6 +74,25 @@ See Step 0 above. The tool handles digest loading, GitHub API calls, filtering, 
 
 **Comment fetch rule:** Fetch comments on ALL new/reactivated items with `comments > 0`, EXCEPT items clearly not relevant (Linux-only, Windows-only, Docker-only). Pay special attention to items where `weParticipated: true`.
 
+**Fetching discussion comments (GraphQL) — Always include `replies` in discussion queries:**
+
+GitHub Discussions have threaded replies — comments can have sub-comments. Use this template to fetch full discussion threads; omitting `replies` silently drops nested comments:
+
+```graphql
+discussion(number: NNN) {
+  comments(first: 20) {
+    totalCount
+    nodes {
+      author { login } body createdAt
+      replies(first: 10) {
+        totalCount
+        nodes { author { login } body createdAt }
+      }
+    }
+  }
+}
+```
+
 For each AFFECTS US or ALREADY HANDLED item:
 - If it's an issue WITH a PR: read the PR diff (`gh pr diff N`), evaluate quality
 - If it's an issue WITHOUT a PR: assess difficulty, consider if we should fix and PR it
