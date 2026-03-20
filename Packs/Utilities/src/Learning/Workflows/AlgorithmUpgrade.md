@@ -22,15 +22,23 @@ Running the **AlgorithmUpgrade** workflow in the **Learning** skill to propose A
 This workflow closes the ultimate feedback loop: the Algorithm reflects on its own performance after every run, and this workflow mines those reflections to propose upgrades to the Algorithm itself.
 
 ```
-Algorithm Reflections (JSONL)     Current Algorithm Spec
+Synthesize Output (preferred)    Current Algorithm Spec
 ┌──────────────────────────┐     ┌──────────────────────────┐
-│ Q1: Execution mistakes   │     │ Version + Changelog      │
-│ Q2: Algorithm fixes      │     │ Phase definitions        │
-│ Q3: Fundamental gaps     │     │ ISC requirements         │
-│ Sentiment + budget data  │     │ Capability matrix        │
-└──────────────────────────┘     │ Quality gates            │
+│ Upgrade candidates       │     │ Version + Changelog      │
+│ Cross-referenced ratings │     │ Phase definitions        │
+│ STOP/DO MORE patterns    │     │ ISC requirements         │
+│ Priority list            │     │ Capability matrix        │
+└──────────┬───────────────┘     │ Quality gates            │
            │                     │ PRD integration          │
-           └──────────┬──────────┘
+           │  ┌── OR (fallback) ─┘
+           │  │
+           │  │  Algorithm Reflections (JSONL)
+           │  │  ┌──────────────────────────┐
+           │  │  │ Q1/Q2/Q3 + sentiment     │
+           │  │  └──────────┬───────────────┘
+           │  │             │
+           └──┴─────────────┘
+                      │
                       ▼
         ┌─────────────────────────────┐
         │  SECTION-TARGETED UPGRADES  │
@@ -75,7 +83,24 @@ Read the current Algorithm version and spec:
 Report: "Current Algorithm: v{VERSION} — {N} sections, {M} rules"
 ```
 
-### Step 2: Mine Reflections with Algorithm Focus
+### Step 2: Get Upgrade Candidates (Synthesis or Direct Mining)
+
+**Check for recent Synthesize output first.** If `~/.claude/MEMORY/LEARNING/last-synthesis.md` exists and its `generated` frontmatter timestamp is less than 24 hours old, use it instead of re-mining. This preserves the cross-referenced ratings signal that direct mining would lose.
+
+```
+1. Check if ~/.claude/MEMORY/LEARNING/last-synthesis.md exists
+2. If it exists, read the frontmatter `generated` timestamp
+3. If timestamp is < 24 hours old:
+   - Read the full file
+   - Extract upgrade candidates and cross-referenced priorities
+   - Report: "Using recent synthesis from [timestamp] — [N] upgrade candidates, [N] ratings entries cross-referenced"
+   - Skip to Step 3
+4. If file is missing or stale (> 24h):
+   - Report: "No recent synthesis found — mining reflections directly"
+   - Fall through to direct mining below
+```
+
+**Fallback: Direct mining** (when no recent synthesis exists).
 
 Spawn 1 agent:
 
@@ -233,5 +258,6 @@ Ideas that require fundamental changes, not just spec edits:
 ## Integration
 
 - **Standalone:** User says "algorithm upgrade" or "improve the algorithm"
+- **From Synthesize:** Reads `~/.claude/MEMORY/LEARNING/last-synthesis.md` if fresh (< 24h). This is the preferred input path — it includes cross-referenced ratings data that direct mining would lose.
 - **From MineReflections:** If MineReflections finds Algorithm-related themes, it can suggest running this workflow for deeper analysis
-- **From PAIUpgrade:** The Upgrade workflow's Thread 3 provides a summary via Synthesize; this workflow goes deeper with section-level mapping
+- **From PAIUpgrade:** The Upgrade workflow's Thread 3 runs Synthesize (which writes `last-synthesis.md`), so running AlgorithmUpgrade after an Upgrade check automatically benefits from the full synthesis

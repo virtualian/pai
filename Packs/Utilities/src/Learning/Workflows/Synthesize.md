@@ -180,9 +180,32 @@ Upgrade candidates mined from our own algorithm reflections and user ratings. Th
 > No ratings found yet — they accumulate from the RatingCapture hook during conversations.
 ```
 
+### Step 5: Save Report for Downstream Workflows
+
+After outputting the report to the conversation, also write it to a known location so downstream workflows (e.g., AlgorithmUpgrade) can consume it without re-mining:
+
+```
+Write the complete Internal Signals report (from Step 4) to:
+~/.claude/MEMORY/LEARNING/last-synthesis.md
+
+Prepend YAML frontmatter with metadata:
+---
+generated: [ISO timestamp]
+reflections_analyzed: [N]
+ratings_analyzed: [N]
+upgrade_candidates: [N]
+cross_referenced: true
+---
+
+The rest of the file is the full Internal Signals report as output in Step 4.
+```
+
+This file is the handoff mechanism to AlgorithmUpgrade and any other workflow that benefits from pre-computed synthesis results.
+
 ---
 
 ## Integration
 
 - **Standalone:** User says "close the loop" or "internal signals"
 - **From PAIUpgrade:** The Upgrade workflow delegates Thread 3 to this workflow. The output slots directly into the Upgrade report's "Internal Signals" section.
+- **To AlgorithmUpgrade:** Writes `last-synthesis.md` which AlgorithmUpgrade reads instead of re-mining reflections. This preserves the cross-referenced ratings signal that AlgorithmUpgrade would otherwise lose.
