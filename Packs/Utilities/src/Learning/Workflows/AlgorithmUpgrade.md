@@ -5,11 +5,11 @@
 ```bash
 curl -s -X POST http://localhost:8888/notify \
   -H "Content-Type: application/json" \
-  -d '{"message": "Running the Algorithm Upgrade workflow to analyze and propose improvements to the PAI Algorithm"}' \
+  -d '{"message": "Running the Algorithm Upgrade workflow in the Learning skill to analyze and propose improvements to the PAI Algorithm"}' \
   > /dev/null 2>&1 &
 ```
 
-Running the **AlgorithmUpgrade** workflow in the **PAIUpgrade** skill to propose Algorithm improvements...
+Running the **AlgorithmUpgrade** workflow in the **Learning** skill to propose Algorithm improvements...
 
 **Dedicated self-improvement workflow for the PAI Algorithm.** Combines internal reflection mining with Algorithm spec analysis to produce concrete, section-targeted upgrade proposals.
 
@@ -84,7 +84,7 @@ Use Task tool with subagent_type=general-purpose:
 
 "Mine algorithm reflections specifically for Algorithm improvement patterns.
 
-Read MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+Read ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 Parse each line as JSON.
 
 For EACH entry, analyze Q2 (algorithm improvements) and classify the theme using this routing table:
@@ -230,8 +230,8 @@ Ideas that require fundamental changes, not just spec edits:
 
 ---
 
-## Integration Notes
+## Integration
 
 - **Standalone:** User says "algorithm upgrade" or "improve the algorithm"
 - **From MineReflections:** If MineReflections finds Algorithm-related themes, it can suggest running this workflow for deeper analysis
-- **From Upgrade:** The main Upgrade workflow's Thread 3 provides a summary; this workflow goes deeper with section-level mapping
+- **From PAIUpgrade:** The Upgrade workflow's Thread 3 provides a summary via Synthesize; this workflow goes deeper with section-level mapping

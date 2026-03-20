@@ -1,6 +1,6 @@
 ---
 name: PAIUpgrade
-description: Extract system improvements from content AND monitor external sources (Anthropic ecosystem, YouTube). USE WHEN upgrade, improve system, system upgrade, analyze for improvements, check Anthropic, Anthropic changes, new Claude features, check YouTube, new videos, algorithm upgrade, mine reflections, find sources, research upgrade, PAI upgrade.
+description: Monitor external sources (Anthropic ecosystem, YouTube, GitHub) and generate prioritized upgrade recommendations. USE WHEN upgrade, improve system, system upgrade, check Anthropic, Anthropic changes, new Claude features, check YouTube, new videos, find sources, research upgrade, PAI upgrade.
 ---
 
 ## Customization
@@ -62,12 +62,12 @@ Thread 1: USER CONTEXT     Thread 2: SOURCE COLLECTION    Thread 3: INTERNAL REF
 | Workflow | Trigger | File |
 |----------|---------|------|
 | **Upgrade** | "check for upgrades", "check sources", "any updates", "check Anthropic", "check YouTube", "upgrade", "pai upgrade" | `Workflows/Upgrade.md` |
-| **MineReflections** | "mine reflections", "check reflections", "what have we learned", "internal improvements", "reflection insights" | `Workflows/MineReflections.md` |
-| **AlgorithmUpgrade** | "algorithm upgrade", "upgrade algorithm", "improve the algorithm", "algorithm improvements", "fix the algorithm" | `Workflows/AlgorithmUpgrade.md` |
 | **ResearchUpgrade** | "research this upgrade", "deep dive on [feature]", "further research" | `Workflows/ResearchUpgrade.md` |
 | **FindSources** | "find upgrade sources", "find new sources", "discover channels" | `Workflows/FindSources.md` |
 
-**Default workflow:** If user says "upgrade" or "check for upgrades" without specifics, run the **Upgrade** workflow. The Upgrade workflow automatically includes internal reflection mining as Thread 3.
+**Default workflow:** If user says "upgrade" or "check for upgrades" without specifics, run the **Upgrade** workflow. The Upgrade workflow automatically delegates to the **Learning** skill for internal signal mining (Thread 3).
+
+**Note:** Internal signal mining (mine reflections, algorithm upgrade, mine ratings) is provided by the **Learning** skill under `skills/Utilities/Learning/`.
 
 ---
 
@@ -459,7 +459,7 @@ User: "check Anthropic only"
 
 ## Workflows
 
-- **Upgrade.md** - Primary workflow: full two-thread analysis with prioritized recommendations
+- **Upgrade.md** - Primary workflow: full three-thread analysis (user context + source collection + internal signals via Learning skill) with prioritized recommendations
 - **ResearchUpgrade.md** - Deep dive on a specific upgrade opportunity
 - **FindSources.md** - Discover and evaluate new sources to monitor
 

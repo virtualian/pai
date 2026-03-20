@@ -11,7 +11,7 @@ curl -s -X POST http://localhost:8888/notify \
 
 Running the **Upgrade** workflow in the **PAIUpgrade** skill to check for upgrades...
 
-**Primary workflow for PAIUpgrade skill.** Generates prioritized upgrade recommendations by running two parallel agent threads: user context analysis and source collection.
+**Primary workflow for PAIUpgrade skill.** Generates prioritized upgrade recommendations by running three parallel agent threads: user context analysis, source collection, and internal signal mining (via Learning skill).
 
 **Trigger:** "check for upgrades", "upgrade", "any updates", "check Anthropic", "check YouTube", "pai upgrade"
 
@@ -23,10 +23,11 @@ This workflow executes the core PAIUpgrade pattern:
 
 1. **Thread 1:** Analyze user context (TELOS, projects, recent work, PAI state)
 2. **Thread 2:** Collect updates from sources (Anthropic, YouTube, custom)
-3. **Synthesize:** Combine context + discoveries into personalized recommendations
-4. **Output:** Prioritized upgrade report
+3. **Thread 3:** Mine internal signals via Learning skill (reflections + ratings)
+4. **Synthesize:** Combine context + discoveries + internal signals into personalized recommendations
+5. **Output:** Prioritized upgrade report
 
-Both threads run in parallel for efficiency.
+All three threads run in parallel for efficiency.
 
 ---
 
@@ -249,54 +250,26 @@ IMPORTANT: This is about INSPIRATION, not just listing repos.
 EFFORT LEVEL: Return within 90 seconds. If queries are slow, reduce per_page to 3."
 ```
 
-### Step 2b: Launch Thread 3 - Internal Reflection Mining
+### Step 2b: Launch Thread 3 - Internal Signal Mining
 
-Spawn 1 parallel agent alongside Threads 1 and 2:
+Spawn 1 agent alongside Threads 1 and 2:
 
 ```
 Use Task tool with subagent_type=general-purpose, run 1 agent in parallel with above:
 
-Agent - Reflection Miner:
-"Mine internal algorithm reflections for recurring improvement patterns.
+Agent - Learning Synthesizer:
+"Run the Synthesize workflow from the Learning skill.
 
-Read MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
-Parse each line as JSON. For the full MineReflections methodology, see Workflows/MineReflections.md.
+Read and follow: ~/.claude/skills/Utilities/Learning/Workflows/Synthesize.md
 
-Quick summary of what to do:
-1. Read all entries from the JSONL file
-2. Prioritize entries with implied_sentiment <= 5, within_budget: false, or criteria_failed > 0
-3. Cluster Q2 answers (algorithm improvements) into themes by similarity
-4. Cluster Q1 answers (execution patterns) into themes
-5. For themes with 2+ occurrences (or 1 if sentiment <= 4), create upgrade candidates
+Return the full output from that workflow.
 
-Return format:
-{
-  'entries_analyzed': N,
-  'date_range': '[earliest] to [latest]',
-  'upgrade_candidates': [
-    {
-      'theme': '[Theme name]',
-      'frequency': N,
-      'signal': 'HIGH/MEDIUM/LOW',
-      'root_cause': '[Structural issue]',
-      'proposed_fix': '[What to change]',
-      'target_files': ['[paths]'],
-      'supporting_quotes': ['[Q2 excerpts]']
-    }
-  ],
-  'execution_warnings': ['[Recurring Q1 mistakes]'],
-  'aspirational_insights': ['[Q3 patterns]']
-}
-
-If the reflections file doesn't exist or is empty, return:
-{ 'entries_analyzed': 0, 'note': 'No reflections found yet — reflections accumulate after Standard+ Algorithm runs' }
-
-EFFORT LEVEL: Return within 60 seconds."
+EFFORT LEVEL: Return within 120 seconds."
 ```
 
 ### Step 3: Wait and Collect Results
 
-Wait for all 9 agents (4 context + 4 source + 1 reflection) to complete. Collect their outputs.
+Wait for all 9 agents (4 context + 4 source + 1 learning synthesizer) to complete. Collect their outputs.
 
 ### Step 4: Synthesize User Context
 
@@ -465,16 +438,20 @@ What to actually DO with these discoveries, organized by urgency and impact.
 
 ---
 
-## 🪞 Internal Reflections
+## 🪞 Internal Signals
 
-Upgrade candidates mined from our own algorithm reflections (Thread 3). These are recurring patterns in what went wrong or could be improved, based on post-algorithm self-reflection.
+Upgrade candidates mined from our own algorithm reflections and user ratings (Thread 3). These are recurring patterns in what went wrong or could be improved, based on post-algorithm self-reflection and behavioral signals from ratings.
 
-**Source:** MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+**Cross-reference:** Where low ratings correlate with reflection themes, both signals reinforce the upgrade priority.
+
+### Algorithm Reflections
+
+**Source:** ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 **Entries analyzed:** [N] | **High-signal:** [N] (low sentiment, over-budget, or failed criteria)
 
 [For each upgrade candidate from the reflection miner:]
 
-### [Theme Name] ([N] occurrences, [HIGH/MEDIUM/LOW] signal)
+#### [Theme Name] ([N] occurrences, [HIGH/MEDIUM/LOW] signal)
 **Root cause:** [What structural issue drives this pattern]
 **Proposed fix:** [Concrete change]
 **Target:** [PAI files affected]
@@ -483,6 +460,26 @@ Upgrade candidates mined from our own algorithm reflections (Thread 3). These ar
 
 [If no reflections exist yet:]
 > No reflections found yet — they accumulate after Standard+ Algorithm runs. Run the Algorithm a few more times and this section will populate.
+
+### Behavioral Signals from Ratings
+
+**Source:** ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
+**Entries analyzed:** [N] | **Explicit feedback:** [N] | **Problem sessions:** [N]
+
+#### STOP (Low-Rating Patterns)
+[For each stop_pattern:]
+- **[Pattern]** (seen [N] times, avg rating [N]) — [example sentiment summaries]
+
+#### DO MORE (High-Rating Patterns)
+[For each do_more_pattern:]
+- **[Pattern]** (seen [N] times, avg rating [N]) — [example sentiment summaries]
+
+#### Explicit User Feedback
+[For each explicit_feedback entry:]
+- [[timestamp]] Rating [N]/10: "[comment excerpt]"
+
+[If no ratings exist yet:]
+> No ratings found yet — they accumulate from the RatingCapture hook during conversations.
 
 ---
 

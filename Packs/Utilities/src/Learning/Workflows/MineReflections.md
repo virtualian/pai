@@ -5,11 +5,11 @@
 ```bash
 curl -s -X POST http://localhost:8888/notify \
   -H "Content-Type: application/json" \
-  -d '{"message": "Running the MineReflections workflow to extract upgrade candidates from algorithm reflections"}' \
+  -d '{"message": "Running the MineReflections workflow in the Learning skill to extract upgrade candidates from algorithm reflections"}' \
   > /dev/null 2>&1 &
 ```
 
-Running the **MineReflections** workflow in the **PAIUpgrade** skill to mine internal algorithm reflections...
+Running the **MineReflections** workflow in the **Learning** skill to mine internal algorithm reflections...
 
 **Mines internal algorithm reflections for recurring patterns that suggest Algorithm or system upgrades.**
 
@@ -19,7 +19,7 @@ Running the **MineReflections** workflow in the **PAIUpgrade** skill to mine int
 
 ## Overview
 
-The Algorithm writes a structured reflection after every Standard+ run to `MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl`. Each entry contains three questions focused on algorithm performance:
+The Algorithm writes a structured reflection after every Standard+ run to `~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl`. Each entry contains three questions focused on algorithm performance:
 
 - **Q1 (Self):** What would I have done differently?
 - **Q2 (Algorithm):** What would a smarter algorithm have done?
@@ -58,7 +58,7 @@ Each JSONL entry contains:
 ### Step 1: Read All Reflections
 
 ```
-Read MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+Read ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 
 Parse each line as JSON. Collect all entries into an array.
 Report: "Found N reflections spanning [date range]"
@@ -128,7 +128,7 @@ Sort upgrade candidates by:
 ```
 # Internal Reflection Mining Report
 
-**Source:** MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+**Source:** ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 **Entries analyzed:** N
 **Date range:** [earliest] to [latest]
 **High-signal entries:** N (sentiment <= 5 or over-budget or failed criteria)
@@ -156,8 +156,9 @@ Sort upgrade candidates by:
 
 ---
 
-## Integration with Upgrade Workflow
+## Integration
 
 This workflow can run:
 1. **Standalone:** User says "mine reflections" or "check reflections"
-2. **As Thread 3 in the main Upgrade workflow:** Runs in parallel with external source collection, adding an internal perspective to upgrade recommendations
+2. **As part of Synthesize:** The Learning skill's Synthesize workflow runs this in parallel with MineRatings
+3. **As Thread 3 in PAIUpgrade:** The Upgrade workflow delegates to Learning/Synthesize, which includes this workflow
