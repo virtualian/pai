@@ -11,7 +11,7 @@ curl -s -X POST http://localhost:8888/notify \
 
 Running the **Upgrade** workflow in the **PAIUpgrade** skill to check for upgrades...
 
-**Primary workflow for PAIUpgrade skill.** Generates prioritized upgrade recommendations by running three parallel agent threads: user context analysis, source collection, and internal signal mining (via Learning skill).
+**Primary workflow for PAIUpgrade skill.** Generates prioritized upgrade recommendations by running two parallel agent threads: user context analysis and source collection.
 
 **Trigger:** "check for upgrades", "upgrade", "any updates", "check Anthropic", "check YouTube", "pai upgrade"
 
@@ -23,11 +23,10 @@ This workflow executes the core PAIUpgrade pattern:
 
 1. **Thread 1:** Analyze user context (TELOS, projects, recent work, PAI state)
 2. **Thread 2:** Collect updates from sources (Anthropic, YouTube, custom)
-3. **Thread 3:** Mine internal signals via Learning skill (reflections + ratings)
-4. **Synthesize:** Combine context + discoveries + internal signals into personalized recommendations
-5. **Output:** Prioritized upgrade report
+3. **Synthesize:** Combine context + discoveries into personalized recommendations
+4. **Output:** Prioritized upgrade report
 
-All three threads run in parallel for efficiency.
+Both threads run in parallel for efficiency.
 
 ---
 
@@ -250,26 +249,9 @@ IMPORTANT: This is about INSPIRATION, not just listing repos.
 EFFORT LEVEL: Return within 90 seconds. If queries are slow, reduce per_page to 3."
 ```
 
-### Step 2b: Launch Thread 3 - Internal Signal Mining
-
-Spawn 1 agent alongside Threads 1 and 2:
-
-```
-Use Task tool with subagent_type=general-purpose, run 1 agent in parallel with above:
-
-Agent - Learning Synthesizer:
-"Run the Synthesize workflow from the Learning skill.
-
-Read and follow: ~/.claude/skills/Learning/Workflows/Check.md
-
-Return the full output from that workflow.
-
-EFFORT LEVEL: Return within 120 seconds."
-```
-
 ### Step 3: Wait and Collect Results
 
-Wait for all 9 agents (4 context + 4 source + 1 learning synthesizer) to complete. Collect their outputs.
+Wait for all 8 agents (4 context + 4 source) to complete. Collect their outputs.
 
 ### Step 4: Synthesize User Context
 
@@ -438,58 +420,13 @@ What to actually DO with these discoveries, organized by urgency and impact.
 
 ---
 
-## 🪞 Internal Signals
-
-Upgrade candidates mined from our own algorithm reflections and user ratings (Thread 3). These are recurring patterns in what went wrong or could be improved, based on post-algorithm self-reflection and behavioral signals from ratings.
-
-**Cross-reference:** Where low ratings correlate with reflection themes, both signals reinforce the upgrade priority.
-
-### Algorithm Reflections
-
-**Source:** ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
-**Entries analyzed:** [N] | **High-signal:** [N] (low sentiment, over-budget, or failed criteria)
-
-[For each upgrade candidate from the reflection miner:]
-
-#### [Theme Name] ([N] occurrences, [HIGH/MEDIUM/LOW] signal)
-**Root cause:** [What structural issue drives this pattern]
-**Proposed fix:** [Concrete change]
-**Target:** [PAI files affected]
-**Evidence:**
-- [timestamp] [task] — "[Q2 quote]"
-
-[If no reflections exist yet:]
-> No reflections found yet — they accumulate after Standard+ Algorithm runs. Run the Algorithm a few more times and this section will populate.
-
-### Behavioral Signals from Ratings
-
-**Source:** ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
-**Entries analyzed:** [N] | **Explicit feedback:** [N] | **Problem sessions:** [N]
-
-#### STOP (Low-Rating Patterns)
-[For each stop_pattern:]
-- **[Pattern]** (seen [N] times, avg rating [N]) — [example sentiment summaries]
-
-#### DO MORE (High-Rating Patterns)
-[For each do_more_pattern:]
-- **[Pattern]** (seen [N] times, avg rating [N]) — [example sentiment summaries]
-
-#### Explicit User Feedback
-[For each explicit_feedback entry:]
-- [[timestamp]] Rating [N]/10: "[comment excerpt]"
-
-[If no ratings exist yet:]
-> No ratings found yet — they accumulate from the RatingCapture hook during conversations.
-
----
-
 ## 📊 Summary
 
 | # | Technique | Source | Priority | PAI Component | Effort |
 |---|-----------|--------|----------|---------------|--------|
-[Table with priority emoji column — include internal reflection candidates]
+[Table with priority emoji column]
 
-**Totals:** [N] Critical | [N] High | [N] Medium | [N] Low | [N] Skipped | [N] Internal
+**Totals:** [N] Critical | [N] High | [N] Medium | [N] Low | [N] Skipped
 
 ---
 
