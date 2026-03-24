@@ -15,6 +15,12 @@
 
 ---
 
+## Note
+
+This is the upstream v4.0.3 release. Personal improvements and customizations are maintained in [`v4.0.3+`](../v4.0.3+/). This folder is frozen — no further changes will be made here.
+
+---
+
 ## What Changed
 
 Community-contributed fixes from open PRs — no new features, no breaking changes.

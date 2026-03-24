@@ -1,6 +1,6 @@
 ---
 name: PAIUpgrade
-description: Extract system improvements from content AND monitor external sources (Anthropic ecosystem, YouTube). USE WHEN upgrade, improve system, system upgrade, analyze for improvements, check Anthropic, Anthropic changes, new Claude features, check YouTube, new videos, algorithm upgrade, mine reflections, find sources, research upgrade, PAI upgrade.
+description: Monitor external sources (Anthropic ecosystem, YouTube, GitHub) and generate prioritized upgrade recommendations. USE WHEN upgrade, improve system, system upgrade, check Anthropic, Anthropic changes, new Claude features, check YouTube, new videos, find sources, research upgrade, PAI upgrade.
 ---
 
 ## Customization
@@ -34,23 +34,22 @@ If this directory exists, load and apply any PREFERENCES.md, configurations, or 
 
 **Primary Purpose:** Generate prioritized upgrade recommendations for the user's existing PAI setup by understanding their context and discovering what's new in the ecosystem.
 
-The skill runs **three parallel agent threads** that converge into personalized recommendations:
+The skill runs **two parallel agent threads** that converge into personalized recommendations:
 
 ```
-Thread 1: USER CONTEXT     Thread 2: SOURCE COLLECTION    Thread 3: INTERNAL REFLECTIONS
-┌───────────────────┐     ┌───────────────────────┐      ┌───────────────────────┐
-│ TELOS Analysis    │     │ Anthropic Sources     │      │ Algorithm Reflections │
-│ Project Analysis  │     │ YouTube Channels      │      │ Q2: Algorithm fixes   │
-│ Recent Work       │     │ Custom USER Sources   │      │ Q1: Execution errors  │
-│ PAI System State  │     │ GitHub Trending       │      │ Sentiment weighting   │
-│                   │     │ Community Updates     │      │                       │
-└───────────────────┘     └───────────────────────┘      └───────────────────────┘
-           │                         │                              │
-           └─────────────┬───────────┴──────────────────────────────┘
+Thread 1: USER CONTEXT     Thread 2: SOURCE COLLECTION
+┌───────────────────┐     ┌───────────────────────┐
+│ TELOS Analysis    │     │ Anthropic Sources     │
+│ Project Analysis  │     │ YouTube Channels      │
+│ Recent Work       │     │ Custom USER Sources   │
+│ PAI System State  │     │ GitHub Trending       │
+│                   │     │ Community Updates     │
+└───────────────────┘     └───────────────────────┘
+           │                         │
+           └─────────────┬───────────┘
                          ▼
            ┌─────────────────────────────┐
            │  PRIORITIZED RECOMMENDATIONS │
-           │  (external + internal)       │
            └─────────────────────────────┘
 ```
 
@@ -62,12 +61,10 @@ Thread 1: USER CONTEXT     Thread 2: SOURCE COLLECTION    Thread 3: INTERNAL REF
 | Workflow | Trigger | File |
 |----------|---------|------|
 | **Upgrade** | "check for upgrades", "check sources", "any updates", "check Anthropic", "check YouTube", "upgrade", "pai upgrade" | `Workflows/Upgrade.md` |
-| **MineReflections** | "mine reflections", "check reflections", "what have we learned", "internal improvements", "reflection insights" | `Workflows/MineReflections.md` |
-| **AlgorithmUpgrade** | "algorithm upgrade", "upgrade algorithm", "improve the algorithm", "algorithm improvements", "fix the algorithm" | `Workflows/AlgorithmUpgrade.md` |
 | **ResearchUpgrade** | "research this upgrade", "deep dive on [feature]", "further research" | `Workflows/ResearchUpgrade.md` |
 | **FindSources** | "find upgrade sources", "find new sources", "discover channels" | `Workflows/FindSources.md` |
 
-**Default workflow:** If user says "upgrade" or "check for upgrades" without specifics, run the **Upgrade** workflow. The Upgrade workflow automatically includes internal reflection mining as Thread 3.
+**Default workflow:** If user says "upgrade" or "check for upgrades" without specifics, run the **Upgrade** workflow.
 
 ---
 
@@ -459,7 +456,7 @@ User: "check Anthropic only"
 
 ## Workflows
 
-- **Upgrade.md** - Primary workflow: full two-thread analysis with prioritized recommendations
+- **Upgrade.md** - Primary workflow: full two-thread analysis (user context + source collection) with prioritized recommendations
 - **ResearchUpgrade.md** - Deep dive on a specific upgrade opportunity
 - **FindSources.md** - Discover and evaluate new sources to monitor
 

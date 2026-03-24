@@ -249,54 +249,9 @@ IMPORTANT: This is about INSPIRATION, not just listing repos.
 EFFORT LEVEL: Return within 90 seconds. If queries are slow, reduce per_page to 3."
 ```
 
-### Step 2b: Launch Thread 3 - Internal Reflection Mining
-
-Spawn 1 parallel agent alongside Threads 1 and 2:
-
-```
-Use Task tool with subagent_type=general-purpose, run 1 agent in parallel with above:
-
-Agent - Reflection Miner:
-"Mine internal algorithm reflections for recurring improvement patterns.
-
-Read MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
-Parse each line as JSON. For the full MineReflections methodology, see Workflows/MineReflections.md.
-
-Quick summary of what to do:
-1. Read all entries from the JSONL file
-2. Prioritize entries with implied_sentiment <= 5, within_budget: false, or criteria_failed > 0
-3. Cluster Q2 answers (algorithm improvements) into themes by similarity
-4. Cluster Q1 answers (execution patterns) into themes
-5. For themes with 2+ occurrences (or 1 if sentiment <= 4), create upgrade candidates
-
-Return format:
-{
-  'entries_analyzed': N,
-  'date_range': '[earliest] to [latest]',
-  'upgrade_candidates': [
-    {
-      'theme': '[Theme name]',
-      'frequency': N,
-      'signal': 'HIGH/MEDIUM/LOW',
-      'root_cause': '[Structural issue]',
-      'proposed_fix': '[What to change]',
-      'target_files': ['[paths]'],
-      'supporting_quotes': ['[Q2 excerpts]']
-    }
-  ],
-  'execution_warnings': ['[Recurring Q1 mistakes]'],
-  'aspirational_insights': ['[Q3 patterns]']
-}
-
-If the reflections file doesn't exist or is empty, return:
-{ 'entries_analyzed': 0, 'note': 'No reflections found yet — reflections accumulate after Standard+ Algorithm runs' }
-
-EFFORT LEVEL: Return within 60 seconds."
-```
-
 ### Step 3: Wait and Collect Results
 
-Wait for all 9 agents (4 context + 4 source + 1 reflection) to complete. Collect their outputs.
+Wait for all 8 agents (4 context + 4 source) to complete. Collect their outputs.
 
 ### Step 4: Synthesize User Context
 
@@ -465,34 +420,13 @@ What to actually DO with these discoveries, organized by urgency and impact.
 
 ---
 
-## 🪞 Internal Reflections
-
-Upgrade candidates mined from our own algorithm reflections (Thread 3). These are recurring patterns in what went wrong or could be improved, based on post-algorithm self-reflection.
-
-**Source:** MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
-**Entries analyzed:** [N] | **High-signal:** [N] (low sentiment, over-budget, or failed criteria)
-
-[For each upgrade candidate from the reflection miner:]
-
-### [Theme Name] ([N] occurrences, [HIGH/MEDIUM/LOW] signal)
-**Root cause:** [What structural issue drives this pattern]
-**Proposed fix:** [Concrete change]
-**Target:** [PAI files affected]
-**Evidence:**
-- [timestamp] [task] — "[Q2 quote]"
-
-[If no reflections exist yet:]
-> No reflections found yet — they accumulate after Standard+ Algorithm runs. Run the Algorithm a few more times and this section will populate.
-
----
-
 ## 📊 Summary
 
 | # | Technique | Source | Priority | PAI Component | Effort |
 |---|-----------|--------|----------|---------------|--------|
-[Table with priority emoji column — include internal reflection candidates]
+[Table with priority emoji column]
 
-**Totals:** [N] Critical | [N] High | [N] Medium | [N] Low | [N] Skipped | [N] Internal
+**Totals:** [N] Critical | [N] High | [N] Medium | [N] Low | [N] Skipped
 
 ---
 
