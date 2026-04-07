@@ -113,7 +113,7 @@ function getSecurityLogPath(event: SecurityEvent): string {
   const summary = generateEventSummary(event);
   const timestamp = `${year}${month}${day}-${hour}${min}${sec}`;
 
-  return configPath('MEMORY', 'SECURITY', year, month, `security-${summary}-${timestamp}.jsonl`);
+  return codePath('MEMORY', 'SECURITY', year, month, `security-${summary}-${timestamp}.jsonl`);
 }
 
 function logSecurityEvent(event: SecurityEvent): void {

@@ -101,7 +101,7 @@ Evidence for each criterion. Written during VERIFY phase.
 ## File Location
 
 ```
-~/.claude/MEMORY/WORK/{slug}/PRD.md
+~/.pai/MEMORY/WORK/{slug}/PRD.md
 ```
 
 Directory created with `mkdir -p MEMORY/WORK/{slug}/` during OBSERVE.

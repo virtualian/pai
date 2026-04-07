@@ -107,7 +107,7 @@ Local flow definitions are tracked in `~/.pai/PAI/FLOWS/flow-index.json`:
 }
 ```
 
-Flow state (run history, errors) is tracked in `~/.claude/MEMORY/STATE/flow-state.json`.
+Flow state (run history, errors) is tracked in `~/.pai/MEMORY/STATE/flow-state.json`.
 
 ---
 

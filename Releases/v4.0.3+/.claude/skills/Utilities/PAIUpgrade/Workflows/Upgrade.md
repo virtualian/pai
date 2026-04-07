@@ -58,7 +58,7 @@ Format as structured JSON."
 
 Agent 2 - Recent Work Analysis:
 "Analyze the user's recent work patterns:
-- Read ~/.claude/MEMORY/STATE/current-work.json
+- Read ~/.pai/MEMORY/STATE/current-work.json
 - Check recent MEMORY/WORK/ directories (last 7 days)
 
 Extract and return:
@@ -446,7 +446,7 @@ Upgrade candidates mined from our own algorithm reflections and user ratings (Th
 
 ### Algorithm Reflections
 
-**Source:** ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+**Source:** ~/.pai/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 **Entries analyzed:** [N] | **High-signal:** [N] (low sentiment, over-budget, or failed criteria)
 
 [For each upgrade candidate from the reflection miner:]
@@ -463,7 +463,7 @@ Upgrade candidates mined from our own algorithm reflections and user ratings (Th
 
 ### Behavioral Signals from Ratings
 
-**Source:** ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
+**Source:** ~/.pai/MEMORY/LEARNING/SIGNALS/ratings.jsonl
 **Entries analyzed:** [N] | **Explicit feedback:** [N] | **Problem sessions:** [N]
 
 #### STOP (Low-Rating Patterns)

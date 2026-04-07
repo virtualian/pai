@@ -2,7 +2,7 @@
 /**
  * WorkArchival - Archive old completed WORK directories
  *
- * Scans ~/.claude/MEMORY/WORK/ for timestamped directories, checks their
+ * Scans ~/.pai/MEMORY/WORK/ for timestamped directories, checks their
  * completion status via PRD.md or META.yaml frontmatter, and archives
  * directories that are both completed and older than a configurable threshold.
  *
@@ -268,7 +268,7 @@ Usage:
   bun run WorkArchival.ts --days 30 --dry-run
 
 How it works:
-  Scans ~/.claude/MEMORY/WORK/ for directories matching YYYYMMDD-HHMMSS_slug.
+  Scans ~/.pai/MEMORY/WORK/ for directories matching YYYYMMDD-HHMMSS_slug.
   Checks each directory's PRD.md (phase: complete) or META.yaml (status: COMPLETED).
   Moves qualifying directories to WORK/ARCHIVE/YYYY-MM/ based on their timestamp.
 

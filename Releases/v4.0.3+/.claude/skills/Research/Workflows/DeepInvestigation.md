@@ -39,10 +39,10 @@ Iteration 3+: Continue until coverage gates pass
 
 All artifacts persist at:
 ```
-~/.claude/MEMORY/RESEARCH/{YYYY-MM}/{YYYY-MM-DD}_{topic-slug}/
+~/.pai/MEMORY/RESEARCH/{YYYY-MM}/{YYYY-MM-DD}_{topic-slug}/
 ```
 
-Read `~/.claude/MEMORY/STATE/current-work.json` for the active work directory.
+Read `~/.pai/MEMORY/STATE/current-work.json` for the active work directory.
 
 ---
 

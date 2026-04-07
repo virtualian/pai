@@ -36,7 +36,7 @@ Apply implements a two-invocation pattern inspired by `git rebase -i`: generate 
 **How to determine which invocation this is:**
 
 ```
-Check if ~/.claude/MEMORY/LEARNING/staged-changes.md exists.
+Check if ~/.pai/MEMORY/LEARNING/staged-changes.md exists.
 
 If it exists → This is the SECOND invocation (apply checked changes)
 If it does not exist → This is the FIRST invocation (generate staged changes)
@@ -49,7 +49,7 @@ If it does not exist → This is the FIRST invocation (generate staged changes)
 ### Step 1: Read Review File
 
 ```
-Read ~/.claude/MEMORY/LEARNING/review.md
+Read ~/.pai/MEMORY/LEARNING/review.md
 Parse all proposals and their statuses.
 Collect only proposals with status ACCEPTED.
 
@@ -88,7 +88,7 @@ For each ACCEPTED proposal, generate a concrete edit against the **current** tar
 ### Step 4: Write staged-changes.md
 
 ```
-Write ~/.claude/MEMORY/LEARNING/staged-changes.md
+Write ~/.pai/MEMORY/LEARNING/staged-changes.md
 
 With YAML frontmatter:
 ---
@@ -124,7 +124,7 @@ Output:
 ```
 ## Staged Changes Ready
 
-**Location:** `~/.claude/MEMORY/LEARNING/staged-changes.md`
+**Location:** `~/.pai/MEMORY/LEARNING/staged-changes.md`
 **Proposals staged:** [N]
 
 ### What to Do
@@ -146,7 +146,7 @@ Unchecked proposals stay ACCEPTED — they'll be re-staged on the next apply run
 ### Step 6: Read Staged Changes
 
 ```
-Read ~/.claude/MEMORY/LEARNING/staged-changes.md
+Read ~/.pai/MEMORY/LEARNING/staged-changes.md
 Parse each proposal section:
 - Extract LP-xxx ID
 - Check if the checkbox is checked ([x]) or unchecked ([ ])
@@ -173,7 +173,7 @@ For each proposal where the checkbox is unchecked (`[ ]`):
 ### Step 8: Update Review File
 
 ```
-Read ~/.claude/MEMORY/LEARNING/review.md
+Read ~/.pai/MEMORY/LEARNING/review.md
 For each proposal that was successfully applied:
   - Change status from ACCEPTED to APPLIED
   - Add applied timestamp: `- Applied: [ISO timestamp]`
@@ -187,7 +187,7 @@ Write the updated review.md
 ### Step 9: Clean Up
 
 ```
-Delete ~/.claude/MEMORY/LEARNING/staged-changes.md
+Delete ~/.pai/MEMORY/LEARNING/staged-changes.md
 (It's transient — regenerated each apply run)
 ```
 

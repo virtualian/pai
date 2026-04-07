@@ -401,12 +401,12 @@ mcp__Apify__apify-slash-rag-web-browser({
 
 ## 📁 Working Files → History Pattern
 
-**Working Directory:** `~/.claude/MEMORY/WORK/{current_work}/`
+**Working Directory:** `~/.pai/MEMORY/WORK/{current_work}/`
 
 **Getting Current Work Directory:**
-1. Read `~/.claude/MEMORY/STATE/current-work.json`
+1. Read `~/.pai/MEMORY/STATE/current-work.json`
 2. Extract the `work_dir` value
-3. Use `~/.claude/MEMORY/WORK/{work_dir}/` for temporary artifacts
+3. Use `~/.pai/MEMORY/WORK/{work_dir}/` for temporary artifacts
 
 **Process:**
 
@@ -434,7 +434,7 @@ mcp__Apify__apify-slash-rag-web-browser({
 
 **Working files (in current work item directory):**
 ```
-~/.claude/MEMORY/WORK/20260111-172408_retrieve-react19-docs/
+~/.pai/MEMORY/WORK/20260111-172408_retrieve-react19-docs/
 ├── raw-content/
 │   ├── page1.md (Layer 2 output)
 │   ├── page2.md (Layer 2 output)

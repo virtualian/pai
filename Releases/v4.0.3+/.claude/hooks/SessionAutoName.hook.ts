@@ -48,7 +48,7 @@ interface HookInput {
   user_prompt?: string;
 }
 
-const SESSION_NAMES_PATH = configPath('MEMORY', 'STATE', 'session-names.json');
+const SESSION_NAMES_PATH = codePath('MEMORY', 'STATE', 'session-names.json');
 const LOCK_PATH = SESSION_NAMES_PATH + '.lock';
 const LOCK_TIMEOUT = 3000;  // 3s max wait
 const LOCK_STALE = 10000;   // 10s = stale lock
@@ -353,7 +353,7 @@ function storeName(sessionId: string, label: string, source: string): void {
   }
   // Cache update is session-local, no lock needed
   const cacheContent = `cached_session_id='${sessionId}'\ncached_session_label='${label}'\n`;
-  const cachePath = configPath('MEMORY', 'STATE', 'session-name-cache.sh');
+  const cachePath = codePath('MEMORY', 'STATE', 'session-name-cache.sh');
   writeFileSync(cachePath, cacheContent, 'utf-8');
   // Propagate to work.json so admin dashboard stays in sync
   updateSessionNameInWorkJson(sessionId, label);
@@ -412,7 +412,7 @@ async function upgradeWithInference(sessionId: string, promptB64: string, expect
         }
         // Update cache outside lock
         const cacheContent = `cached_session_id='${sessionId}'\ncached_session_label='${label}'\n`;
-        const cachePath = configPath('MEMORY', 'STATE', 'session-name-cache.sh');
+        const cachePath = codePath('MEMORY', 'STATE', 'session-name-cache.sh');
         writeFileSync(cachePath, cacheContent, 'utf-8');
         console.error(`[SessionAutoName] Background upgrade: "${label}"`);
       } else {

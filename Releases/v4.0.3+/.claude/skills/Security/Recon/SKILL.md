@@ -363,8 +363,8 @@ Located in `Tools/` directory:
 ```
 
 Reports saved to:
-- **Work directory** (`~/.claude/MEMORY/WORK/{current_work}/`) - For iterative artifacts during investigation
-- **MEMORY/RESEARCH/** (`~/.claude/MEMORY/RESEARCH/YYYY-MM/`) - For pentest engagements and formal assessments
+- **Work directory** (`~/.pai/MEMORY/WORK/{current_work}/`) - For iterative artifacts during investigation
+- **MEMORY/RESEARCH/** (`~/.pai/MEMORY/RESEARCH/YYYY-MM/`) - For pentest engagements and formal assessments
 
 ## MCP Profile Requirements
 
@@ -421,7 +421,7 @@ Assistant: Activating recon skill with passive-recon workflow.
      [Performs WHOIS, DNS, cert transparency, IPInfo]
      [Generates report in scratchpad]
 
-     Report: ~/.claude/MEMORY/WORK/{current_work}/recon-example-com/
+     Report: ~/.pai/MEMORY/WORK/{current_work}/recon-example-com/
 ```
 
 ### Example 2: IP Investigation with Active Scan

@@ -139,7 +139,7 @@ Route to the appropriate workflow based on the request.
 → Exit: When all CRITICAL/HIGH entities researched + all categories covered
 ```
 
-**Artifacts persist** at `~/.claude/MEMORY/RESEARCH/{date}_{topic}/` — the vault survives across sessions.
+**Artifacts persist** at `~/.pai/MEMORY/RESEARCH/{date}_{topic}/` — the vault survives across sessions.
 
 See `Workflows/DeepInvestigation.md` for full workflow details.
 
@@ -147,8 +147,8 @@ See `Workflows/DeepInvestigation.md` for full workflow details.
 
 ## File Organization
 
-**Working files (temporary work artifacts):** `~/.claude/MEMORY/WORK/{current_work}/`
-- Read `~/.claude/MEMORY/STATE/current-work.json` to get the `work_dir` value
+**Working files (temporary work artifacts):** `~/.pai/MEMORY/WORK/{current_work}/`
+- Read `~/.pai/MEMORY/STATE/current-work.json` to get the `work_dir` value
 - All iterative work artifacts go in the current work item directory
 - This ties research artifacts to the work item for learning and context
 

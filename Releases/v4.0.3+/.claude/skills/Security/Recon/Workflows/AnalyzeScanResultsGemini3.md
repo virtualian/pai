@@ -98,13 +98,13 @@ The analysis provided is for DEFENSIVE security improvement and AUTHORIZED offen
 **Collect scan outputs:**
 ```bash
 # Get current work directory
-WORK_DIR=$(jq -r '.work_dir' ~/.claude/MEMORY/STATE/current-work.json)
+WORK_DIR=$(jq -r '.work_dir' ~/.pai/MEMORY/STATE/current-work.json)
 
 # Example: Recent nmap scan
-SCAN_FILE=~/.claude/MEMORY/WORK/${WORK_DIR}/$(date +%Y-%m-%d)_nmap-scan.txt
+SCAN_FILE=~/.pai/MEMORY/WORK/${WORK_DIR}/$(date +%Y-%m-%d)_nmap-scan.txt
 
 # Or masscan results
-MASSCAN_FILE=~/.claude/MEMORY/WORK/${WORK_DIR}/$(date +%Y-%m-%d)_masscan.json
+MASSCAN_FILE=~/.pai/MEMORY/WORK/${WORK_DIR}/$(date +%Y-%m-%d)_masscan.json
 
 # Or combined multi-tool archive from history
 SCAN_DIR=~/.claude/History/security/scans/2025-11-target-recon/
@@ -973,7 +973,7 @@ async function analyzeScans(scanDir: string) {
   console.log(`Analysis saved to: ${reportPath}`);
 }
 
-// Usage: bun run tools/batch-scan-analysis.ts ~/.claude/MEMORY/WORK/{current_work}/target-scans/
+// Usage: bun run tools/batch-scan-analysis.ts ~/.pai/MEMORY/WORK/{current_work}/target-scans/
 ```
 
 ## Example: Real-World Scan Analysis

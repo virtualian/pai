@@ -29,7 +29,7 @@
  *   algorithm stop -p <PRD>                     Stop a loop
  *
  * EXAMPLES:
- *   algorithm -m loop -p ~/.claude/MEMORY/WORK/auth/PRD-20260207-auth.md
+ *   algorithm -m loop -p ~/.pai/MEMORY/WORK/auth/PRD-20260207-auth.md
  *   algorithm -m loop -p /path/to/project/.prd/PRD-20260213-feature.md -n 20
  *   algorithm -m interactive -p PRD-20260213-surface
  *   algorithm new -t "Build auth system" -e Extended
@@ -211,7 +211,7 @@ Flags:
   -h, --help            Show this help
 
 PRD Resolution:
-  Full path     ~/.claude/MEMORY/WORK/auth/PRD-20260207-auth.md
+  Full path     ~/.pai/MEMORY/WORK/auth/PRD-20260207-auth.md
   PRD ID        PRD-20260207-auth (searches MEMORY/WORK/ and ~/Projects/*/.prd/)
   Project path  /path/to/project/.prd/PRD-20260213-feature.md
 

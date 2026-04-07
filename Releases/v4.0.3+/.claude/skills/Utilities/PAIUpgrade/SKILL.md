@@ -339,7 +339,7 @@ Extract: Current focus, priorities, active goals, project themes
 
 ### Agent 2: Recent Work Analysis
 Read and analyze:
-- ~/.claude/MEMORY/STATE/current-work.json
+- ~/.pai/MEMORY/STATE/current-work.json
 - Recent MEMORY/WORK/ directories
 
 Extract: What user has been working on, patterns, open tasks

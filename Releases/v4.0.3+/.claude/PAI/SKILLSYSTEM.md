@@ -518,7 +518,7 @@ Or manually:
 2. Update YAML frontmatter to single-line description
 3. Add `## Workflow Routing` table
 4. Add `## Examples` section
-5. Move backups to `~/.claude/MEMORY/Backups/`
+5. Move backups to `~/.pai/MEMORY/Backups/`
 6. Verify against checklist
 
 ---

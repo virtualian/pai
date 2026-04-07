@@ -48,8 +48,8 @@ interface VoiceEvent {
   error?: string;
 }
 
-const VOICE_LOG_PATH = configPath('MEMORY', 'VOICE', 'voice-events.jsonl');
-const CURRENT_WORK_PATH = configPath('MEMORY', 'STATE', 'current-work.json');
+const VOICE_LOG_PATH = codePath('MEMORY', 'VOICE', 'voice-events.jsonl');
+const CURRENT_WORK_PATH = codePath('MEMORY', 'STATE', 'current-work.json');
 
 function getActiveWorkDir(): string | null {
   try {
@@ -57,7 +57,7 @@ function getActiveWorkDir(): string | null {
     const content = readFileSync(CURRENT_WORK_PATH, 'utf-8');
     const state = JSON.parse(content);
     if (state.work_dir) {
-      const workPath = configPath('MEMORY', 'WORK', state.work_dir);
+      const workPath = codePath('MEMORY', 'WORK', state.work_dir);
       if (existsSync(workPath)) return workPath;
     }
   } catch {
@@ -70,7 +70,7 @@ function logVoiceEvent(event: VoiceEvent): void {
   const line = JSON.stringify(event) + '\n';
 
   try {
-    const dir = configPath('MEMORY', 'VOICE');
+    const dir = codePath('MEMORY', 'VOICE');
     if (!existsSync(dir)) {
       mkdirSync(dir, { recursive: true });
     }

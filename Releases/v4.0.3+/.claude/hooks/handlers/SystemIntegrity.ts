@@ -40,7 +40,7 @@ interface HookInput {
   hook_event_name: string;
 }
 
-const STATE_DIR = configPath('MEMORY', 'STATE');
+const STATE_DIR = codePath('MEMORY', 'STATE');
 const STATE_FILE = join(STATE_DIR, 'integrity-state.json');
 const INTEGRITY_SCRIPT = codePath('PAI', 'Tools', 'IntegrityMaintenance.ts');
 

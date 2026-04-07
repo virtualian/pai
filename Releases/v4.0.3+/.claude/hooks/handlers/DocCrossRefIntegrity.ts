@@ -74,8 +74,8 @@ const SYSTEM_DIR = codePath('PAI');
 const HOOKS_DIR = configPath('hooks');
 const HANDLERS_DIR = join(HOOKS_DIR, 'handlers');
 const LIB_DIR = join(HOOKS_DIR, 'lib');
-const DRIFT_STATE_FILE = configPath('MEMORY', 'STATE', 'doc-drift-state.json');
-const REVIEW_QUEUE_FILE = configPath('MEMORY', 'STATE', 'doc-review-queue.json');
+const DRIFT_STATE_FILE = codePath('MEMORY', 'STATE', 'doc-drift-state.json');
+const REVIEW_QUEUE_FILE = codePath('MEMORY', 'STATE', 'doc-review-queue.json');
 const TAG = '[DocAutoUpdate]';
 
 // ============================================================================

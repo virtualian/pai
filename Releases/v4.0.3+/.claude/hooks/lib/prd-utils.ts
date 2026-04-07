@@ -13,8 +13,8 @@ import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSy
 import { join } from 'path';
 import { configPath } from './paths';
 
-export const WORK_DIR = configPath('MEMORY', 'WORK');
-export const WORK_JSON = configPath('MEMORY', 'STATE', 'work.json');
+export const WORK_DIR = codePath('MEMORY', 'WORK');
+export const WORK_JSON = codePath('MEMORY', 'STATE', 'work.json');
 
 export function findLatestPRD(): string | null {
   if (!existsSync(WORK_DIR)) return null;
@@ -102,7 +102,7 @@ export function readRegistry(): { sessions: Record<string, any> } {
 }
 
 export function writeRegistry(reg: { sessions: Record<string, any> }): void {
-  mkdirSync(join(configPath('MEMORY'), 'STATE'), { recursive: true });
+  mkdirSync(join(codePath('MEMORY'), 'STATE'), { recursive: true });
   const tmp = WORK_JSON + '.tmp';
   writeFileSync(tmp, JSON.stringify(reg, null, 2));
   renameSync(tmp, WORK_JSON);
@@ -135,7 +135,7 @@ export function syncToWorkJson(fm: Record<string, string>, prdPath: string, cont
   let sessionName = existing.sessionName || '';
   if (sessionId) {
     try {
-      const namesPath = configPath('MEMORY', 'STATE', 'session-names.json');
+      const namesPath = codePath('MEMORY', 'STATE', 'session-names.json');
       if (existsSync(namesPath)) {
         const names = JSON.parse(readFileSync(namesPath, 'utf-8'));
         if (names[sessionId]) sessionName = names[sessionId];

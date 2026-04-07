@@ -125,7 +125,7 @@ The CLI accepts PRD references in multiple formats:
 
 | Format | Example | Resolution |
 |--------|---------|------------|
-| Full path | `~/.claude/MEMORY/WORK/20260207-auth/PRD.md` | Used directly |
+| Full path | `~/.pai/MEMORY/WORK/20260207-auth/PRD.md` | Used directly |
 | PRD ID | `PRD-20260207-auth` | Searches `MEMORY/WORK/*/PRD.md` and `~/Projects/*/.prd/` |
 | Project path | `/path/to/project/.prd/PRD-20260213-feature.md` | Used directly |
 

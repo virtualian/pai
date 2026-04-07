@@ -7,7 +7,7 @@
  *
  * Usage:
  *   import { getConfigDir, getPaiDir, configPath, codePath } from './lib/paths';
- *   configPath('MEMORY', 'STATE', 'work.json')  // ~/.claude/MEMORY/STATE/work.json
+ *   codePath('MEMORY', 'STATE', 'work.json')  // ~/.pai/MEMORY/STATE/work.json
  *   codePath('PAI', 'Tools', 'Inference')        // ~/.pai/PAI/Tools/Inference
  */
 
@@ -98,8 +98,8 @@ export function getSkillsDir(): string {
 }
 
 /**
- * Get the MEMORY directory (lives in CONFIG root)
+ * Get the MEMORY directory (lives in PAI code root)
  */
 export function getMemoryDir(): string {
-  return configPath('MEMORY');
+  return codePath('MEMORY');
 }

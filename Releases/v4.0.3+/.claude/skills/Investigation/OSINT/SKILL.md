@@ -138,7 +138,7 @@ Open Source Intelligence gathering for authorized investigations.
 
 **Active investigations:**
 ```
-~/.claude/MEMORY/WORK/$(jq -r '.work_dir' ~/.claude/MEMORY/STATE/current-work.json)/YYYY-MM-DD-HHMMSS_osint-[target]/
+~/.pai/MEMORY/WORK/$(jq -r '.work_dir' ~/.pai/MEMORY/STATE/current-work.json)/YYYY-MM-DD-HHMMSS_osint-[target]/
 ```
 
 **Archived reports:**
