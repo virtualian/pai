@@ -3,7 +3,7 @@
  * YouTubeApi.ts - YouTube Data API v3 client
  *
  * Usage:
- *   bun ~/.claude/skills/YouTube/Tools/YouTubeApi.ts <command> [options]
+ *   bun ~/.pai/skills/YouTube/Tools/YouTubeApi.ts <command> [options]
  *
  * Commands:
  *   channel              Get channel statistics

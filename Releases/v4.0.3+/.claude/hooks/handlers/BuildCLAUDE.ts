@@ -10,7 +10,9 @@
  * Rebuild ensures the NEXT session gets the fresh version.
  */
 
-import { needsRebuild, build } from "../../PAI/Tools/BuildCLAUDE.ts";
+import { codePath } from "../lib/paths";
+
+const { needsRebuild, build } = await import(codePath('PAI', 'Tools', 'BuildCLAUDE.ts'));
 
 const needs = needsRebuild();
 if (needs) {

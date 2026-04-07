@@ -17,8 +17,8 @@ Running the **CreateSkill** workflow in the **CreateSkill** skill to create new 
 
 **REQUIRED FIRST:**
 
-1. Read the skill system documentation: `~/.claude/PAI/SkillSystem.md`
-2. Read the canonical example: `~/.claude/skills/Research/SKILL.md`
+1. Read the skill system documentation: `~/.pai/PAI/SkillSystem.md`
+2. Read the canonical example: `~/.pai/skills/Research/SKILL.md`
 
 ## Step 2: Understand the Request
 
@@ -46,14 +46,14 @@ Ask the user:
 ## Step 4: Create the Skill Directory
 
 ```bash
-mkdir -p ~/.claude/skills/[SkillName]/Workflows
-mkdir -p ~/.claude/skills/[SkillName]/Tools
+mkdir -p ~/.pai/skills/[SkillName]/Workflows
+mkdir -p ~/.pai/skills/[SkillName]/Tools
 ```
 
 **Example:**
 ```bash
-mkdir -p ~/.claude/skills/YourSkill/Workflows
-mkdir -p ~/.claude/skills/YourSkill/Tools
+mkdir -p ~/.pai/skills/YourSkill/Workflows
+mkdir -p ~/.pai/skills/YourSkill/Tools
 ```
 
 ## Step 5: Create SKILL.md
@@ -87,7 +87,7 @@ description: [What it does]. USE WHEN [intent triggers using OR]. [Additional ca
    Running **WorkflowName** in **SkillName**...
    ```
 
-**Full documentation:** `~/.claude/PAI/THENOTIFICATIONSYSTEM.md`
+**Full documentation:** `~/.pai/PAI/THENOTIFICATIONSYSTEM.md`
 
 ## Workflow Routing
 
@@ -123,7 +123,7 @@ User: "[Different request]"
 For each workflow in the routing section:
 
 ```bash
-touch ~/.claude/skills/[SkillName]/Workflows/[WorkflowName].md
+touch ~/.pai/skills/[SkillName]/Workflows/[WorkflowName].md
 ```
 
 ### Workflow-to-Tool Integration (REQUIRED for workflows with CLI tools)
@@ -165,23 +165,23 @@ bun ToolName.ts \
 - Workflows should expose this flexibility, not hardcode single patterns
 - Users speak naturally; workflows translate to precise CLI
 
-**Reference:** `~/.claude/PAI/CliFirstArchitecture.md` (Workflow-to-Tool Integration section)
+**Reference:** `~/.pai/PAI/CliFirstArchitecture.md` (Workflow-to-Tool Integration section)
 
 **Examples (TitleCase):**
 ```bash
-touch ~/.claude/skills/YourSkill/Workflows/UpdateDaemonInfo.md
-touch ~/.claude/skills/YourSkill/Workflows/UpdatePublicRepo.md
-touch ~/.claude/skills/YourSkill/Workflows/Create.md
-touch ~/.claude/skills/YourSkill/Workflows/Publish.md
+touch ~/.pai/skills/YourSkill/Workflows/UpdateDaemonInfo.md
+touch ~/.pai/skills/YourSkill/Workflows/UpdatePublicRepo.md
+touch ~/.pai/skills/YourSkill/Workflows/Create.md
+touch ~/.pai/skills/YourSkill/Workflows/Publish.md
 ```
 
 ## Step 7: Verify TitleCase
 
 Run this check:
 ```bash
-ls ~/.claude/skills/[SkillName]/
-ls ~/.claude/skills/[SkillName]/Workflows/
-ls ~/.claude/skills/[SkillName]/Tools/
+ls ~/.pai/skills/[SkillName]/
+ls ~/.pai/skills/[SkillName]/Workflows/
+ls ~/.pai/skills/[SkillName]/Tools/
 ```
 
 Verify ALL files use TitleCase:

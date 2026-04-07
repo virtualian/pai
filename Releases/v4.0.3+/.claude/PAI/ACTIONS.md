@@ -88,7 +88,7 @@ Actions run in two environments with identical behavior:
 
 ## Action Structure
 
-Each action is a flat directory under `~/.claude/PAI/ACTIONS/`:
+Each action is a flat directory under `~/.pai/PAI/ACTIONS/`:
 
 ```
 A_LABEL_AND_RATE/
@@ -195,7 +195,7 @@ const capabilities = {
 ### Local Execution
 
 ```bash
-cd ~/.claude/PAI/ACTIONS
+cd ~/.pai/PAI/ACTIONS
 
 # Run a single action
 bun lib/runner.v2.ts run A_LABEL_AND_RATE --input '{"content": "Your text here"}'
@@ -258,7 +258,7 @@ Authorization: Bearer YOUR_AUTH_TOKEN
 
 ```bash
 # Personal actions go in USER/ACTIONS/
-mkdir ~/.claude/PAI/USER/ACTIONS/A_YOUR_ACTION
+mkdir ~/.pai/PAI/USER/ACTIONS/A_YOUR_ACTION
 ```
 
 ### Step 2: Define Manifest (action.json)
@@ -389,10 +389,10 @@ Same input should produce same output (for LLM actions, use temperature 0).
 
 ## Related Documentation
 
-- **Pipelines:** `~/.claude/PAI/PIPELINES.md`
-- **Flows:** `~/.claude/PAI/FLOWS.md`
-- **Architecture:** `~/.claude/PAI/PAISYSTEMARCHITECTURE.md`
-- **Personal Actions:** `~/.claude/PAI/USER/ACTIONS/`
+- **Pipelines:** `~/.pai/PAI/PIPELINES.md`
+- **Flows:** `~/.pai/PAI/FLOWS.md`
+- **Architecture:** `~/.pai/PAI/PAISYSTEMARCHITECTURE.md`
+- **Personal Actions:** `~/.pai/PAI/USER/ACTIONS/`
 - **Source code:** `~/Projects/arbol/`
 
 ---

@@ -18,7 +18,7 @@
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { spawn } from 'child_process';
 import { join } from 'path';
-import { paiPath } from '../lib/paths';
+import { configPath, codePath } from '../lib/paths';
 
 import {
   parseToolUseBlocks,
@@ -32,7 +32,7 @@ import {
   generateDescriptiveTitle,
   type FileChange,
 } from '../lib/change-detection';
-import type { ParsedTranscript } from '../../PAI/Tools/TranscriptParser';
+type ParsedTranscript = import('../../PAI/Tools/TranscriptParser').ParsedTranscript;
 
 interface HookInput {
   session_id: string;
@@ -40,9 +40,9 @@ interface HookInput {
   hook_event_name: string;
 }
 
-const STATE_DIR = paiPath('MEMORY', 'STATE');
+const STATE_DIR = configPath('MEMORY', 'STATE');
 const STATE_FILE = join(STATE_DIR, 'integrity-state.json');
-const INTEGRITY_SCRIPT = paiPath('PAI', 'Tools', 'IntegrityMaintenance.ts');
+const INTEGRITY_SCRIPT = codePath('PAI', 'Tools', 'IntegrityMaintenance.ts');
 
 
 /**

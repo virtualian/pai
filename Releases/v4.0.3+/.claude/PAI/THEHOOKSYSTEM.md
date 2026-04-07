@@ -603,7 +603,7 @@ else if (hookData.cwd && hookData.cwd.includes('/agents/')) {
 - 🧠 Brain - AI inference in progress (Haiku/Sonnet thinking)
 - ⚙️ Gear - Processing/working state
 
-**Full Documentation:** See `~/.claude/PAI/TERMINALTABS.md`
+**Full Documentation:** See `~/.pai/PAI/TERMINALTABS.md`
 
 ---
 
@@ -933,7 +933,7 @@ grep '"type":"user"' ~/.claude/projects/-Users-username--claude/*.jsonl | head -
 ### Context Loading Issues (SessionStart)
 
 **Check:**
-1. Does `~/.claude/PAI/SKILL.md` exist?
+1. Does `~/.pai/PAI/SKILL.md` exist?
 2. Is `LoadContext.hook.ts` executable?
 3. Is `PAI_DIR` env variable set correctly?
 
@@ -1067,9 +1067,9 @@ Hooks in same event execute **sequentially** in order defined in settings.json:
 
 ## Related Documentation
 
-- **Voice System:** `~/.claude/VoiceServer/SKILL.md`
-- **Agent System:** `~/.claude/skills/Agents/SKILL.md`
-- **History/Memory:** `~/.claude/PAI/MEMORYSYSTEM.md`
+- **Voice System:** `~/.pai/VoiceServer/SKILL.md`
+- **Agent System:** `~/.pai/skills/Agents/SKILL.md`
+- **History/Memory:** `~/.pai/PAI/MEMORYSYSTEM.md`
 
 ---
 
@@ -1135,7 +1135,7 @@ KEY FILES:
 ~/.claude/MEMORY/STATE/events.jsonl  Unified event log (append-only)
 
 INFERENCE TOOL (for hooks needing AI):
-Path: ~/.claude/PAI/Tools/Inference.ts
+Path: ~/.pai/PAI/Tools/Inference.ts
 Import: import { inference } from '../PAI/Tools/Inference'
 Levels: fast (haiku/15s) | standard (sonnet/30s) | smart (opus/90s)
 

@@ -64,7 +64,7 @@ import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
 import { parse as parseYaml } from 'yaml';
-import { paiPath } from './lib/paths';
+import { configPath, codePath } from './lib/paths';
 
 // ========================================
 // Security Event Logging
@@ -113,7 +113,7 @@ function getSecurityLogPath(event: SecurityEvent): string {
   const summary = generateEventSummary(event);
   const timestamp = `${year}${month}${day}-${hour}${min}${sec}`;
 
-  return paiPath('MEMORY', 'SECURITY', year, month, `security-${summary}-${timestamp}.jsonl`);
+  return configPath('MEMORY', 'SECURITY', year, month, `security-${summary}-${timestamp}.jsonl`);
 }
 
 function logSecurityEvent(event: SecurityEvent): void {
@@ -180,8 +180,8 @@ interface PatternsConfig {
 // Pattern paths in priority order:
 // 1. PAI/USER/PAISECURITYSYSTEM/patterns.yaml (user's custom rules)
 // 2. PAI/PAISECURITYSYSTEM/patterns.example.yaml (default template)
-const USER_PATTERNS_PATH = paiPath('PAI', 'USER', 'PAISECURITYSYSTEM', 'patterns.yaml');
-const SYSTEM_PATTERNS_PATH = paiPath('PAI', 'PAISECURITYSYSTEM', 'patterns.example.yaml');
+const USER_PATTERNS_PATH = codePath('PAI', 'USER', 'PAISECURITYSYSTEM', 'patterns.yaml');
+const SYSTEM_PATTERNS_PATH = codePath('PAI', 'PAISECURITYSYSTEM', 'patterns.example.yaml');
 
 let patternsCache: PatternsConfig | null = null;
 let patternsSource: 'user' | 'system' | 'none' = 'none';

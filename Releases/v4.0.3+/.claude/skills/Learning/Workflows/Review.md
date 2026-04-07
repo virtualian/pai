@@ -1,7 +1,7 @@
 # Review Workflow (Propose + Open Review File)
 
 ```bash
-bun ~/.claude/PAI/Tools/Notify.ts "Running the Review workflow in the Learning skill to generate change proposals"
+bun ~/.pai/PAI/Tools/Notify.ts "Running the Review workflow in the Learning skill to generate change proposals"
 ```
 
 Running the **Review** workflow in the **Learning** skill to generate change proposals...

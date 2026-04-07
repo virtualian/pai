@@ -9,7 +9,7 @@ description: Create, edit, and analyze Word documents — tracked changes, table
 
 **Before starting any task with this skill, load complete PAI context:**
 
-`read ~/.claude/PAI/SKILL.md`
+`read ~/.pai/PAI/SKILL.md`
 
 This provides access to:
 - Complete contact list (Angela, Bunny, Saša, Greg, team members)

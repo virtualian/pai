@@ -3,7 +3,7 @@
 /**
  * RebuildPAI.ts - Assembles SKILL.md from Components/
  *
- * Usage: bun ~/.claude/PAI/Tools/RebuildPAI.ts
+ * Usage: bun ~/.pai/PAI/Tools/RebuildPAI.ts
  *
  * Reads all .md files from Components/, sorts by numeric prefix,
  * concatenates them, and writes to SKILL.md with build timestamp
@@ -105,8 +105,8 @@ for (const file of components) {
   // Inject timestamp into frontmatter component
   if (file === "00-frontmatter.md") {
     content = content.replace(
-      "  Build:  bun ~/.claude/PAI/Tools/RebuildPAI.ts",
-      `  Build:  bun ~/.claude/PAI/Tools/RebuildPAI.ts\n  Built:  ${timestamp}`
+      "  Build:  bun ~/.pai/PAI/Tools/RebuildPAI.ts",
+      `  Build:  bun ~/.pai/PAI/Tools/RebuildPAI.ts\n  Built:  ${timestamp}`
     );
   }
 

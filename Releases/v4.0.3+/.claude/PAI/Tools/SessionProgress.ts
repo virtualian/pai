@@ -6,7 +6,7 @@
  * Based on Anthropic's claude-progress.txt pattern.
  *
  * Usage:
- *   bun run ~/.claude/PAI/Tools/SessionProgress.ts <command> [options]
+ *   bun run ~/.pai/PAI/Tools/SessionProgress.ts <command> [options]
  */
 
 import { existsSync, readFileSync, writeFileSync, readdirSync } from 'fs';

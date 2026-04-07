@@ -9,8 +9,10 @@
  * PERFORMANCE: ~50ms (single transcript parse, one handler call). Non-blocking.
  */
 
-import { parseTranscript } from '../PAI/Tools/TranscriptParser';
+import { codePath } from './lib/paths';
 import { handleSystemIntegrity } from './handlers/SystemIntegrity';
+
+const { parseTranscript } = await import(codePath('PAI', 'Tools', 'TranscriptParser'));
 
 interface HookInput {
   session_id: string;

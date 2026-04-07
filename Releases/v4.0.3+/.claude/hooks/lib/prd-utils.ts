@@ -11,10 +11,10 @@
 
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync, renameSync } from 'fs';
 import { join } from 'path';
-import { paiPath } from './paths';
+import { configPath } from './paths';
 
-export const WORK_DIR = paiPath('MEMORY', 'WORK');
-export const WORK_JSON = paiPath('MEMORY', 'STATE', 'work.json');
+export const WORK_DIR = configPath('MEMORY', 'WORK');
+export const WORK_JSON = configPath('MEMORY', 'STATE', 'work.json');
 
 export function findLatestPRD(): string | null {
   if (!existsSync(WORK_DIR)) return null;
@@ -102,7 +102,7 @@ export function readRegistry(): { sessions: Record<string, any> } {
 }
 
 export function writeRegistry(reg: { sessions: Record<string, any> }): void {
-  mkdirSync(join(paiPath('MEMORY'), 'STATE'), { recursive: true });
+  mkdirSync(join(configPath('MEMORY'), 'STATE'), { recursive: true });
   const tmp = WORK_JSON + '.tmp';
   writeFileSync(tmp, JSON.stringify(reg, null, 2));
   renameSync(tmp, WORK_JSON);
@@ -110,8 +110,8 @@ export function writeRegistry(reg: { sessions: Record<string, any> }): void {
 
 export function syncToWorkJson(fm: Record<string, string>, prdPath: string, content?: string, sessionId?: string): void {
   if (!fm.slug) return;
-  const paiDir = paiPath();
-  const relativePrd = prdPath.replace(paiDir + '/', '');
+  const cfgDir = configPath();
+  const relativePrd = prdPath.replace(cfgDir + '/', '');
   const registry = readRegistry();
 
   // Migration: if there's a 'starting' or 'native' placeholder entry for this session UUID,
@@ -135,7 +135,7 @@ export function syncToWorkJson(fm: Record<string, string>, prdPath: string, cont
   let sessionName = existing.sessionName || '';
   if (sessionId) {
     try {
-      const namesPath = paiPath('MEMORY', 'STATE', 'session-names.json');
+      const namesPath = configPath('MEMORY', 'STATE', 'session-names.json');
       if (existsSync(namesPath)) {
         const names = JSON.parse(readFileSync(namesPath, 'utf-8'));
         if (names[sessionId]) sessionName = names[sessionId];

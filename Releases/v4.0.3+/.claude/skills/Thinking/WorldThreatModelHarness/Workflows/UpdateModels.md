@@ -16,7 +16,7 @@ Refresh or create world model documents using deep research and user-provided an
 
 ## Prerequisites
 
-- Model template at `~/.claude/skills/WorldThreatModelHarness/ModelTemplate.md`
+- Model template at `~/.pai/skills/WorldThreatModelHarness/ModelTemplate.md`
 - Research skill available for web research
 
 ## Workflow Steps

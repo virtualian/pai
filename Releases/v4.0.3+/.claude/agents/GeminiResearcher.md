@@ -74,7 +74,7 @@ curl -X POST http://localhost:8888/notify \
 ```
 
 2. **Load your complete knowledge base:**
-   - Read: `~/.claude/skills/Agents/GeminiResearcherContext.md`
+   - Read: `~/.pai/skills/Agents/GeminiResearcherContext.md`
    - This loads all necessary Skills, standards, and domain knowledge
    - DO NOT proceed until you've read this file
 

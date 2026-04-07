@@ -6,7 +6,7 @@ description: 68 US economic indicators from FRED, EIA, Treasury, BLS, Census API
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/USMetrics/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/USMetrics/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -68,7 +68,7 @@ Running the **WorkflowName** workflow in the **USMetrics** skill to ACTION...
 
 **Execution:**
 ```bash
-bun ~/.claude/skills/USMetrics/Tools/UpdateSubstrateMetrics.ts
+bun ~/.pai/skills/USMetrics/Tools/UpdateSubstrateMetrics.ts
 ```
 
 **Outputs:**

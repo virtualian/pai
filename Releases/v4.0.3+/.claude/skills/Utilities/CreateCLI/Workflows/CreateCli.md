@@ -276,7 +276,7 @@ const format = formatIdx !== -1 ? args[formatIdx + 1] : 'json';
 4. **Value flags**: `--flag <value>` for choices
 5. **Composable**: Flags should combine logically
 
-**Reference:** `~/.claude/PAI/CliFirstArchitecture.md` (Configuration Flags section)
+**Reference:** `~/.pai/PAI/CliFirstArchitecture.md` (Configuration Flags section)
 
 ---
 

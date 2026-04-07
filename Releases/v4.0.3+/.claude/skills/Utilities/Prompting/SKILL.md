@@ -6,7 +6,7 @@ description: Meta-prompting system that generates optimized prompts using templa
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Prompting/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Prompting/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -63,7 +63,7 @@ Complete prompt engineering documentation based on:
 
 ```typescript
 // skills/Agents/Tools/ComposeAgent.ts
-import { renderTemplate } from '~/.claude/skills/Utilities/Prompting/Tools/RenderTemplate.ts';
+import { renderTemplate } from '~/.pai/skills/Utilities/Prompting/Tools/RenderTemplate.ts';
 
 const prompt = renderTemplate('Primitives/Briefing.hbs', {
   briefing: { type: 'research' },

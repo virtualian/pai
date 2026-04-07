@@ -99,7 +99,7 @@ Use the Agents skill to compose task-specific agents with unique traits, voices,
 
 **For research specifically:** Use the Research skill, which has dedicated researcher agents (ClaudeResearcher, GeminiResearcher, etc.)
 
-**Reference:** Agents skill (`~/.claude/skills/Agents/SKILL.md`)
+**Reference:** Agents skill (`~/.pai/skills/Agents/SKILL.md`)
 
 **Full Context Requirements:**
 When delegating, ALWAYS include:

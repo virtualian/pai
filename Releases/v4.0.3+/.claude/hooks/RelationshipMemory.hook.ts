@@ -30,10 +30,11 @@
 
 import { writeFileSync, existsSync, mkdirSync, appendFileSync } from 'fs';
 import { join } from 'path';
-import { getPaiDir } from './lib/paths';
+import { getConfigDir, codePath } from './lib/paths';
 import { getPSTComponents } from './lib/time';
 import { getDAName, getPrincipalName } from './lib/identity';
-import { parseTranscript } from '../PAI/Tools/TranscriptParser';
+
+const { parseTranscript } = await import(codePath('PAI', 'Tools', 'TranscriptParser'));
 
 interface HookInput {
   session_id: string;
@@ -265,8 +266,8 @@ async function main() {
     }
 
     // Write to daily relationship file
-    const paiDir = getPaiDir();
-    const filepath = ensureRelationshipDir(paiDir);
+    const configDir = getConfigDir();
+    const filepath = ensureRelationshipDir(configDir);
     initDailyFile(filepath);
 
     const formatted = formatNotes(notes);

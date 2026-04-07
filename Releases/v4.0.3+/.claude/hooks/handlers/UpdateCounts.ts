@@ -19,7 +19,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join } from 'path';
 import { execSync, spawn } from 'child_process';
-import { getPaiDir, getSettingsPath } from '../lib/paths';
+import { getConfigDir, getPaiDir, getSettingsPath } from '../lib/paths';
 
 
 interface Counts {
@@ -147,18 +147,18 @@ function countSubdirs(dir: string): number {
 /**
  * Get all counts
  */
-function getCounts(paiDir: string): Counts {
-  const ratingsPath = join(paiDir, 'MEMORY/LEARNING/SIGNALS/ratings.jsonl');
+function getCounts(configDir: string, paiDir: string): Counts {
+  const ratingsPath = join(configDir, 'MEMORY/LEARNING/SIGNALS/ratings.jsonl');
   return {
     skills: countSkills(paiDir),
     workflows: countWorkflowFiles(join(paiDir, 'skills')),
-    hooks: countHooks(paiDir),
-    signals: countFilesRecursive(join(paiDir, 'MEMORY/LEARNING'), '.md'),
+    hooks: countHooks(configDir),
+    signals: countFilesRecursive(join(configDir, 'MEMORY/LEARNING'), '.md'),
     files: countFilesRecursive(join(paiDir, 'PAI/USER')),
-    work: countSubdirs(join(paiDir, 'MEMORY/WORK')),
-    sessions: countFilesRecursive(join(paiDir, 'MEMORY'), '.jsonl'),
-    research: countFilesRecursive(join(paiDir, 'MEMORY/RESEARCH'), '.md') +
-              countFilesRecursive(join(paiDir, 'MEMORY/RESEARCH'), '.json'),
+    work: countSubdirs(join(configDir, 'MEMORY/WORK')),
+    sessions: countFilesRecursive(join(configDir, 'MEMORY'), '.jsonl'),
+    research: countFilesRecursive(join(configDir, 'MEMORY/RESEARCH'), '.md') +
+              countFilesRecursive(join(configDir, 'MEMORY/RESEARCH'), '.json'),
     ratings: countRatingsLines(ratingsPath),
     updatedAt: new Date().toISOString(),
   };
@@ -252,19 +252,20 @@ async function refreshUsageCache(paiDir: string): Promise<void> {
  * Handler called by UpdateCounts.hook.ts
  */
 export async function handleUpdateCounts(): Promise<void> {
+  const configDir = getConfigDir();
   const paiDir = getPaiDir();
   const settingsPath = getSettingsPath();
 
   try {
     // Write counts to settings.json FIRST (fast, ~50ms) so they survive
     // even if the process gets SIGTERM'd during the slower API refresh.
-    const counts = getCounts(paiDir);
+    const counts = getCounts(configDir, paiDir);
     const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
     settings.counts = counts;
 
-    // Extract and write Algorithm version from CLAUDE.md
+    // Extract and write Algorithm version from CLAUDE.md (lives in CONFIG root)
     try {
-      const claudeMd = readFileSync(join(paiDir, 'CLAUDE.md'), 'utf-8');
+      const claudeMd = readFileSync(join(configDir, 'CLAUDE.md'), 'utf-8');
       const algoMatch = claudeMd.match(/Algorithm\/v([\d.]+)\.md/);
       if (algoMatch) {
         settings.pai = settings.pai || {};
@@ -280,7 +281,7 @@ export async function handleUpdateCounts(): Promise<void> {
     // signal aborting it ("Hook cancelled"). A detached process runs independently
     // and isn't killed when the hook exits.
     try {
-      const scriptPath = join(paiDir, 'hooks', 'handlers', 'UpdateCounts.ts');
+      const scriptPath = join(configDir, 'hooks', 'handlers', 'UpdateCounts.ts');
       const child = spawn('bun', ['run', scriptPath], {
         detached: true,
         stdio: 'ignore',
@@ -301,7 +302,7 @@ export async function handleUpdateCounts(): Promise<void> {
 // - UPDATE_COUNTS_REFRESH_ONLY=1: only refresh usage cache — spawned as detached bg process by the hook
 if (import.meta.main) {
   if (process.env.UPDATE_COUNTS_REFRESH_ONLY === '1') {
-    refreshUsageCache(getPaiDir()).then(() => process.exit(0)).catch(() => process.exit(0));
+    refreshUsageCache(getConfigDir()).then(() => process.exit(0)).catch(() => process.exit(0));
   } else {
     handleUpdateCounts().then(() => process.exit(0));
   }

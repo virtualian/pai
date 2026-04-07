@@ -56,7 +56,7 @@ FOR: Multi-step, complex, or difficult work. Troubleshooting, debugging, buildin
 
 ### Context Routing
 
-When you need context about any of these topics, read `~/.claude/PAI/CONTEXT_ROUTING.md` for the file path:
+When you need context about any of these topics, read `~/.pai/PAI/CONTEXT_ROUTING.md` for the file path:
 
 - PAI internals
 - The user, their life and work, etc

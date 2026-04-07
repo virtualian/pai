@@ -67,7 +67,7 @@ Ask the user:
 
 ```bash
 # Check prompts exist
-ls ~/.claude/skills/Utilities/Evals/UseCases/<name>/prompts/
+ls ~/.pai/skills/Utilities/Evals/UseCases/<name>/prompts/
 
 # Should see both versions:
 # v1.0.0.md
@@ -76,7 +76,7 @@ ls ~/.claude/skills/Utilities/Evals/UseCases/<name>/prompts/
 
 ### Step 3: Create Comparison Config
 
-Create `~/.claude/skills/Utilities/Evals/UseCases/<name>/comparisons/<comparison-name>.yaml`:
+Create `~/.pai/skills/Utilities/Evals/UseCases/<name>/comparisons/<comparison-name>.yaml`:
 
 ```yaml
 comparison:
@@ -119,7 +119,7 @@ comparison:
 **Option A: Via CLI**
 
 ```bash
-bun run ~/.claude/skills/Utilities/Evals/EvalServer/cli-run.ts \
+bun run ~/.pai/skills/Utilities/Evals/EvalServer/cli-run.ts \
   --use-case <name> \
   --compare prompts/v1.0.0.md prompts/v1.1.0.md \
   --position-swap
@@ -304,8 +304,8 @@ For detailed comparison setup, use the Comparison template:
 ```bash
 bun run ~/.claude/Templates/Tools/RenderTemplate.ts \
   -t Evals/Comparison.hbs \
-  -d ~/.claude/skills/Utilities/Evals/UseCases/<name>/comparisons/<name>.yaml \
-  -o ~/.claude/skills/Utilities/Evals/UseCases/<name>/comparisons/<name>-setup.md \
+  -d ~/.pai/skills/Utilities/Evals/UseCases/<name>/comparisons/<name>.yaml \
+  -o ~/.pai/skills/Utilities/Evals/UseCases/<name>/comparisons/<name>-setup.md \
   --preview
 ```
 

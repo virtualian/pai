@@ -322,7 +322,7 @@ IF either gate FAILS:
 
 ## Domain Template Packs
 
-Templates live at `~/.claude/skills/Research/Templates/{DomainName}.md`
+Templates live at `~/.pai/skills/Research/Templates/{DomainName}.md`
 
 Each template pack defines:
 1. **Entity categories** for this domain (what types of things to discover)

@@ -6,7 +6,7 @@ description: 2-8 scientific lens passes to surface hidden requirements single-pa
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/IterativeDepth/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/IterativeDepth/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 

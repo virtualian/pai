@@ -28,7 +28,7 @@ PAI is a general problem-solving system that magnifies human capabilities. It ru
 The 7-phase execution engine: Observe, Think, Plan, Build, Execute, Verify, Learn. Transitions from CURRENT STATE to IDEAL STATE via verifiable criteria (ISC). Current version: v3.7.0.
 
 ### Skills (`SKILLSYSTEM.md`)
-12 hierarchical categories with 49 total skills in `~/.claude/skills/`, each with a `SKILL.md` defining triggers, workflows, and tools. Skills are the primary capability unit.
+12 hierarchical categories with 49 total skills in `~/.pai/skills/`, each with a `SKILL.md` defining triggers, workflows, and tools. Skills are the primary capability unit.
 
 ### Hooks (`THEHOOKSYSTEM.md`)
 21+ event hooks across the session lifecycle: SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, Stop, SessionEnd. Defined in `settings.json`, implemented in `~/.claude/hooks/`.

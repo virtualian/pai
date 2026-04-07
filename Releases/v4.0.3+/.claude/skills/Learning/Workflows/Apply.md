@@ -1,7 +1,7 @@
 # Apply Workflow (Two-Gate Approval)
 
 ```bash
-bun ~/.claude/PAI/Tools/Notify.ts "Running the Apply workflow in the Learning skill to stage and apply approved changes"
+bun ~/.pai/PAI/Tools/Notify.ts "Running the Apply workflow in the Learning skill to stage and apply approved changes"
 ```
 
 Running the **Apply** workflow in the **Learning** skill to stage and apply approved changes...
@@ -65,7 +65,7 @@ For each ACCEPTED proposal, read the current state of its target file:
 
 | Target | File to Read |
 |--------|-------------|
-| Algorithm spec | Read `~/.claude/PAI/Algorithm/LATEST` to get version, then read `~/.claude/PAI/Algorithm/v{VERSION}.md` |
+| Algorithm spec | Read `~/.pai/PAI/Algorithm/LATEST` to get version, then read `~/.pai/PAI/Algorithm/v{VERSION}.md` |
 | AISTEERINGRULES.md | Read `~/.claude/AISTEERINGRULES.md` |
 | Feedback memories | Read the PAI memory directory `~/.claude/projects/*/memory/` to understand existing structure |
 

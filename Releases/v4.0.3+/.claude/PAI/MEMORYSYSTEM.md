@@ -317,7 +317,7 @@ ls -lt ~/.claude/MEMORY/LEARNING/FAILURES/$(date +%Y-%m)/ 2>/dev/null | head -10
 cat ~/.claude/MEMORY/LEARNING/FAILURES/2026-01/*/CONTEXT.md | head -100
 
 # Migrate historical low ratings to FAILURES
-bun run ~/.claude/PAI/Tools/FailureCapture.ts --migrate
+bun run ~/.pai/PAI/Tools/FailureCapture.ts --migrate
 ```
 
 ### Check multi-session progress
@@ -328,10 +328,10 @@ ls ~/.claude/MEMORY/STATE/progress/
 ### Run harvesting tools
 ```bash
 # Harvest learnings from recent sessions
-bun run ~/.claude/PAI/Tools/SessionHarvester.ts --recent 10
+bun run ~/.pai/PAI/Tools/SessionHarvester.ts --recent 10
 
 # Generate pattern synthesis
-bun run ~/.claude/PAI/Tools/LearningPatternSynthesis.ts --week
+bun run ~/.pai/PAI/Tools/LearningPatternSynthesis.ts --week
 ```
 
 ---

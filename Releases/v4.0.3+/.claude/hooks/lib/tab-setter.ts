@@ -12,10 +12,10 @@ import { existsSync, writeFileSync, mkdirSync, readdirSync, unlinkSync, readFile
 import { join } from 'path';
 import { execSync } from 'child_process';
 import { TAB_COLORS, PHASE_TAB_CONFIG, ACTIVE_TAB_BG, ACTIVE_TAB_FG, INACTIVE_TAB_FG, type TabState, type AlgorithmTabPhase } from './tab-constants';
-import { paiPath } from './paths';
+import { configPath } from './paths';
 
-const TAB_TITLES_DIR = paiPath('MEMORY', 'STATE', 'tab-titles');
-const KITTY_SESSIONS_DIR = paiPath('MEMORY', 'STATE', 'kitty-sessions');
+const TAB_TITLES_DIR = configPath('MEMORY', 'STATE', 'tab-titles');
+const KITTY_SESSIONS_DIR = configPath('MEMORY', 'STATE', 'kitty-sessions');
 
 /**
  * Get Kitty environment from env vars or persisted per-session file.
@@ -251,7 +251,7 @@ const SESSION_NOISE = new Set([
  */
 export function getSessionOneWord(sessionId: string): string | null {
   try {
-    const namesPath = paiPath('MEMORY', 'STATE', 'session-names.json');
+    const namesPath = configPath('MEMORY', 'STATE', 'session-names.json');
     if (!existsSync(namesPath)) return null;
     const names = JSON.parse(readFileSync(namesPath, 'utf-8'));
     const fullName = names[sessionId];

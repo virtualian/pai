@@ -34,9 +34,9 @@
 
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
-import { getPaiDir } from './lib/paths';
+import { getConfigDir, getPaiDir } from './lib/paths';
 import { recordSessionStart } from './lib/notifications';
-import { loadLearningDigest, loadWisdomFrames, loadFailurePatterns, loadSignalTrends, loadLatestSynthesis, loadBehavioralTrends } from './lib/learning-readback';
+import { loadLearningDigest, loadWisdomFrames, loadFailurePatterns, loadSignalTrends } from './lib/learning-readback';
 
 interface DynamicContextConfig {
   relationshipContext?: boolean;
@@ -112,10 +112,10 @@ function loadStartupFiles(paiDir: string, settings: Settings): string | null {
  * Load relationship context for session startup.
  * Returns a lightweight summary of key opinions and recent notes.
  */
-function loadRelationshipContext(paiDir: string): string | null {
+function loadRelationshipContext(configDir: string, paiDir: string): string | null {
   const parts: string[] = [];
 
-  // Load high-confidence opinions (>0.85) from OPINIONS.md
+  // Load high-confidence opinions (>0.85) from OPINIONS.md (PAI code root)
   const opinionsPath = join(paiDir, 'PAI/USER/OPINIONS.md');
   if (existsSync(opinionsPath)) {
     try {
@@ -154,7 +154,7 @@ function loadRelationshipContext(paiDir: string): string | null {
   const recentNotes: string[] = [];
   for (const date of [today, yesterday]) {
     const notePath = join(
-      paiDir,
+      configDir,
       'MEMORY/RELATIONSHIP',
       formatMonth(date),
       `${formatDate(date)}.md`
@@ -427,8 +427,9 @@ async function checkActiveProgress(paiDir: string): Promise<string | null> {
     }
   }
 
-  summary += '\n💡 To resume project: `bun run ~/.claude/PAI/Tools/SessionProgress.ts resume <project>`\n';
-  summary += '💡 To complete project: `bun run ~/.claude/PAI/Tools/SessionProgress.ts complete <project>`\n';
+  const pDir = getPaiDir();
+  summary += `\n💡 To resume project: \`bun run ${pDir}/PAI/Tools/SessionProgress.ts resume <project>\`\n`;
+  summary += `💡 To complete project: \`bun run ${pDir}/PAI/Tools/SessionProgress.ts complete <project>\`\n`;
 
   return summary;
 }
@@ -445,6 +446,7 @@ async function main() {
       process.exit(0);
     }
 
+    const configDir = getConfigDir();
     const paiDir = getPaiDir();
 
     // Tab reset is handled by KittyEnvPersist.hook.ts (runs before this hook)
@@ -453,11 +455,11 @@ async function main() {
     recordSessionStart();
     console.error('⏱️ Session start time recorded');
 
-    // Load settings for dynamic context controls
-    const settings = loadSettings(paiDir);
+    // Load settings for dynamic context controls (settings.json lives in CONFIG root)
+    const settings = loadSettings(configDir);
     console.error('✅ Loaded settings.json');
 
-    // Force-load startup files from settings.json → loadAtStartup
+    // Force-load startup files from settings.json → loadAtStartup (paths relative to PAI code root)
     const startupContent = loadStartupFiles(paiDir, settings);
     if (startupContent) {
       console.log(`<system-reminder>\n${startupContent}\n</system-reminder>`);
@@ -466,7 +468,7 @@ async function main() {
     // Load relationship context (lightweight summary)
     let relationshipContext: string | null = null;
     if (isDynamicEnabled(settings, 'relationshipContext')) {
-      relationshipContext = loadRelationshipContext(paiDir);
+      relationshipContext = loadRelationshipContext(configDir, paiDir);
       if (relationshipContext) {
         console.error(`💕 Loaded relationship context (${relationshipContext.length} chars)`);
       }
@@ -477,18 +479,14 @@ async function main() {
     // Load learning readback context
     let learningContext = '';
     if (isDynamicEnabled(settings, 'learningReadback')) {
-      const learningDigest = loadLearningDigest(paiDir);
-      const wisdomFrames = loadWisdomFrames(paiDir);
-      const failurePatterns = loadFailurePatterns(paiDir);
-      const signalTrends = loadSignalTrends(paiDir);
-      const latestSynthesis = loadLatestSynthesis(paiDir);
-      const behavioralTrends = loadBehavioralTrends(paiDir);
+      const learningDigest = loadLearningDigest(configDir);
+      const wisdomFrames = loadWisdomFrames(configDir);
+      const failurePatterns = loadFailurePatterns(configDir);
+      const signalTrends = loadSignalTrends(configDir);
 
       const learningParts: string[] = [];
       if (signalTrends) learningParts.push(signalTrends);
-      if (behavioralTrends) learningParts.push(behavioralTrends);
       if (wisdomFrames) learningParts.push(wisdomFrames);
-      if (latestSynthesis) learningParts.push(latestSynthesis);
       if (learningDigest) learningParts.push(learningDigest);
       if (failurePatterns) learningParts.push(failurePatterns);
 
@@ -520,7 +518,7 @@ Dynamic context loaded. Core identity, rules, and format are in CLAUDE.md.
 
     // Active work summary
     if (isDynamicEnabled(settings, 'activeWorkSummary')) {
-      const activeProgress = await checkActiveProgress(paiDir);
+      const activeProgress = await checkActiveProgress(configDir);
       if (activeProgress) {
         console.log(activeProgress);
         console.error(`📋 Active work summary loaded (${activeProgress.length} chars)`);

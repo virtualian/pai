@@ -10,7 +10,7 @@ Complete visual content system for creating illustrations, diagrams, and visual 
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Art/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Art/`
 
 If this directory exists, load and apply:
 - `PREFERENCES.md` - Aesthetic preferences, default model, output location
@@ -89,7 +89,7 @@ Route to the appropriate workflow based on the request.
 - Character design specifications
 - Scene composition rules
 
-**Load from:** `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md`
+**Load from:** `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md`
 
 ---
 
@@ -97,7 +97,7 @@ Route to the appropriate workflow based on the request.
 
 **User customization** may include reference images for consistent style.
 
-Check `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md` for:
+Check `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md` for:
 - Reference image locations
 - Style examples by use case
 - Character and scene reference guidance
@@ -138,7 +138,7 @@ Never output directly to a project's `public/images/` directory. User needs to r
 
 ```bash
 # CORRECT - Output to Downloads for preview
-bun run ~/.claude/skills/Media/Art/Tools/Generate.ts \
+bun run ~/.pai/skills/Media/Art/Tools/Generate.ts \
   --model nano-banana-pro \
   --prompt "[PROMPT]" \
   --size 2K \
@@ -157,7 +157,7 @@ For improved character or style consistency, use multiple `--reference-image` fl
 
 ```bash
 # Multiple reference images for better likeness
-bun run ~/.claude/skills/Media/Art/Tools/Generate.ts \
+bun run ~/.pai/skills/Media/Art/Tools/Generate.ts \
   --model nano-banana-pro \
   --prompt "Person from references at a party..." \
   --reference-image face1.jpg \

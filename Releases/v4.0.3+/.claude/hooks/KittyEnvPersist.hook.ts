@@ -12,11 +12,11 @@
 
 import { writeFileSync, mkdirSync, existsSync } from 'fs';
 import { join } from 'path';
-import { getPaiDir } from './lib/paths';
+import { getConfigDir } from './lib/paths';
 import { setTabState, readTabState } from './lib/tab-setter';
 import { getDAName } from './lib/identity';
 
-const paiDir = getPaiDir();
+const configDir = getConfigDir();
 
 // Skip for subagents
 const claudeProjectDir = process.env.CLAUDE_PROJECT_DIR || '';
@@ -28,7 +28,7 @@ if (isSubagent) process.exit(0);
 const kittyListenOn = process.env.KITTY_LISTEN_ON;
 const kittyWindowId = process.env.KITTY_WINDOW_ID;
 if (kittyListenOn && kittyWindowId) {
-  const stateDir = join(paiDir, 'MEMORY', 'STATE');
+  const stateDir = join(configDir, 'MEMORY', 'STATE');
   if (!existsSync(stateDir)) mkdirSync(stateDir, { recursive: true });
   writeFileSync(
     join(stateDir, 'kitty-env.json'),

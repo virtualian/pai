@@ -6,7 +6,7 @@ description: Closed-loop behavioural improvement — mine signals, synthesise pa
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Learning/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Learning/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations,
 or resources found there. These override default behavior. If the directory
@@ -17,7 +17,7 @@ does not exist, proceed with skill defaults.
 **When executing a workflow, announce via Notify.ts:**
 
 ```bash
-bun ~/.claude/PAI/Tools/Notify.ts "Running the WORKFLOWNAME workflow in the Learning skill to ACTION"
+bun ~/.pai/PAI/Tools/Notify.ts "Running the WORKFLOWNAME workflow in the Learning skill to ACTION"
 ```
 
 Then output text notification:

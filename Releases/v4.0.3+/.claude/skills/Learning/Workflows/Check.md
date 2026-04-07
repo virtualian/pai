@@ -1,7 +1,7 @@
 # Check Workflow (Mine + Synthesise)
 
 ```bash
-bun ~/.claude/PAI/Tools/Notify.ts "Running the Check workflow in the Learning skill to mine and synthesise learning signals"
+bun ~/.pai/PAI/Tools/Notify.ts "Running the Check workflow in the Learning skill to mine and synthesise learning signals"
 ```
 
 Running the **Check** workflow in the **Learning** skill to mine and synthesise learning signals...

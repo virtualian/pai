@@ -90,7 +90,7 @@ Flows run as **Cloudflare Workers** in the [Arbol project](~/Projects/arbol/). T
 
 ## Flow Registry
 
-Local flow definitions are tracked in `~/.claude/PAI/FLOWS/flow-index.json`:
+Local flow definitions are tracked in `~/.pai/PAI/FLOWS/flow-index.json`:
 
 ```json
 {
@@ -433,10 +433,10 @@ async scheduled(event: ScheduledEvent, env: Env, ctx: ExecutionContext) {
 
 ## Related Documentation
 
-- **Actions:** `~/.claude/PAI/ACTIONS.md` *(planned)*
-- **Pipelines:** `~/.claude/PAI/PIPELINES.md`
-- **Architecture:** `~/.claude/PAI/PAISYSTEMARCHITECTURE.md`
-- **Detailed README:** `~/.claude/PAI/FLOWS/README.md`
+- **Actions:** `~/.pai/PAI/ACTIONS.md` *(planned)*
+- **Pipelines:** `~/.pai/PAI/PIPELINES.md`
+- **Architecture:** `~/.pai/PAI/PAISYSTEMARCHITECTURE.md`
+- **Detailed README:** `~/.pai/PAI/FLOWS/README.md`
 - **Source code:** `~/Projects/arbol/`
 
 ---

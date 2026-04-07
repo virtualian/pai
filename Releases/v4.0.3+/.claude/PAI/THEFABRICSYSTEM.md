@@ -7,7 +7,7 @@ updated: 2026-01-18
 
 # Fabric Pattern System Reference
 
-**Primary Skill:** `~/.claude/skills/Fabric/SKILL.md`
+**Primary Skill:** `~/.pai/skills/Fabric/SKILL.md`
 
 This document provides a quick reference. For full functionality, invoke the Fabric skill.
 
@@ -15,7 +15,7 @@ This document provides a quick reference. For full functionality, invoke the Fab
 
 ## Quick Reference
 
-**Patterns Location:** `~/.claude/skills/Fabric/Patterns/` (237 patterns)
+**Patterns Location:** `~/.pai/skills/Fabric/Patterns/` (237 patterns)
 
 ### Invoke Fabric Skill
 
@@ -73,19 +73,19 @@ Only use `fabric` command for:
 User: "Update fabric patterns"
 -> Fabric skill > UpdatePatterns workflow
 -> Runs fabric -U
--> Syncs to ~/.claude/skills/Fabric/Patterns/
+-> Syncs to ~/.pai/skills/Fabric/Patterns/
 ```
 
 **Manual:**
 ```bash
-fabric -U && rsync -av ~/.config/fabric/patterns/ ~/.claude/skills/Fabric/Patterns/
+fabric -U && rsync -av ~/.config/fabric/patterns/ ~/.pai/skills/Fabric/Patterns/
 ```
 
 ---
 
 ## See Also
 
-- **Full Skill:** `~/.claude/skills/Fabric/SKILL.md`
-- **Pattern Execution:** `~/.claude/skills/Fabric/Workflows/ExecutePattern.md`
-- **Pattern Updates:** `~/.claude/skills/Fabric/Workflows/UpdatePatterns.md`
-- **All Patterns:** `~/.claude/skills/Fabric/Patterns/`
+- **Full Skill:** `~/.pai/skills/Fabric/SKILL.md`
+- **Pattern Execution:** `~/.pai/skills/Fabric/Workflows/ExecutePattern.md`
+- **Pattern Updates:** `~/.pai/skills/Fabric/Workflows/UpdatePatterns.md`
+- **All Patterns:** `~/.pai/skills/Fabric/Patterns/`
