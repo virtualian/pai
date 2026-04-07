@@ -12,7 +12,7 @@ import { existsSync, writeFileSync, mkdirSync, readdirSync, unlinkSync, readFile
 import { join } from 'path';
 import { execSync } from 'child_process';
 import { TAB_COLORS, PHASE_TAB_CONFIG, ACTIVE_TAB_BG, ACTIVE_TAB_FG, INACTIVE_TAB_FG, type TabState, type AlgorithmTabPhase } from './tab-constants';
-import { configPath } from './paths';
+import { configPath, codePath } from './paths';
 
 const TAB_TITLES_DIR = codePath('MEMORY', 'STATE', 'tab-titles');
 const KITTY_SESSIONS_DIR = codePath('MEMORY', 'STATE', 'kitty-sessions');

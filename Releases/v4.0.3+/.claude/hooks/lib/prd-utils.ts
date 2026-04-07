@@ -11,7 +11,7 @@
 
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync, renameSync } from 'fs';
 import { join } from 'path';
-import { configPath } from './paths';
+import { configPath, codePath } from './paths';
 
 export const WORK_DIR = codePath('MEMORY', 'WORK');
 export const WORK_JSON = codePath('MEMORY', 'STATE', 'work.json');
