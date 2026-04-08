@@ -184,7 +184,7 @@ Optional configuration points:
 | News sources | `SECUpdates/sources.json` | Add or remove security news feeds |
 | Bounty programs | `Recon/Data/BountyPrograms.json` | Update bounty program database |
 | OSINT API keys | `WebAssessment/OsintTools/api-config-template.env` | Configure API keys for OSINT tools |
-| Skill customizations | `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Security/` | Per-user preferences and overrides |
+| Skill customizations | `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Security/` | Per-user preferences and overrides |
 
 ---
 

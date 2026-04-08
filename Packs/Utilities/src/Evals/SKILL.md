@@ -6,7 +6,7 @@ description: Objective eval metrics via code/model/human graders with pass@k/pas
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Evals/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Evals/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -102,19 +102,19 @@ Comprehensive agent evaluation system based on Anthropic's "Demystifying Evals f
 
 ```bash
 # Run an eval suite
-bun run ~/.claude/skills/Utilities/Evals/Tools/AlgorithmBridge.ts -s <suite>
+bun run ~/.pai/skills/Utilities/Evals/Tools/AlgorithmBridge.ts -s <suite>
 
 # Log a failure for later conversion
-bun run ~/.claude/skills/Utilities/Evals/Tools/FailureToTask.ts log "description" -c category -s severity
+bun run ~/.pai/skills/Utilities/Evals/Tools/FailureToTask.ts log "description" -c category -s severity
 
 # Convert failures to test tasks
-bun run ~/.claude/skills/Utilities/Evals/Tools/FailureToTask.ts convert-all
+bun run ~/.pai/skills/Utilities/Evals/Tools/FailureToTask.ts convert-all
 
 # Manage suites
-bun run ~/.claude/skills/Utilities/Evals/Tools/SuiteManager.ts create <name> -t capability -d "description"
-bun run ~/.claude/skills/Utilities/Evals/Tools/SuiteManager.ts list
-bun run ~/.claude/skills/Utilities/Evals/Tools/SuiteManager.ts check-saturation <name>
-bun run ~/.claude/skills/Utilities/Evals/Tools/SuiteManager.ts graduate <name>
+bun run ~/.pai/skills/Utilities/Evals/Tools/SuiteManager.ts create <name> -t capability -d "description"
+bun run ~/.pai/skills/Utilities/Evals/Tools/SuiteManager.ts list
+bun run ~/.pai/skills/Utilities/Evals/Tools/SuiteManager.ts check-saturation <name>
+bun run ~/.pai/skills/Utilities/Evals/Tools/SuiteManager.ts graduate <name>
 ```
 
 ### ALGORITHM Integration
@@ -123,7 +123,7 @@ Evals is a verification method for THE ALGORITHM ISC rows:
 
 ```bash
 # Run eval and update ISC row
-bun run ~/.claude/skills/Utilities/Evals/Tools/AlgorithmBridge.ts -s regression-core -r 3 -u
+bun run ~/.pai/skills/Utilities/Evals/Tools/AlgorithmBridge.ts -s regression-core -r 3 -u
 ```
 
 ISC rows can specify eval verification:

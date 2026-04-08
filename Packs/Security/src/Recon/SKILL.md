@@ -6,7 +6,7 @@ description: Network reconnaissance — subdomain enumeration, port scanning, DN
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Recon/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Recon/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -363,8 +363,8 @@ Located in `Tools/` directory:
 ```
 
 Reports saved to:
-- **Work directory** (`~/.claude/MEMORY/WORK/{current_work}/`) - For iterative artifacts during investigation
-- **MEMORY/RESEARCH/** (`~/.claude/MEMORY/RESEARCH/YYYY-MM/`) - For pentest engagements and formal assessments
+- **Work directory** (`~/.pai/MEMORY/WORK/{current_work}/`) - For iterative artifacts during investigation
+- **MEMORY/RESEARCH/** (`~/.pai/MEMORY/RESEARCH/YYYY-MM/`) - For pentest engagements and formal assessments
 
 ## MCP Profile Requirements
 
@@ -421,7 +421,7 @@ Assistant: Activating recon skill with passive-recon workflow.
      [Performs WHOIS, DNS, cert transparency, IPInfo]
      [Generates report in scratchpad]
 
-     Report: ~/.claude/MEMORY/WORK/{current_work}/recon-example-com/
+     Report: ~/.pai/MEMORY/WORK/{current_work}/recon-example-com/
 ```
 
 ### Example 2: IP Investigation with Active Scan
@@ -496,8 +496,8 @@ Assistant: Activating OSINT skill...
 ## Related Documentation
 
 **Security Skills:**
-- `~/.claude/skills/Investigation/` - Entity and people reconnaissance (OSINT)
-- `~/.claude/skills/Security/WebAssessment/` - Web application testing
+- `~/.pai/skills/Investigation/` - Entity and people reconnaissance (OSINT)
+- `~/.pai/skills/Security/WebAssessment/` - Web application testing
 
 **Tool Documentation:**
 - IPInfo API: https://ipinfo.io/developers

@@ -371,7 +371,7 @@ cp -r .claude ~/
 cd ~/.claude && bash install.sh
 
 # 4. Rebuild your CLAUDE.md
-bun ~/.claude/PAI/Tools/BuildCLAUDE.ts
+bun ~/.pai/PAI/Tools/BuildCLAUDE.ts
 ```
 
 > [!TIP]

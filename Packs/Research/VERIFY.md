@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/Research/SKILL.md" ] && echo "OK Research SKILL.md" || echo "MISSING Research SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/Research/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/Research/SKILL.md`.
 
 ### Check subdirectories exist
 
@@ -140,7 +140,7 @@ Mark each item as complete:
 ## Research Installation Verification
 
 ### Files
-- [ ] SKILL.md installed at ~/.claude/skills/Research/SKILL.md
+- [ ] SKILL.md installed at ~/.pai/skills/Research/SKILL.md
 - [ ] SKILL.md has valid YAML frontmatter with name and description
 - [ ] QuickReference.md installed
 - [ ] UrlVerificationProtocol.md installed

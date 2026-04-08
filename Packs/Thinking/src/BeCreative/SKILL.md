@@ -6,7 +6,7 @@ description: Divergent ideation via Verbalized Sampling + extended thinking (1.6
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/BeCreative/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/BeCreative/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 

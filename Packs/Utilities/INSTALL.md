@@ -146,7 +146,7 @@ affect specific workflows at runtime."
   "question": "Ready to install Utilities v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/Utilities/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/Utilities/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -156,20 +156,20 @@ affect specific workflows at runtime."
 **If user chose "Show me what will change":**
 ```
 "Directories and files to be created:
-- ~/.claude/skills/Utilities/SKILL.md (routing layer)
-- ~/.claude/skills/Utilities/Aphorisms/ (quote database management)
-- ~/.claude/skills/Utilities/AudioEditor/ (audio cleaning and editing)
-- ~/.claude/skills/Utilities/Browser/ (browser automation)
-- ~/.claude/skills/Utilities/Cloudflare/ (infrastructure deployment)
-- ~/.claude/skills/Utilities/CreateCLI/ (CLI generation with patterns)
-- ~/.claude/skills/Utilities/CreateSkill/ (skill scaffolding)
-- ~/.claude/skills/Utilities/Delegation/ (parallel agent coordination)
-- ~/.claude/skills/Utilities/Documents/ (document processing)
-- ~/.claude/skills/Utilities/Evals/ (evaluation framework)
-- ~/.claude/skills/Utilities/Fabric/ (pattern execution)
-- ~/.claude/skills/Utilities/PAIUpgrade/ (system improvement)
-- ~/.claude/skills/Utilities/Parser/ (data extraction)
-- ~/.claude/skills/Utilities/Prompting/ (meta-prompting)
+- ~/.pai/skills/Utilities/SKILL.md (routing layer)
+- ~/.pai/skills/Utilities/Aphorisms/ (quote database management)
+- ~/.pai/skills/Utilities/AudioEditor/ (audio cleaning and editing)
+- ~/.pai/skills/Utilities/Browser/ (browser automation)
+- ~/.pai/skills/Utilities/Cloudflare/ (infrastructure deployment)
+- ~/.pai/skills/Utilities/CreateCLI/ (CLI generation with patterns)
+- ~/.pai/skills/Utilities/CreateSkill/ (skill scaffolding)
+- ~/.pai/skills/Utilities/Delegation/ (parallel agent coordination)
+- ~/.pai/skills/Utilities/Documents/ (document processing)
+- ~/.pai/skills/Utilities/Evals/ (evaluation framework)
+- ~/.pai/skills/Utilities/Fabric/ (pattern execution)
+- ~/.pai/skills/Utilities/PAIUpgrade/ (system improvement)
+- ~/.pai/skills/Utilities/Parser/ (data extraction)
+- ~/.pai/skills/Utilities/Prompting/ (meta-prompting)
 
 Total: 1 routing file + 13 sub-skill directories with their contents.
 No other files will be modified. No hooks, no configuration changes."
@@ -352,7 +352,7 @@ Example: 'Clean the filler words from this audio file'"
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md
 
 Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infrastructure/issues"
@@ -364,7 +364,7 @@ Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infras
 
 ### Skill not recognized after installation
 
-Restart Claude Code. Skills from `~/.claude/skills/` are loaded at session start.
+Restart Claude Code. Skills from `~/.pai/skills/` are loaded at session start.
 
 ### Specific sub-skill not routing correctly
 

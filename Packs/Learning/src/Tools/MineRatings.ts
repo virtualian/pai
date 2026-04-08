@@ -11,7 +11,7 @@
  *   bun MineRatings.ts --all        # Process all entries, ignore HWM
  *
  * Input:
- *   ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
+ *   ~/.pai/MEMORY/LEARNING/SIGNALS/ratings.jsonl
  *
  * Output:
  *   Structured report with STOP and DO MORE behavioral patterns,

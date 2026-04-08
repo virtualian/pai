@@ -208,7 +208,7 @@ Optional configuration:
 
 | Configuration | Location | Purpose |
 |--------------|----------|---------|
-| Skill customizations | `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/{ModeName}/` | Per-user preferences and overrides for each thinking mode |
+| Skill customizations | `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/{ModeName}/` | Per-user preferences and overrides for each thinking mode |
 | World models | Managed by WorldThreatModelHarness | Persistent world model state for TestIdea and UpdateModels workflows |
 
 ---

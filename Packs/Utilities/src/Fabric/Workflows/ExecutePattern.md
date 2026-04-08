@@ -37,14 +37,14 @@ Read the pattern's system.md file:
 
 ```bash
 PATTERN_NAME="[selected_pattern]"
-PATTERN_PATH="$HOME/.claude/skills/Utilities/Fabric/Patterns/$PATTERN_NAME/system.md"
+PATTERN_PATH="$HOME/.pai/skills/Utilities/Fabric/Patterns/$PATTERN_NAME/system.md"
 
 if [ -f "$PATTERN_PATH" ]; then
   cat "$PATTERN_PATH"
 else
   echo "Pattern not found: $PATTERN_NAME"
   echo "Available patterns:"
-  ls ~/.claude/skills/Utilities/Fabric/Patterns/ | head -20
+  ls ~/.pai/skills/Utilities/Fabric/Patterns/ | head -20
 fi
 ```
 
@@ -196,7 +196,7 @@ User Request
 
 **Pattern not found:**
 ```
-Pattern '[name]' not found in ~/.claude/skills/Utilities/Fabric/Patterns/
+Pattern '[name]' not found in ~/.pai/skills/Utilities/Fabric/Patterns/
 
 Similar patterns:
 - [suggestion 1]

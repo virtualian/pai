@@ -120,7 +120,7 @@ Statistical reporting with confidence intervals.
 ### Basic Rendering
 
 ```bash
-bun run ~/.claude/skills/Utilities/Prompting/Tools/RenderTemplate.ts \
+bun run ~/.pai/skills/Utilities/Prompting/Tools/RenderTemplate.ts \
   --template Primitives/Roster.hbs \
   --data Data/Agents.yaml \
   --output Compiled/AgentRoster.md
@@ -229,7 +229,7 @@ The RenderTemplate.ts engine provides these custom Handlebars helpers:
 ### Render a Template
 
 ```bash
-bun run ~/.claude/skills/Utilities/Prompting/Tools/RenderTemplate.ts \
+bun run ~/.pai/skills/Utilities/Prompting/Tools/RenderTemplate.ts \
   --template Primitives/Roster.hbs \
   --data Data/Agents.yaml \
   --output Compiled/AgentRoster.md
@@ -238,7 +238,7 @@ bun run ~/.claude/skills/Utilities/Prompting/Tools/RenderTemplate.ts \
 ### Preview Without Writing
 
 ```bash
-bun run ~/.claude/skills/Utilities/Prompting/Tools/RenderTemplate.ts \
+bun run ~/.pai/skills/Utilities/Prompting/Tools/RenderTemplate.ts \
   --template Evals/Judge.hbs \
   --data path/to/judge-config.yaml \
   --preview
@@ -247,7 +247,7 @@ bun run ~/.claude/skills/Utilities/Prompting/Tools/RenderTemplate.ts \
 ### Validate Template Syntax
 
 ```bash
-bun run ~/.claude/skills/Utilities/Prompting/Tools/ValidateTemplate.ts \
+bun run ~/.pai/skills/Utilities/Prompting/Tools/ValidateTemplate.ts \
   --template Primitives/Briefing.hbs \
   --data Data/sample-briefing.yaml
 ```
@@ -304,7 +304,7 @@ This system is based on research from:
 
 ## Related Documentation
 
-- `~/.claude/PAI/Prompting.md` (Templating section)
+- `~/.pai/PAI/Prompting.md` (Templating section)
 - `~/.claude/History/research/2025-12/2025-12-09-templating-system-research.md`
 - `~/.claude/History/learnings/2025-12/2025-12-09-021700_LEARNING_complete-templating-system-and-evals-integration.md`
-- `~/.claude/skills/Utilities/Evals/SKILL.md`
+- `~/.pai/skills/Utilities/Evals/SKILL.md`

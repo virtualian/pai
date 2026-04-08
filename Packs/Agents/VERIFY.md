@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/Agents/SKILL.md" ] && echo "OK SKILL.md" || echo "MISSING SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/Agents/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/Agents/SKILL.md`.
 
 ### Check directories exist
 
@@ -108,7 +108,7 @@ CLAUDE_DIR="$HOME/.claude"
 if [ -d "$CLAUDE_DIR/skills/Agents/Tools/node_modules" ]; then
   echo "  AVAILABLE Tool dependencies installed"
 else
-  echo "  UNAVAILABLE Tool dependencies (run: cd ~/.claude/skills/Agents/Tools && bun install)"
+  echo "  UNAVAILABLE Tool dependencies (run: cd ~/.pai/skills/Agents/Tools && bun install)"
 fi
 
 # Voice server
@@ -118,7 +118,7 @@ curl -s -o /dev/null -w "%{http_code}" http://localhost:8888/health 2>/dev/null 
 if [ -d "$CLAUDE_DIR/PAI/USER/SKILLCUSTOMIZATIONS/Agents" ]; then
   echo "  AVAILABLE User customizations directory"
 else
-  echo "  INFO No user customizations (optional, create at ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/)"
+  echo "  INFO No user customizations (optional, create at ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/)"
 fi
 ```
 
@@ -132,7 +132,7 @@ Mark each item as complete:
 ## Agents Skill Installation Verification
 
 ### Files
-- [ ] SKILL.md installed at ~/.claude/skills/Agents/SKILL.md
+- [ ] SKILL.md installed at ~/.pai/skills/Agents/SKILL.md
 - [ ] SKILL.md has valid YAML frontmatter with name and description
 - [ ] Data/Traits.yaml installed
 - [ ] Tools/ directory with ComposeAgent.ts, LoadAgentContext.ts, SpawnAgentWithProfile.ts
@@ -144,7 +144,7 @@ Mark each item as complete:
 ### Functional (manual test)
 - [ ] "Spin up a custom agent" triggers the Agents skill
 - [ ] "What traits are available?" shows merged trait list
-- [ ] ComposeAgent.ts runs successfully: bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts --list
+- [ ] ComposeAgent.ts runs successfully: bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts --list
 ```
 
 ---
@@ -154,7 +154,7 @@ Mark each item as complete:
 After installation, test the composition engine:
 
 ```bash
-cd ~/.claude/skills/Agents/Tools && bun run ComposeAgent.ts --list
+cd ~/.pai/skills/Agents/Tools && bun run ComposeAgent.ts --list
 ```
 
 **Expected behavior:**
@@ -172,4 +172,4 @@ When all file checks pass:
 
 1. **Confirm to user:** "Agents skill installation verified successfully"
 2. **Recommend:** "Try it now: 'Spin up 3 custom agents to review this code'"
-3. **Note:** "Add your own traits and voices at ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/"
+3. **Note:** "Add your own traits and voices at ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/"

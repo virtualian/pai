@@ -18,7 +18,7 @@ Running the **DiscoverOSINTSources** workflow in the **OSINT** skill to discover
 ## Phase 1: Load Current Source Inventory
 
 **Read existing sources:**
-- Load `~/.claude/skills/Investigation/OSINT/SOURCES.JSON` to get current source count and categories
+- Load `~/.pai/skills/Investigation/OSINT/SOURCES.JSON` to get current source count and categories
 - Note the `last_updated` date to understand staleness
 - Build a list of all existing source URLs for deduplication
 

@@ -204,8 +204,8 @@ The OSINT source catalog lives at `OSINT/SOURCES.JSON` inside the skill director
 User customizations are stored separately and never overwritten by updates:
 
 ```
-~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/OSINT/
-~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/PrivateInvestigator/
+~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/OSINT/
+~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/PrivateInvestigator/
 ```
 
 ---

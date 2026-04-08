@@ -6,7 +6,7 @@ description: Scaffold new PAI skills with proper YAML front matter, TitleCase na
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/CreateSkill/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/CreateSkill/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -36,9 +36,9 @@ MANDATORY skill creation framework for ALL skill creation requests.
 
 ## Authoritative Source
 
-**Before creating ANY skill, READ:** `~/.claude/PAI/SkillSystem.md`
+**Before creating ANY skill, READ:** `~/.pai/PAI/SkillSystem.md`
 
-**Canonical example to follow:** `~/.claude/skills/Research/SKILL.md`
+**Canonical example to follow:** `~/.pai/skills/Research/SKILL.md`
 
 ## TitleCase Naming Convention
 
@@ -105,7 +105,7 @@ skills/SkillName/Tools/Utils/Helper.ts           # THREE levels - NO
 - Good: `Workflows/CompanyDueDiligence.md`
 - Bad: `Workflows/Company/DueDiligence.md`
 
-**See:** `~/.claude/PAI/SkillSystem.md` (Flat Folder Structure section)
+**See:** `~/.pai/PAI/SkillSystem.md` (Flat Folder Structure section)
 
 ---
 
@@ -218,7 +218,7 @@ Brief description.
 - **Efficiency:** Workflows load only what they actually need
 - **Maintainability:** Easier to update individual sections
 
-**See:** `~/.claude/PAI/SkillSystem.md` (Dynamic Loading Pattern section)
+**See:** `~/.pai/PAI/SkillSystem.md` (Dynamic Loading Pattern section)
 
 ---
 

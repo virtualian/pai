@@ -392,4 +392,4 @@ Use **SpawnParallelAgents workflow** when:
 
 ## References
 
-- Agent personalities: `~/.claude/skills/Agents/AgentPersonalities.md`
+- Agent personalities: `~/.pai/skills/Agents/AgentPersonalities.md`

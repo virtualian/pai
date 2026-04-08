@@ -15,7 +15,7 @@ User: "Do passive recon on example.com"
      - Subdomain discovery (47 found)
      - IP mapping (3 unique IPs)
 
-Report: ~/.claude/MEMORY/WORK/{current_work}/recon-example-com/
+Report: ~/.pai/MEMORY/WORK/{current_work}/recon-example-com/
 ```
 
 ### IP Address Investigation
@@ -276,8 +276,8 @@ Requires **security MCP profile**:
 ## Output Formats
 
 ### Report Locations
-- **Iterative Work:** `~/.claude/MEMORY/WORK/{current_work}/` (tied to work item for learning)
-- **Formal Assessments:** `~/.claude/MEMORY/RESEARCH/YYYY-MM/`
+- **Iterative Work:** `~/.pai/MEMORY/WORK/{current_work}/` (tied to work item for learning)
+- **Formal Assessments:** `~/.pai/MEMORY/RESEARCH/YYYY-MM/`
 
 ### Report Structure
 - Executive summary

@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/ContentAnalysis/SKILL.md" ] && echo "OK SKILL.md" || echo "MISSING SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/ContentAnalysis/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/ContentAnalysis/SKILL.md`.
 
 ### Check directories exist
 
@@ -91,7 +91,7 @@ CLAUDE_DIR="$HOME/.claude"
 
 echo "Enhancements:"
 [ -f "$CLAUDE_DIR/PAI/USER/WRITINGSTYLE.md" ] && echo "  AVAILABLE Writing style definition (voice calibration)" || echo "  UNAVAILABLE Writing style (skill uses built-in voice standards)"
-[ -d "$CLAUDE_DIR/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom" ] && echo "  AVAILABLE User customizations for ExtractWisdom" || echo "  UNAVAILABLE User customizations (optional, create at ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/)"
+[ -d "$CLAUDE_DIR/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom" ] && echo "  AVAILABLE User customizations for ExtractWisdom" || echo "  UNAVAILABLE User customizations (optional, create at ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/)"
 ```
 
 ---
@@ -104,7 +104,7 @@ Mark each item as complete:
 ## ContentAnalysis Skill Installation Verification
 
 ### Files
-- [ ] SKILL.md installed at ~/.claude/skills/ContentAnalysis/SKILL.md
+- [ ] SKILL.md installed at ~/.pai/skills/ContentAnalysis/SKILL.md
 - [ ] SKILL.md has valid YAML frontmatter with name and description
 - [ ] ExtractWisdom/SKILL.md installed with full extraction methodology
 - [ ] ExtractWisdom/SKILL.md has valid YAML frontmatter
@@ -150,4 +150,4 @@ When all file checks pass:
 
 1. **Confirm to user:** "ContentAnalysis skill installation verified successfully"
 2. **Recommend:** "Try it now: 'extract wisdom from' followed by a YouTube URL or article"
-3. **Note:** "Customize extraction preferences at ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/"
+3. **Note:** "Customize extraction preferences at ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/"

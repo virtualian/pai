@@ -18,10 +18,10 @@ export const CONFIG = {
 
   // Local paths
   paths: {
-    root: '~/.claude/skills/hacking/bug-bounties',
-    state: '~/.claude/skills/hacking/bug-bounties/state.json',
-    cache: '~/.claude/skills/hacking/bug-bounties/cache',
-    logs: '~/.claude/skills/hacking/bug-bounties/logs',
+    root: '~/.pai/skills/hacking/bug-bounties',
+    state: '~/.pai/skills/hacking/bug-bounties/state.json',
+    cache: '~/.pai/skills/hacking/bug-bounties/cache',
+    logs: '~/.pai/skills/hacking/bug-bounties/logs',
   },
 
   // GitHub API

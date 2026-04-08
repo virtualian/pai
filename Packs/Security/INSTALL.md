@@ -133,7 +133,7 @@ https://github.com/danielmiessler/Personal_AI_Infrastructure"
   "question": "Ready to install Security v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies all skill files to ~/.claude/skills/Security/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies all skill files to ~/.pai/skills/Security/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -143,12 +143,12 @@ https://github.com/danielmiessler/Personal_AI_Infrastructure"
 **If user chose "Show me what will change":**
 ```
 "Directories to be created:
-- ~/.claude/skills/Security/
-- ~/.claude/skills/Security/Recon/ (with Tools/, Workflows/, Data/)
-- ~/.claude/skills/Security/WebAssessment/ (with BugBountyTool/, FfufResources/, OsintTools/, Workflows/, WebappScripts/, WebappExamples/)
-- ~/.claude/skills/Security/PromptInjection/ (with Workflows/)
-- ~/.claude/skills/Security/SECUpdates/ (with Workflows/, State/)
-- ~/.claude/skills/Security/AnnualReports/ (with Tools/)
+- ~/.pai/skills/Security/
+- ~/.pai/skills/Security/Recon/ (with Tools/, Workflows/, Data/)
+- ~/.pai/skills/Security/WebAssessment/ (with BugBountyTool/, FfufResources/, OsintTools/, Workflows/, WebappScripts/, WebappExamples/)
+- ~/.pai/skills/Security/PromptInjection/ (with Workflows/)
+- ~/.pai/skills/Security/SECUpdates/ (with Workflows/, State/)
+- ~/.pai/skills/Security/AnnualReports/ (with Tools/)
 
 Files to be created: 60+ files across all sub-domains (SKILL.md files, workflows, tools, data, examples)
 
@@ -305,7 +305,7 @@ and the Security skill handles the rest."
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md
 
 Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infrastructure/issues"
@@ -317,11 +317,11 @@ Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infras
 
 ### Skill not activating after installation
 
-Restart Claude Code. Skills from `~/.claude/skills/` are loaded at session start. Also verify that SKILL.md has valid YAML frontmatter with the `name` and `description` fields.
+Restart Claude Code. Skills from `~/.pai/skills/` are loaded at session start. Also verify that SKILL.md has valid YAML frontmatter with the `name` and `description` fields.
 
 ### Sub-domain not routing correctly
 
-Check that the sub-domain's SKILL.md exists at the expected path (e.g., `~/.claude/skills/Security/Recon/SKILL.md`). The top-level SKILL.md routes based on keyword matching -- verify your request contains one of the trigger keywords listed in the routing table.
+Check that the sub-domain's SKILL.md exists at the expected path (e.g., `~/.pai/skills/Security/Recon/SKILL.md`). The top-level SKILL.md routes based on keyword matching -- verify your request contains one of the trigger keywords listed in the routing table.
 
 ### Tools not executing
 
@@ -340,4 +340,4 @@ Some tools require external dependencies (e.g., nmap for port scanning, ffuf for
 | `src/SECUpdates/` | Security news aggregation from multiple sources |
 | `src/AnnualReports/` | Annual vendor report fetching and analysis tools |
 
-All files in `src/` are copied to `~/.claude/skills/Security/` during installation.
+All files in `src/` are copied to `~/.pai/skills/Security/` during installation.

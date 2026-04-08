@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/Learning/SKILL.md" ] && echo "OK Learning SKILL.md" || echo "MISSING Learning SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/Learning/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/Learning/SKILL.md`.
 
 ### Check subdirectories exist
 
@@ -92,13 +92,13 @@ fi
 ## Learning Installation Verification
 
 ### Files
-- [ ] SKILL.md installed at ~/.claude/skills/Learning/SKILL.md
+- [ ] SKILL.md installed at ~/.pai/skills/Learning/SKILL.md
 - [ ] SKILL.md has valid YAML frontmatter with name and description
 - [ ] Workflows/ directory contains Check.md, Review.md, Apply.md
 - [ ] Tools/ directory contains MineRatings.ts
 
 ### Legacy Cleanup
-- [ ] No Learning directory under ~/.claude/skills/Utilities/Learning/
+- [ ] No Learning directory under ~/.pai/skills/Utilities/Learning/
 - [ ] Utilities SKILL.md no longer routes to Learning workflows
 
 ### Functional (manual test)

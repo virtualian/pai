@@ -6,7 +6,7 @@ Intelligent pattern selection for Fabric CLI. Automatically selects the right pa
 
 **Before starting any task with this skill, load complete PAI context:**
 
-`read ~/.claude/PAI/SKILL.md`
+`read ~/.pai/PAI/SKILL.md`
 
 This provides access to:
 - Complete contact list (Angela, Bunny, Saša, Greg, team members)
@@ -20,8 +20,8 @@ This provides access to:
 
 **The Fabric skill has moved to a dedicated skill directory.**
 
-**Primary Skill:** `~/.claude/skills/Utilities/Fabric/SKILL.md`
-**Patterns Location:** `~/.claude/skills/Utilities/Fabric/Patterns/`
+**Primary Skill:** `~/.pai/skills/Utilities/Fabric/SKILL.md`
+**Patterns Location:** `~/.pai/skills/Utilities/Fabric/Patterns/`
 
 For pattern updates, use: "update fabric patterns" → invokes Fabric skill's UpdatePatterns workflow.
 
@@ -272,7 +272,7 @@ fabric "your text here" -p [pattern]
 
 ## Updating Patterns
 
-Patterns are managed by the Fabric skill at `~/.claude/skills/Utilities/Fabric/`.
+Patterns are managed by the Fabric skill at `~/.pai/skills/Utilities/Fabric/`.
 
 **To update patterns:**
 
@@ -281,7 +281,7 @@ Say: "update fabric patterns" → invokes Fabric skill's UpdatePatterns workflow
 **To see all available patterns:**
 
 ```bash
-ls ~/.claude/skills/Utilities/Fabric/Patterns/
+ls ~/.pai/skills/Utilities/Fabric/Patterns/
 ```
 
 ## 💡 Usage Examples
@@ -356,10 +356,10 @@ cat wisdom.txt | fabric -p create_5_sentence_summary
 
 ## Supplementary Resources
 
-**Full Pattern List:** `ls ~/.claude/skills/Utilities/Fabric/Patterns/`
-**Fabric Skill:** `~/.claude/skills/Utilities/Fabric/SKILL.md`
+**Full Pattern List:** `ls ~/.pai/skills/Utilities/Fabric/Patterns/`
+**Fabric Skill:** `~/.pai/skills/Utilities/Fabric/SKILL.md`
 **Fabric Documentation:** https://github.com/danielmiessler/fabric
-**Pattern Templates:** See `~/.claude/skills/Utilities/Fabric/Patterns/official_pattern_template/`
+**Pattern Templates:** See `~/.pai/skills/Utilities/Fabric/Patterns/official_pattern_template/`
 
 ## 🔑 Key Insight
 

@@ -1,7 +1,7 @@
 # Check Workflow (Mine + Synthesise)
 
 ```bash
-bun ~/.claude/PAI/Tools/Notify.ts "Running the Check workflow in the Learning skill to mine and synthesise learning signals"
+bun ~/.pai/PAI/Tools/Notify.ts "Running the Check workflow in the Learning skill to mine and synthesise learning signals"
 ```
 
 Running the **Check** workflow in the **Learning** skill to mine and synthesise learning signals...
@@ -62,7 +62,7 @@ This is the analytical engine of the Learning pipeline. It runs both mining oper
 ### Step 1: Check for Digest (Compressed History)
 
 ```
-Check if ~/.claude/MEMORY/LEARNING/digest.md exists.
+Check if ~/.pai/MEMORY/LEARNING/digest.md exists.
 
 If it exists:
   - Read the digest file
@@ -86,7 +86,7 @@ Use Agent tool, run 2 agents in parallel:
 Agent - Reflection Miner:
 "Mine internal algorithm reflections for recurring improvement patterns.
 
-Read ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+Read ~/.pai/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 Parse each line as JSON.
 
 [IF DIGEST EXISTS, prepend this to the prompt:]
@@ -137,7 +137,7 @@ EFFORT LEVEL: Return within 60 seconds."
 Agent - Ratings Miner:
 "Mine user ratings for behavioral patterns — what to STOP doing and what to DO MORE of.
 
-Read ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
+Read ~/.pai/MEMORY/LEARNING/SIGNALS/ratings.jsonl
 Parse each line as JSON.
 
 [IF DIGEST EXISTS, prepend this to the prompt:]
@@ -197,7 +197,7 @@ For each cross-referenced pair, assign severity:
 
 ```
 Write the raw mining results to:
-~/.claude/MEMORY/LEARNING/mine-output.md
+~/.pai/MEMORY/LEARNING/mine-output.md
 
 With YAML frontmatter:
 ---
@@ -224,7 +224,7 @@ Body contains the raw output from both miners, separated by headers:
 
 ```
 Write the cross-referenced synthesis to:
-~/.claude/MEMORY/LEARNING/last-synthesis.md
+~/.pai/MEMORY/LEARNING/last-synthesis.md
 
 With YAML frontmatter:
 ---
@@ -246,7 +246,7 @@ Cross-referenced: where low ratings correlate with reflection themes, both signa
 
 ### Algorithm Reflections
 
-**Source:** ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+**Source:** ~/.pai/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 **Entries analyzed:** [N] | **High-signal:** [N]
 
 [For each upgrade candidate:]
@@ -259,7 +259,7 @@ Cross-referenced: where low ratings correlate with reflection themes, both signa
 
 ### Behavioral Signals from Ratings
 
-**Source:** ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
+**Source:** ~/.pai/MEMORY/LEARNING/SIGNALS/ratings.jsonl
 **Entries analyzed:** [N] | **Explicit feedback:** [N] | **Problem sessions:** [N]
 
 #### STOP (Low-Rating Patterns)

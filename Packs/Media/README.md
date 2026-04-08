@@ -164,8 +164,8 @@ AI:
 
 ### Optional
 
-- **User customizations** at `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Art/` for aesthetic preferences, character specs, and scene construction guidelines
-- **Remotion customizations** at `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Remotion/`
+- **User customizations** at `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Art/` for aesthetic preferences, character specs, and scene construction guidelines
+- **Remotion customizations** at `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Remotion/`
 
 ### Supported Image Models
 
@@ -182,7 +182,7 @@ AI:
 
 ### Recommended Customization
 
-Create `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md` to define:
+Create `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md` to define:
 - Default image generation model
 - Visual style and aesthetic influences
 - Color palette and rendering approach

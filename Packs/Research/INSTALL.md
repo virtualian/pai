@@ -153,7 +153,7 @@ Install it with: brew install fabric (or see https://github.com/danielmiessler/f
   "question": "Ready to install Research v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/Research/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/Research/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -163,15 +163,15 @@ Install it with: brew install fabric (or see https://github.com/danielmiessler/f
 **If user chose "Show me what will change":**
 ```
 "Directories to be created:
-- ~/.claude/skills/Research/
-- ~/.claude/skills/Research/Workflows/ (14 workflow files)
-- ~/.claude/skills/Research/Templates/ (2 template files)
+- ~/.pai/skills/Research/
+- ~/.pai/skills/Research/Workflows/ (14 workflow files)
+- ~/.pai/skills/Research/Templates/ (2 template files)
 
 Files to be created:
-- ~/.claude/skills/Research/SKILL.md (skill definition and routing)
-- ~/.claude/skills/Research/QuickReference.md (mode comparison)
-- ~/.claude/skills/Research/UrlVerificationProtocol.md (URL verification rules)
-- ~/.claude/skills/Research/MigrationNotes.md (upgrade notes)
+- ~/.pai/skills/Research/SKILL.md (skill definition and routing)
+- ~/.pai/skills/Research/QuickReference.md (mode comparison)
+- ~/.pai/skills/Research/UrlVerificationProtocol.md (URL verification rules)
+- ~/.pai/skills/Research/MigrationNotes.md (upgrade notes)
 
 No other files will be modified. No hooks, no configuration changes."
 ```
@@ -344,7 +344,7 @@ For full multi-agent research (Quick/Standard/Extensive modes), add a Perplexity
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md
 
 Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infrastructure/issues"
@@ -368,7 +368,7 @@ Install the Fabric CLI: `brew install fabric` or follow instructions at https://
 
 ### Deep investigation not persisting
 
-Ensure `~/.claude/MEMORY/RESEARCH/` directory exists. If PAI MEMORY is not installed, create it manually: `mkdir -p ~/.claude/MEMORY/RESEARCH/`
+Ensure `~/.pai/MEMORY/RESEARCH/` directory exists. If PAI MEMORY is not installed, create it manually: `mkdir -p ~/.pai/MEMORY/RESEARCH/`
 
 ---
 

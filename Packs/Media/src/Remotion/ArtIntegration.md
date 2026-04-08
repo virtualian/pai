@@ -6,7 +6,7 @@
 
 1. **Load Art preferences:**
    ```
-   ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md
+   ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md
    ```
 
 2. **Apply the PAI Theme** derived from Art preferences:
@@ -21,18 +21,18 @@
 
 3. **Use Theme Constants:**
    ```
-   ~/.claude/skills/Media/Remotion/Tools/Theme.ts
+   ~/.pai/skills/Media/Remotion/Tools/Theme.ts
    ```
 
 4. **Reference images** (when visual style reference needed):
    ```
-   ~/.claude/skills/Media/Art/Examples/
+   ~/.pai/skills/Media/Art/Examples/
    ```
 
 ## PAI Theme Quick Reference
 
 ```typescript
-import { PAI_THEME } from '~/.claude/skills/Media/Remotion/Tools/Theme'
+import { PAI_THEME } from '~/.pai/skills/Media/Remotion/Tools/Theme'
 
 // Colors
 PAI_THEME.colors.background    // #0f172a - Deep slate
@@ -59,7 +59,7 @@ PAI_THEME.spacing.element      // 30px between elements
 ## Using the Theme in Components
 
 ```typescript
-import { PAI_THEME, titleScreenStyle, fadeInterpolation } from '~/.claude/skills/Media/Remotion/Tools/Theme'
+import { PAI_THEME, titleScreenStyle, fadeInterpolation } from '~/.pai/skills/Media/Remotion/Tools/Theme'
 
 export const MyScene: React.FC = () => {
   const frame = useCurrentFrame()

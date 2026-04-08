@@ -42,19 +42,19 @@ Extract from {PRINCIPAL.NAME}'s request:
 # Example for 3 custom research agents:
 
 # Agent 1 - Enthusiastic Explorer
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts \
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts \
   --traits "research,enthusiastic,exploratory" \
   --task "Research quantum computing applications" \
   --output json
 
 # Agent 2 - Skeptical Analyst
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts \
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts \
   --traits "research,skeptical,systematic" \
   --task "Research quantum computing applications" \
   --output json
 
 # Agent 3 - Thorough Synthesizer
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts \
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts \
   --traits "research,analytical,synthesizing" \
   --task "Research quantum computing applications" \
   --output json
@@ -270,7 +270,7 @@ ComposeAgent automatically maps trait combinations to voices:
 
 ## References
 
-- Trait definitions: `~/.claude/skills/Agents/Data/Traits.yaml`
-- Agent template: `~/.claude/skills/Agents/Templates/DynamicAgent.hbs`
-- ComposeAgent tool: `~/.claude/skills/Agents/Tools/ComposeAgent.ts`
-- Voice mappings: `~/.claude/skills/Agents/AgentPersonalities.md`
+- Trait definitions: `~/.pai/skills/Agents/Data/Traits.yaml`
+- Agent template: `~/.pai/skills/Agents/Templates/DynamicAgent.hbs`
+- ComposeAgent tool: `~/.pai/skills/Agents/Tools/ComposeAgent.ts`
+- Voice mappings: `~/.pai/skills/Agents/AgentPersonalities.md`

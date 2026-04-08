@@ -7,8 +7,8 @@
  * Merges base traits (ships with PAI) with user customizations.
  *
  * Configuration files:
- *   Base:  ~/.claude/skills/Agents/Data/Traits.yaml
- *   User:  ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml
+ *   Base:  ~/.pai/skills/Agents/Data/Traits.yaml
+ *   User:  ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml
  *
  * Usage:
  *   # Infer traits from task description
@@ -34,9 +34,9 @@ import Handlebars from "handlebars";
 
 // Paths
 const HOME = process.env.HOME || "~";
-const BASE_TRAITS_PATH = `${HOME}/.claude/skills/Agents/Data/Traits.yaml`;
-const USER_TRAITS_PATH = `${HOME}/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml`;
-const TEMPLATE_PATH = `${HOME}/.claude/skills/Agents/Templates/DynamicAgent.hbs`;
+const BASE_TRAITS_PATH = `${HOME}/.pai/skills/Agents/Data/Traits.yaml`;
+const USER_TRAITS_PATH = `${HOME}/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml`;
+const TEMPLATE_PATH = `${HOME}/.pai/skills/Agents/Templates/DynamicAgent.hbs`;
 const CUSTOM_AGENTS_DIR = `${HOME}/.claude/custom-agents`;
 
 // Types
@@ -501,7 +501,7 @@ function slugify(name: string): string {
  * Save a composed agent to ~/.claude/custom-agents/{slug}.md
  *
  * Produces a CLAUDE CODE COMPATIBLE agent file that can be:
- * 1. Copied to ~/.claude/agents/ and used as a built-in agent
+ * 1. Copied to ~/.pai/agents/ and used as a built-in agent
  * 2. Loaded via --load for re-composition with a new task
  *
  * The body is a complete system prompt matching built-in agent format.
@@ -589,7 +589,7 @@ ${body}
 /**
  * Build a Claude Code compatible agent body (system prompt).
  *
- * Matches the structural format of built-in agents in ~/.claude/agents/*.md:
+ * Matches the structural format of built-in agents in ~/.pai/agents/*.md:
  * - Character heading with name and archetype
  * - Domain expertise, personality, approach sections
  * - Startup sequence, voice notifications, output format
@@ -727,13 +727,13 @@ ${identityList}
 To re-compose this agent with a specific task:
 
 \`\`\`bash
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts --load "${slug}"
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts --load "${slug}"
 \`\`\`
 
 Or reconstruct from traits:
 
 \`\`\`bash
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts --traits "${agent.traits.join(",")}"
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts --traits "${agent.traits.join(",")}"
 \`\`\`
 
 ---
@@ -890,8 +890,8 @@ OPTIONS:
   -h, --help           Show this help
 
 CONFIGURATION:
-  Base traits:    ~/.claude/skills/Agents/Data/Traits.yaml
-  User traits:    ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml
+  Base traits:    ~/.pai/skills/Agents/Data/Traits.yaml
+  User traits:    ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml
   Custom agents:  ~/.claude/custom-agents/
 
   User traits are merged over base (user takes priority).

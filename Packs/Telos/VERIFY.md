@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/Telos/SKILL.md" ] && echo "OK SKILL.md" || echo "MISSING SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/Telos/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/Telos/SKILL.md`.
 
 ### Check workflow files exist
 
@@ -129,7 +129,7 @@ Mark each item as complete:
 ## Telos Skill Installation Verification
 
 ### Files
-- [ ] SKILL.md installed at ~/.claude/skills/Telos/SKILL.md
+- [ ] SKILL.md installed at ~/.pai/skills/Telos/SKILL.md
 - [ ] SKILL.md has valid YAML frontmatter with name and description
 - [ ] Workflows/ directory with Update.md, InterviewExtraction.md, CreateNarrativePoints.md, WriteReport.md
 - [ ] Tools/ directory with UpdateTelos.ts

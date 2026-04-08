@@ -23,7 +23,7 @@ You are searching prior work on the topic "$ARGUMENTS". Search across ALL availa
 Check which data sources exist. This determines whether you're on a vanilla Claude Code install or a PAI-enhanced one.
 
 ```
-PAI detected if: ~/.claude/MEMORY/WORK/ directory exists
+PAI detected if: ~/.pai/MEMORY/WORK/ directory exists
 ```
 
 ## Step 2: Search (execute available searches in parallel)
@@ -39,22 +39,22 @@ Run: `git log --oneline --all --grep="$ARGUMENTS" -i -20` to find commits in the
 **C. Project Memory Files**
 Use Glob to find `~/.claude/projects/*/memory/*.md` files, then Grep across them for "$ARGUMENTS" to find any saved context from prior projects.
 
-### PAI-Enhanced (only if ~/.claude/MEMORY/WORK/ exists)
+### PAI-Enhanced (only if ~/.pai/MEMORY/WORK/ exists)
 
 **D. Session Registry**
-Read `~/.claude/MEMORY/STATE/work.json` and find all sessions where the `task` field, slug key, or `sessionName` field matches "$ARGUMENTS" (case-insensitive, partial match). Extract: task, phase, progress, effort, started, criteria summary.
+Read `~/.pai/MEMORY/STATE/work.json` and find all sessions where the `task` field, slug key, or `sessionName` field matches "$ARGUMENTS" (case-insensitive, partial match). Extract: task, phase, progress, effort, started, criteria summary.
 
 **E. Work Directories**
-Search `~/.claude/MEMORY/WORK/` for matching directory names (case-insensitive, partial match). For each match, read the PRD.md frontmatter and `## Context` section.
+Search `~/.pai/MEMORY/WORK/` for matching directory names (case-insensitive, partial match). For each match, read the PRD.md frontmatter and `## Context` section.
 
 **F. PAI Git History**
 Run: `git -C ~/.claude log --oneline --all --grep="$ARGUMENTS" -i -20` to find commits in the PAI repo mentioning this topic.
 
 **G. Session Names**
-Read `~/.claude/MEMORY/STATE/session-names.json` and find entries where the session name matches "$ARGUMENTS" (case-insensitive, partial match).
+Read `~/.pai/MEMORY/STATE/session-names.json` and find entries where the session name matches "$ARGUMENTS" (case-insensitive, partial match).
 
 **H. PRD Content Search**
-Use Grep to search for "$ARGUMENTS" in `~/.claude/MEMORY/WORK/` across PRD files (limit to `**/PRD.md` glob) for deeper context matches.
+Use Grep to search for "$ARGUMENTS" in `~/.pai/MEMORY/WORK/` across PRD files (limit to `**/PRD.md` glob) for deeper context matches.
 
 ## Output Format
 

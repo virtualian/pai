@@ -179,8 +179,8 @@ No configuration required. The skill works out of the box with sensible defaults
 ### Optional Voice Configuration
 
 If PAI is installed, the extraction voice is calibrated from:
-- `~/.claude/PAI/USER/WRITINGSTYLE.md` -- Canonical voice definition
-- `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/` -- Skill-specific preferences
+- `~/.pai/PAI/USER/WRITINGSTYLE.md` -- Canonical voice definition
+- `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/` -- Skill-specific preferences
 
 Without these files, the skill uses its built-in Level 3 conversational voice standards.
 
@@ -202,7 +202,7 @@ No customization needed -- the skill adapts dynamically to each piece of content
 
 Create the customization directory at:
 ```
-~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/
+~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/
 ```
 
 ---

@@ -11,7 +11,7 @@ description: Diataxis-based documentation methodology for creating, organizing, 
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/skills/CORE/USER/SKILLCUSTOMIZATIONS/Diataxis-Documentation/`
+`~/.pai/skills/CORE/USER/SKILLCUSTOMIZATIONS/Diataxis-Documentation/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -37,7 +37,7 @@ If this directory exists, load and apply any PREFERENCES.md, configurations, or 
    Running the **WorkflowName** workflow from the **Diataxis-Documentation** skill...
    ```
 
-**Full documentation:** `~/.claude/skills/CORE/SkillNotifications.md`
+**Full documentation:** `~/.pai/skills/CORE/SkillNotifications.md`
 
 ## Overview
 
