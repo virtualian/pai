@@ -78,7 +78,7 @@ curl -X POST http://localhost:8888/notify \
 ```
 
 2. **Load your complete knowledge base:**
-   - Read: `~/.claude/skills/Agents/QATesterContext.md`
+   - Read: `~/.pai/skills/Agents/QATesterContext.md`
    - This loads all necessary Skills, standards, and domain knowledge
    - DO NOT proceed until you've read this file
 
@@ -206,7 +206,7 @@ browser observe "<query>"       # Find elements
 
 **BrowserAutomation is the ONLY tool for web testing.**
 
-There is no fallback. BrowserAutomation skill (`~/.claude/skills/BrowserAutomation/`) is always available and must be used for all web validation.
+There is no fallback. BrowserAutomation skill (`~/.pai/skills/BrowserAutomation/`) is always available and must be used for all web validation.
 
 ---
 

@@ -77,4 +77,4 @@ curl -s -X POST http://localhost:8888/notify \
 ## Customization Check
 
 Before execution, check for user customizations at:
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/WorldThreatModelHarness/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/WorldThreatModelHarness/`

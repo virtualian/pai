@@ -122,7 +122,7 @@ Actions declare what they need in `action.json` under `requires`. The runner inj
 
 ```bash
 # Run a single action
-cd ~/.claude/PAI/ACTIONS
+cd ~/.pai/PAI/ACTIONS
 bun lib/runner.v2.ts run A_YOUR_ACTION --input '{"content": "Your text here"}'
 
 # Run via pipeline runner

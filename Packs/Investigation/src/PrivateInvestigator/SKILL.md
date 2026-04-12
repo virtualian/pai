@@ -6,7 +6,7 @@ description: Ethical people-finding using 15 parallel research agents (45 search
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/PrivateInvestigator/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/PrivateInvestigator/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 

@@ -6,7 +6,7 @@ description: Aggregate and analyze annual security reports from major vendors â€
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/AnnualReports/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/AnnualReports/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -46,13 +46,13 @@ Aggregates and analyzes annual security reports from 570+ sources across the cyb
 
 ```bash
 # Update sources from GitHub
-bun run ~/.claude/skills/Security/AnnualReports/Tools/UpdateSources.ts
+bun run ~/.pai/skills/Security/AnnualReports/Tools/UpdateSources.ts
 
 # List all sources
-bun run ~/.claude/skills/Security/AnnualReports/Tools/ListSources.ts [category]
+bun run ~/.pai/skills/Security/AnnualReports/Tools/ListSources.ts [category]
 
 # Fetch a specific report
-bun run ~/.claude/skills/Security/AnnualReports/Tools/FetchReport.ts <vendor> <report-name>
+bun run ~/.pai/skills/Security/AnnualReports/Tools/FetchReport.ts <vendor> <report-name>
 ```
 
 ## Categories

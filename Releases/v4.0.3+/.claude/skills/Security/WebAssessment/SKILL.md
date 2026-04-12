@@ -6,7 +6,7 @@ description: Full web app security assessment — app understanding, threat mode
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/WebAssessment/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/WebAssessment/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -79,19 +79,19 @@ WebAssessment uses tools from the Recon skill:
 
 ```bash
 # Corporate structure for scope
-bun ~/.claude/skills/Security/Recon/Tools/CorporateStructure.ts target.com
+bun ~/.pai/skills/Security/Recon/Tools/CorporateStructure.ts target.com
 
 # Subdomain enumeration
-bun ~/.claude/skills/Security/Recon/Tools/SubdomainEnum.ts target.com
+bun ~/.pai/skills/Security/Recon/Tools/SubdomainEnum.ts target.com
 
 # Endpoint discovery from JavaScript
-bun ~/.claude/skills/Security/Recon/Tools/EndpointDiscovery.ts https://target.com
+bun ~/.pai/skills/Security/Recon/Tools/EndpointDiscovery.ts https://target.com
 
 # Port scanning
-bun ~/.claude/skills/Security/Recon/Tools/PortScan.ts target.com
+bun ~/.pai/skills/Security/Recon/Tools/PortScan.ts target.com
 
 # Path discovery
-bun ~/.claude/skills/Security/Recon/Tools/PathDiscovery.ts https://target.com
+bun ~/.pai/skills/Security/Recon/Tools/PathDiscovery.ts https://target.com
 ```
 
 ## UnderstandApplication Output

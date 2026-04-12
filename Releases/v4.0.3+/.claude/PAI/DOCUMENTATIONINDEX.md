@@ -13,7 +13,7 @@ extracted_from: SKILL.md (context loading section)
 
 ## 📚 Documentation Index & Route Triggers
 
-**All documentation files are in `~/.claude/PAI/` with USER/ subdirectory for personal overrides. Read these files when you need deeper context.**
+**All documentation files are in `~/.pai/PAI/` with USER/ subdirectory for personal overrides. Read these files when you need deeper context.**
 
 **Core Architecture & Philosophy:**
 - `PAISYSTEMARCHITECTURE.md` - System architecture and philosophy, foundational principles (CLI-First, Deterministic Code, Prompts Wrap Code) | ⭐ PRIMARY REFERENCE | Triggers: "system architecture", "how does the system work", "system principles"
@@ -56,7 +56,7 @@ See `SKILLSYSTEM.md` for complete documentation.
 - Testing standards → Development Skill
 
 **Agent System:**
-- **Agents Skill** (`~/.claude/skills/Agents/`) - Complete agent composition system | See Agents skill for custom agent creation, traits, and voice mappings
+- **Agents Skill** (`~/.pai/skills/Agents/`) - Complete agent composition system | See Agents skill for custom agent creation, traits, and voice mappings
 - Delegation patterns are documented inline in the "Delegation & Parallelization" section below
 
 **Response & Communication:**

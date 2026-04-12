@@ -40,7 +40,7 @@ This workflow handles ANY input via the Parser skill:
 **For YouTube:**
 ```bash
 # Get transcript via Parser skill
-# Load: ~/.claude/skills/Utilities/Parser/Workflows/ExtractYoutube.md
+# Load: ~/.pai/skills/Utilities/Parser/Workflows/ExtractYoutube.md
 ```
 
 **For articles/blogs:**
@@ -362,7 +362,7 @@ Cannot proceed - fix logical issues before rendering
 
 **MANDATORY: Apply PAI Theme**
 ```typescript
-import { PAI_THEME } from '~/.claude/skills/Media/Remotion/theme'
+import { PAI_THEME } from '~/.pai/skills/Media/Remotion/theme'
 
 // All components MUST use:
 // - PAI_THEME.colors for all colors
@@ -545,6 +545,6 @@ User: animate this content: "The three pillars of AI safety are..."
 ## Integration with Art Skill
 
 This workflow inherits visual theming from Art preferences:
-- Load: `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md`
+- Load: `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md`
 - Apply: Charcoal aesthetic, purple accents, organic animations
-- Reference: `~/.claude/skills/Media/Remotion/theme.ts`
+- Reference: `~/.pai/skills/Media/Remotion/theme.ts`

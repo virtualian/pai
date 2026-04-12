@@ -34,10 +34,11 @@
 
 import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 'fs';
 import { join, basename, dirname } from 'path';
-import { paiPath, getPaiDir } from '../lib/paths';
+import { configPath, codePath, getConfigDir } from '../lib/paths';
 import { getIdentity } from '../lib/identity';
-import { inference } from '../../PAI/Tools/Inference';
-import type { ParsedTranscript } from '../../PAI/Tools/TranscriptParser';
+
+const { inference } = await import(codePath('PAI', 'Tools', 'Inference'));
+type ParsedTranscript = import('../../PAI/Tools/TranscriptParser').ParsedTranscript;
 
 
 // ============================================================================
@@ -69,12 +70,12 @@ interface DriftReport {
 // Constants
 // ============================================================================
 
-const SYSTEM_DIR = paiPath('PAI');
-const HOOKS_DIR = paiPath('hooks');
+const SYSTEM_DIR = codePath('PAI');
+const HOOKS_DIR = configPath('hooks');
 const HANDLERS_DIR = join(HOOKS_DIR, 'handlers');
 const LIB_DIR = join(HOOKS_DIR, 'lib');
-const DRIFT_STATE_FILE = paiPath('MEMORY', 'STATE', 'doc-drift-state.json');
-const REVIEW_QUEUE_FILE = paiPath('MEMORY', 'STATE', 'doc-review-queue.json');
+const DRIFT_STATE_FILE = codePath('MEMORY', 'STATE', 'doc-drift-state.json');
+const REVIEW_QUEUE_FILE = codePath('MEMORY', 'STATE', 'doc-review-queue.json');
 const TAG = '[DocAutoUpdate]';
 
 // ============================================================================
@@ -166,17 +167,23 @@ function isHookModified(modifiedFiles: Set<string>): boolean {
  * and other non-system paths.
  */
 function isSystemFileModified(modifiedFiles: Set<string>): boolean {
-  const PAI_DIR = getPaiDir();
+  const CONFIG_DIR = getConfigDir();
+  const PAI_CODE_DIR = codePath();
   const EXCLUDED = ['MEMORY/WORK/', 'MEMORY/LEARNING/', 'MEMORY/STATE/', 'Plans/', 'projects/', '.git/', 'node_modules/', 'ShellSnapshots/', 'Projects/', 'MEMORY/VOICE/', 'MEMORY/RELATIONSHIP/', 'history.jsonl', '.quote-cache'];
 
   for (const filePath of modifiedFiles) {
-    // Normalize to relative path for checking
-    const relPath = filePath.startsWith(PAI_DIR)
-      ? filePath.slice(PAI_DIR.length + 1)
-      : filePath;
+    // Normalize to relative path for checking (file could be in either root)
+    let relPath: string;
+    if (filePath.startsWith(CONFIG_DIR)) {
+      relPath = filePath.slice(CONFIG_DIR.length + 1);
+    } else if (filePath.startsWith(PAI_CODE_DIR)) {
+      relPath = filePath.slice(PAI_CODE_DIR.length + 1);
+    } else {
+      relPath = filePath;
+    }
 
-    // Must be within PAI directory
-    if (filePath.startsWith('/') && !filePath.startsWith(PAI_DIR)) continue;
+    // Must be within one of the two PAI roots
+    if (filePath.startsWith('/') && !filePath.startsWith(CONFIG_DIR) && !filePath.startsWith(PAI_CODE_DIR)) continue;
 
     // Skip excluded paths
     if (EXCLUDED.some(ex => relPath.includes(ex))) continue;

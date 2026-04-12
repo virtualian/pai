@@ -6,7 +6,7 @@ description: Test LLM applications for prompt injection vulnerabilities — jail
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/PromptInjection/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/PromptInjection/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 

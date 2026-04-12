@@ -61,9 +61,9 @@ When user requests custom agents:
 
 ```bash
 # Example: 3 custom research agents
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts --traits "research,enthusiastic,exploratory"
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts --traits "research,skeptical,systematic"
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts --traits "research,analytical,synthesizing"
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts --traits "research,enthusiastic,exploratory"
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts --traits "research,skeptical,systematic"
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts --traits "research,analytical,synthesizing"
 ```
 
 ---

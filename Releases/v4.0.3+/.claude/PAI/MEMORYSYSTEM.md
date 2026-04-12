@@ -3,7 +3,7 @@
 **The unified system memory - what happened, what we learned, what we're working on.**
 
 **Version:** 7.0 (Projects-native architecture, 2026-01-12)
-**Location:** `~/.claude/MEMORY/`
+**Location:** `~/.pai/MEMORY/`
 
 ---
 
@@ -34,7 +34,7 @@ Harvesting (periodic):
 ## Directory Structure
 
 ```
-~/.claude/MEMORY/
+~/.pai/MEMORY/
 ├── WORK/                   # PRIMARY work tracking
 │   └── {timestamp}_{slug}/
 │       └── PRD.md          # Single source of truth (metadata + ISC + decisions + changelog)
@@ -282,13 +282,13 @@ LearningPatternSynthesis → analyzes SIGNALS/ → writes SYNTHESIS/
 
 ### Check current work
 ```bash
-cat ~/.claude/MEMORY/STATE/current-work.json
-ls ~/.claude/MEMORY/WORK/ | tail -5
+cat ~/.pai/MEMORY/STATE/current-work.json
+ls ~/.pai/MEMORY/WORK/ | tail -5
 ```
 
 ### Check ratings
 ```bash
-tail ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
+tail ~/.pai/MEMORY/LEARNING/SIGNALS/ratings.jsonl
 ```
 
 ### View session transcripts
@@ -303,35 +303,35 @@ tail ~/.claude/projects/-Users-{username}--claude/$(ls -t ~/.claude/projects/-Us
 
 ### Check learnings
 ```bash
-ls ~/.claude/MEMORY/LEARNING/SYSTEM/
-ls ~/.claude/MEMORY/LEARNING/ALGORITHM/
-ls ~/.claude/MEMORY/LEARNING/SYNTHESIS/
+ls ~/.pai/MEMORY/LEARNING/SYSTEM/
+ls ~/.pai/MEMORY/LEARNING/ALGORITHM/
+ls ~/.pai/MEMORY/LEARNING/SYNTHESIS/
 ```
 
 ### Check failures
 ```bash
 # List recent failure captures
-ls -lt ~/.claude/MEMORY/LEARNING/FAILURES/$(date +%Y-%m)/ 2>/dev/null | head -10
+ls -lt ~/.pai/MEMORY/LEARNING/FAILURES/$(date +%Y-%m)/ 2>/dev/null | head -10
 
 # View a specific failure
-cat ~/.claude/MEMORY/LEARNING/FAILURES/2026-01/*/CONTEXT.md | head -100
+cat ~/.pai/MEMORY/LEARNING/FAILURES/2026-01/*/CONTEXT.md | head -100
 
 # Migrate historical low ratings to FAILURES
-bun run ~/.claude/PAI/Tools/FailureCapture.ts --migrate
+bun run ~/.pai/PAI/Tools/FailureCapture.ts --migrate
 ```
 
 ### Check multi-session progress
 ```bash
-ls ~/.claude/MEMORY/STATE/progress/
+ls ~/.pai/MEMORY/STATE/progress/
 ```
 
 ### Run harvesting tools
 ```bash
 # Harvest learnings from recent sessions
-bun run ~/.claude/PAI/Tools/SessionHarvester.ts --recent 10
+bun run ~/.pai/PAI/Tools/SessionHarvester.ts --recent 10
 
 # Generate pattern synthesis
-bun run ~/.claude/PAI/Tools/LearningPatternSynthesis.ts --week
+bun run ~/.pai/PAI/Tools/LearningPatternSynthesis.ts --week
 ```
 
 ---
@@ -389,7 +389,7 @@ bun run ~/.claude/PAI/Tools/LearningPatternSynthesis.ts --week
 
 **2026-01-05:** v1.0 - Unified Memory System migration
 - Previous: `~/.claude/history/`, `~/.claude/context/`, `~/.claude/progress/`
-- Current: `~/.claude/MEMORY/`
+- Current: `~/.pai/MEMORY/`
 - Files migrated: 8,415+
 
 ---

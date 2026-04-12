@@ -44,7 +44,7 @@ curl -X POST http://localhost:8888/notify \
 ```
 
 2. **Load your knowledge base:**
-   - Read: `~/.claude/skills/PAI/SKILL.md` (The PAI Algorithm spec)
+   - Read: `~/.pai/skills/PAI/SKILL.md` (The PAI Algorithm spec)
    - Available skills are listed in the system prompt at session start
    - This loads all ISC principles and available skills
    - DO NOT proceed until you've read these files

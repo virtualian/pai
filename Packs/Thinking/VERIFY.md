@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/Thinking/SKILL.md" ] && echo "OK SKILL.md" || echo "MISSING SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/Thinking/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/Thinking/SKILL.md`.
 
 ### Check thinking mode SKILL.md files
 
@@ -167,7 +167,7 @@ Mark each item as complete:
 ## Thinking Skill Installation Verification
 
 ### Files
-- [ ] Top-level SKILL.md installed at ~/.claude/skills/Thinking/SKILL.md
+- [ ] Top-level SKILL.md installed at ~/.pai/skills/Thinking/SKILL.md
 - [ ] FirstPrinciples/SKILL.md installed with Workflows/ (3 workflows)
 - [ ] IterativeDepth/SKILL.md installed with Workflows/ (1 workflow) and reference files
 - [ ] BeCreative/SKILL.md installed with Workflows/ (6 workflows), Assets/, and reference files

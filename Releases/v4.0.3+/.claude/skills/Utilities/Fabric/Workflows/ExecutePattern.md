@@ -44,7 +44,7 @@ if [ -f "$PATTERN_PATH" ]; then
 else
   echo "Pattern not found: $PATTERN_NAME"
   echo "Available patterns:"
-  ls ~/.claude/skills/Fabric/Patterns/ | head -20
+  ls ~/.pai/skills/Fabric/Patterns/ | head -20
 fi
 ```
 
@@ -196,7 +196,7 @@ User Request
 
 **Pattern not found:**
 ```
-Pattern '[name]' not found in ~/.claude/skills/Fabric/Patterns/
+Pattern '[name]' not found in ~/.pai/skills/Fabric/Patterns/
 
 Similar patterns:
 - [suggestion 1]

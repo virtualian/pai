@@ -10,7 +10,7 @@
  *   add-bg input.png "#EAE9DF" output.png
  *   add-bg input.png --brand output.png
  *
- * @see ~/.claude/skills/Images/SKILL.md
+ * @see ~/.pai/skills/Images/SKILL.md
  */
 
 import { existsSync } from "node:fs";

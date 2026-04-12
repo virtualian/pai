@@ -142,7 +142,7 @@ to fetch live data. You can get free keys at:
   "question": "Ready to install USMetrics v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/USMetrics/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/USMetrics/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -152,12 +152,12 @@ to fetch live data. You can get free keys at:
 **If user chose "Show me what will change":**
 ```
 "Files and directories to be created:
-- ~/.claude/skills/USMetrics/SKILL.md (skill definition and routing)
-- ~/.claude/skills/USMetrics/Tools/UpdateSubstrateMetrics.ts (data fetching tool)
-- ~/.claude/skills/USMetrics/Tools/FetchFredSeries.ts (FRED API tool)
-- ~/.claude/skills/USMetrics/Tools/GenerateAnalysis.ts (analysis generation tool)
-- ~/.claude/skills/USMetrics/Workflows/UpdateData.md (data update workflow)
-- ~/.claude/skills/USMetrics/Workflows/GetCurrentState.md (analysis workflow)
+- ~/.pai/skills/USMetrics/SKILL.md (skill definition and routing)
+- ~/.pai/skills/USMetrics/Tools/UpdateSubstrateMetrics.ts (data fetching tool)
+- ~/.pai/skills/USMetrics/Tools/FetchFredSeries.ts (FRED API tool)
+- ~/.pai/skills/USMetrics/Tools/GenerateAnalysis.ts (analysis generation tool)
+- ~/.pai/skills/USMetrics/Workflows/UpdateData.md (data update workflow)
+- ~/.pai/skills/USMetrics/Workflows/GetCurrentState.md (analysis workflow)
 
 No other files will be modified. No hooks, no configuration changes."
 ```
@@ -316,7 +316,7 @@ Get free API keys at:
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md
 
 Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infrastructure/issues"
@@ -328,7 +328,7 @@ Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infras
 
 ### Skill not recognized after installation
 
-Restart Claude Code. Skills from `~/.claude/skills/` are loaded at session start.
+Restart Claude Code. Skills from `~/.pai/skills/` are loaded at session start.
 
 ### UpdateData workflow fails
 

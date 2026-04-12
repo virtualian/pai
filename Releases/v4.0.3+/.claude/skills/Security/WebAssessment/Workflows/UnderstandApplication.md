@@ -125,13 +125,13 @@ Use Recon outputs to enhance understanding:
 
 ```bash
 # Get corporate structure for scope
-bun ~/.claude/skills/Security/Recon/Tools/CorporateStructure.ts target.com
+bun ~/.pai/skills/Security/Recon/Tools/CorporateStructure.ts target.com
 
 # Enumerate subdomains
-bun ~/.claude/skills/Security/Recon/Tools/SubdomainEnum.ts target.com
+bun ~/.pai/skills/Security/Recon/Tools/SubdomainEnum.ts target.com
 
 # Extract endpoints from JavaScript
-bun ~/.claude/skills/Security/Recon/Tools/EndpointDiscovery.ts https://target.com
+bun ~/.pai/skills/Security/Recon/Tools/EndpointDiscovery.ts https://target.com
 ```
 
 ## Workflow Execution

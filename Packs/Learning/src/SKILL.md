@@ -6,7 +6,7 @@ description: Closed-loop behavioural improvement — mine signals, synthesise pa
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Learning/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Learning/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations,
 or resources found there. These override default behavior. If the directory
@@ -17,7 +17,7 @@ does not exist, proceed with skill defaults.
 **When executing a workflow, announce via Notify.ts:**
 
 ```bash
-bun ~/.claude/PAI/Tools/Notify.ts "Running the WORKFLOWNAME workflow in the Learning skill to ACTION"
+bun ~/.pai/PAI/Tools/Notify.ts "Running the WORKFLOWNAME workflow in the Learning skill to ACTION"
 ```
 
 Then output text notification:
@@ -72,8 +72,8 @@ to three targets: Algorithm spec, AISTEERINGRULES.md, and feedback memories.
 
 When invoked with no subcommand, display pipeline status:
 
-1. **Check status:** Read `~/.claude/MEMORY/LEARNING/last-synthesis.md` frontmatter for `generated` timestamp. Report when check last ran.
-2. **Proposal counts:** Read `~/.claude/MEMORY/LEARNING/review.md` if it exists. Count proposals by status (PENDING, ACCEPTED, DEFERRED, REJECTED, APPLIED).
+1. **Check status:** Read `~/.pai/MEMORY/LEARNING/last-synthesis.md` frontmatter for `generated` timestamp. Report when check last ran.
+2. **Proposal counts:** Read `~/.pai/MEMORY/LEARNING/review.md` if it exists. Count proposals by status (PENDING, ACCEPTED, DEFERRED, REJECTED, APPLIED).
 3. **Unprocessed signals:** Compare the `generated` timestamp from last-synthesis.md against the modification times of `ratings.jsonl` and `algorithm-reflections.jsonl`. If signals are newer than the last synthesis, report "Unprocessed signals exist since last check."
 
 Output format:
@@ -94,9 +94,9 @@ Next steps:
 
 | Source | Location (runtime) | Writer | Content |
 |--------|----------|--------|---------|
-| Algorithm reflections | `~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl` | Algorithm LEARN phase | Q1/Q2/Q3 reflections per session |
-| User ratings | `~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl` | RatingCapture.hook.ts | Explicit + implicit ratings with sentiment |
-| HWM state | `~/.claude/MEMORY/LEARNING/SIGNALS/mine-ratings-hwm.json` | MineRatings.ts | Last-processed timestamp for incremental analysis |
+| Algorithm reflections | `~/.pai/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl` | Algorithm LEARN phase | Q1/Q2/Q3 reflections per session |
+| User ratings | `~/.pai/MEMORY/LEARNING/SIGNALS/ratings.jsonl` | RatingCapture.hook.ts | Explicit + implicit ratings with sentiment |
+| HWM state | `~/.pai/MEMORY/LEARNING/SIGNALS/mine-ratings-hwm.json` | MineRatings.ts | Last-processed timestamp for incremental analysis |
 
 ## Pipeline Output Files
 

@@ -1,12 +1,14 @@
 /**
  * Centralized Path Resolution
  *
- * Handles environment variable expansion for portable PAI configuration.
- * Claude Code doesn't expand $HOME in settings.json env values, so we do it here.
+ * Two-root architecture:
+ *   - CONFIG root (CLAUDE_CONFIG_DIR): CC config — hooks, MEMORY, settings.json, projects
+ *   - PAI root (PAI_DIR): PAI code — PAI/Tools, Algorithm, skills, agents
  *
  * Usage:
- *   import { getPaiDir, getSettingsPath } from './lib/paths';
- *   const paiDir = getPaiDir(); // Always returns expanded absolute path
+ *   import { getConfigDir, getPaiDir, configPath, codePath } from './lib/paths';
+ *   codePath('MEMORY', 'STATE', 'work.json')  // ~/.pai/MEMORY/STATE/work.json
+ *   codePath('PAI', 'Tools', 'Inference')        // ~/.pai/PAI/Tools/Inference
  */
 
 import { homedir } from 'os';
@@ -26,8 +28,22 @@ export function expandPath(path: string): string {
 }
 
 /**
- * Get the PAI directory (expanded)
- * Priority: PAI_DIR env var (expanded) → ~/.claude
+ * Get the CC config directory (expanded)
+ * Priority: CLAUDE_CONFIG_DIR env var → ~/.claude
+ */
+export function getConfigDir(): string {
+  const envConfigDir = process.env.CLAUDE_CONFIG_DIR;
+
+  if (envConfigDir) {
+    return expandPath(envConfigDir);
+  }
+
+  return join(homedir(), '.claude');
+}
+
+/**
+ * Get the PAI code directory (expanded)
+ * Priority: PAI_DIR env var (expanded) → ~/.pai
  */
 export function getPaiDir(): string {
   const envPaiDir = process.env.PAI_DIR;
@@ -36,40 +52,54 @@ export function getPaiDir(): string {
     return expandPath(envPaiDir);
   }
 
-  return join(homedir(), '.claude');
+  return join(homedir(), '.pai');
 }
 
 /**
- * Get the settings.json path
+ * Get a path relative to CONFIG root (hooks, MEMORY, settings, projects)
  */
-export function getSettingsPath(): string {
-  return join(getPaiDir(), 'settings.json');
+export function configPath(...segments: string[]): string {
+  return join(getConfigDir(), ...segments);
 }
 
 /**
- * Get a path relative to PAI_DIR
+ * Get a path relative to PAI code root (PAI/Tools, Algorithm, skills, agents)
+ */
+export function codePath(...segments: string[]): string {
+  return join(getPaiDir(), ...segments);
+}
+
+/**
+ * Get a path relative to PAI_DIR (backward compat alias for codePath)
  */
 export function paiPath(...segments: string[]): string {
   return join(getPaiDir(), ...segments);
 }
 
 /**
- * Get the hooks directory
+ * Get the settings.json path (lives in CONFIG root)
+ */
+export function getSettingsPath(): string {
+  return join(getConfigDir(), 'settings.json');
+}
+
+/**
+ * Get the hooks directory (lives in CONFIG root)
  */
 export function getHooksDir(): string {
-  return paiPath('hooks');
+  return configPath('hooks');
 }
 
 /**
- * Get the skills directory
+ * Get the skills directory (lives in PAI code root)
  */
 export function getSkillsDir(): string {
-  return paiPath('skills');
+  return codePath('skills');
 }
 
 /**
- * Get the MEMORY directory
+ * Get the MEMORY directory (lives in PAI code root)
  */
 export function getMemoryDir(): string {
-  return paiPath('MEMORY');
+  return codePath('MEMORY');
 }

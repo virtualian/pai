@@ -10,26 +10,26 @@ This file documents single-purpose CLI utilities that have been consolidated fro
 
 ## Inference.ts - Unified AI Inference Tool
 
-**Location:** `~/.claude/PAI/Tools/Inference.ts`
+**Location:** `~/.pai/PAI/Tools/Inference.ts`
 
 Single inference tool with three run levels for different speed/capability trade-offs.
 
 **Usage:**
 ```bash
 # Fast (Haiku) - quick tasks, simple generation
-bun ~/.claude/PAI/Tools/Inference.ts --level fast "System prompt" "User prompt"
+bun ~/.pai/PAI/Tools/Inference.ts --level fast "System prompt" "User prompt"
 
 # Standard (Sonnet) - balanced reasoning, typical analysis
-bun ~/.claude/PAI/Tools/Inference.ts --level standard "System prompt" "User prompt"
+bun ~/.pai/PAI/Tools/Inference.ts --level standard "System prompt" "User prompt"
 
 # Smart (Opus) - deep reasoning, strategic decisions
-bun ~/.claude/PAI/Tools/Inference.ts --level smart "System prompt" "User prompt"
+bun ~/.pai/PAI/Tools/Inference.ts --level smart "System prompt" "User prompt"
 
 # With JSON output
-bun ~/.claude/PAI/Tools/Inference.ts --json --level fast "Return JSON" "Input"
+bun ~/.pai/PAI/Tools/Inference.ts --json --level fast "Return JSON" "Input"
 
 # Custom timeout
-bun ~/.claude/PAI/Tools/Inference.ts --level standard --timeout 60000 "Prompt" "Input"
+bun ~/.pai/PAI/Tools/Inference.ts --level standard --timeout 60000 "Prompt" "Input"
 ```
 
 **Run Levels:**
@@ -72,20 +72,20 @@ if (result.success) {
 
 ## RemoveBg.ts - Remove Image Backgrounds
 
-**Location:** `~/.claude/PAI/Tools/RemoveBg.ts`
+**Location:** `~/.pai/PAI/Tools/RemoveBg.ts`
 
 Remove backgrounds from images using the remove.bg API.
 
 **Usage:**
 ```bash
 # Remove background from single image (overwrites original)
-bun ~/.claude/PAI/Tools/RemoveBg.ts /path/to/image.png
+bun ~/.pai/PAI/Tools/RemoveBg.ts /path/to/image.png
 
 # Remove background and save to different path
-bun ~/.claude/PAI/Tools/RemoveBg.ts /path/to/input.png /path/to/output.png
+bun ~/.pai/PAI/Tools/RemoveBg.ts /path/to/input.png /path/to/output.png
 
 # Process multiple images
-bun ~/.claude/PAI/Tools/RemoveBg.ts image1.png image2.png image3.png
+bun ~/.pai/PAI/Tools/RemoveBg.ts image1.png image2.png image3.png
 ```
 
 **Environment Variables:**
@@ -100,17 +100,17 @@ bun ~/.claude/PAI/Tools/RemoveBg.ts image1.png image2.png image3.png
 
 ## AddBg.ts - Add Background Color
 
-**Location:** `~/.claude/PAI/Tools/AddBg.ts`
+**Location:** `~/.pai/PAI/Tools/AddBg.ts`
 
 Add solid background color to transparent images.
 
 **Usage:**
 ```bash
 # Add specific background color
-bun ~/.claude/PAI/Tools/AddBg.ts /path/to/transparent.png "#EAE9DF" /path/to/output.png
+bun ~/.pai/PAI/Tools/AddBg.ts /path/to/transparent.png "#EAE9DF" /path/to/output.png
 
 # Add brand background color
-bun ~/.claude/PAI/Tools/AddBg.ts /path/to/transparent.png --brand /path/to/output.png
+bun ~/.pai/PAI/Tools/AddBg.ts /path/to/transparent.png --brand /path/to/output.png
 ```
 
 **When to Use:**
@@ -124,17 +124,17 @@ bun ~/.claude/PAI/Tools/AddBg.ts /path/to/transparent.png --brand /path/to/outpu
 
 ## GetTranscript.ts - Extract YouTube Transcripts
 
-**Location:** `~/.claude/PAI/Tools/GetTranscript.ts`
+**Location:** `~/.pai/PAI/Tools/GetTranscript.ts`
 
 Extract transcripts from YouTube videos using yt-dlp (via fabric).
 
 **Usage:**
 ```bash
 # Extract transcript to stdout
-bun ~/.claude/PAI/Tools/GetTranscript.ts "https://www.youtube.com/watch?v=VIDEO_ID"
+bun ~/.pai/PAI/Tools/GetTranscript.ts "https://www.youtube.com/watch?v=VIDEO_ID"
 
 # Save transcript to file
-bun ~/.claude/PAI/Tools/GetTranscript.ts "https://www.youtube.com/watch?v=VIDEO_ID" --save /path/to/transcript.txt
+bun ~/.pai/PAI/Tools/GetTranscript.ts "https://www.youtube.com/watch?v=VIDEO_ID" --save /path/to/transcript.txt
 ```
 
 **Supported URL Formats:**
@@ -193,7 +193,7 @@ sleep 2
 - "perform this"
 
 **Technical Details:**
-- Voice server must be running (`~/.claude/skills/VoiceServer/`)
+- Voice server must be running (`~/.pai/skills/VoiceServer/`)
 - Segments longer than 450 chars should be split
 - Natural 2-second pauses between segments for storytelling flow
 - Uses ElevenLabs API under the hood
@@ -202,14 +202,14 @@ sleep 2
 
 ## extract-transcript.py - Transcribe Audio/Video Files
 
-**Location:** `~/.claude/PAI/Tools/extract-transcript.py`
+**Location:** `~/.pai/PAI/Tools/extract-transcript.py`
 
 Local transcription using faster-whisper (4x faster than OpenAI Whisper, 50% less memory). Self-contained UV script for offline transcription.
 
 **Usage:**
 ```bash
 # Transcribe single file (base.en model - recommended)
-cd ~/.claude/PAI/Tools/
+cd ~/.pai/PAI/Tools/
 uv run extract-transcript.py /path/to/audio.m4a
 
 # Use different model
@@ -263,20 +263,20 @@ uv run extract-transcript.py /path/to/folder/ --batch --model base.en
 
 ## YouTubeApi.ts - YouTube Channel & Video Stats
 
-**Location:** `~/.claude/PAI/Tools/YouTubeApi.ts`
+**Location:** `~/.pai/PAI/Tools/YouTubeApi.ts`
 
 Wrapper around YouTube Data API v3 for channel statistics and video metrics.
 
 **Usage:**
 ```bash
 # Get channel statistics
-bun ~/.claude/PAI/Tools/YouTubeApi.ts --channel-stats
+bun ~/.pai/PAI/Tools/YouTubeApi.ts --channel-stats
 
 # Get video statistics
-bun ~/.claude/PAI/Tools/YouTubeApi.ts --video-stats VIDEO_ID
+bun ~/.pai/PAI/Tools/YouTubeApi.ts --video-stats VIDEO_ID
 
 # Get latest uploads
-bun ~/.claude/PAI/Tools/YouTubeApi.ts --latest-videos
+bun ~/.pai/PAI/Tools/YouTubeApi.ts --latest-videos
 ```
 
 **Environment Variables:**
@@ -351,23 +351,23 @@ brew install trufflehog
 
 ## UpstreamScan.ts - Upstream Repository Monitor
 
-**Location:** `~/.claude/PAI/Tools/UpstreamScan.ts`
+**Location:** `~/.pai/PAI/Tools/UpstreamScan.ts`
 
 Monitor the upstream PAI repo for new issues, PRs, and discussions. Uses disposition-based tracking to avoid re-processing already-decided items while surfacing new activity.
 
 **Usage:**
 ```bash
 # Full scan (issues, PRs, discussions)
-bun ~/.claude/PAI/Tools/UpstreamScan.ts
+bun ~/.pai/PAI/Tools/UpstreamScan.ts
 
 # Set GitHub username (for participation detection)
-bun ~/.claude/PAI/Tools/UpstreamScan.ts --author myuser
+bun ~/.pai/PAI/Tools/UpstreamScan.ts --author myuser
 
 # Report digest state only (no GitHub API calls)
-bun ~/.claude/PAI/Tools/UpstreamScan.ts --no-gh
+bun ~/.pai/PAI/Tools/UpstreamScan.ts --no-gh
 
 # Custom relevance keywords
-bun ~/.claude/PAI/Tools/UpstreamScan.ts --keywords-file keywords.json
+bun ~/.pai/PAI/Tools/UpstreamScan.ts --keywords-file keywords.json
 ```
 
 **Environment Variables:**
@@ -380,7 +380,7 @@ bun ~/.claude/PAI/Tools/UpstreamScan.ts --keywords-file keywords.json
 - "what's new in the PAI repo"
 - "scan for upstream changes"
 
-**Workflow:** Read `~/.claude/PAI/Tools/ScanWorkflow.md` for the full 9-step scan workflow including deep-dive analysis and disposition recording.
+**Workflow:** Read `~/.pai/PAI/Tools/ScanWorkflow.md` for the full 9-step scan workflow including deep-dive analysis and disposition recording.
 
 **Technical Details:**
 - Tracks items in `~/.claude/UPSTREAM-DIGEST.json` with dispositions (new/open/ignore/implemented/deferred)
@@ -392,23 +392,23 @@ bun ~/.claude/PAI/Tools/UpstreamScan.ts --keywords-file keywords.json
 
 ## UpgradeCheck.ts - Pre-Upgrade Patch Analysis
 
-**Location:** `~/.claude/PAI/Tools/UpgradeCheck.ts`
+**Location:** `~/.pai/PAI/Tools/UpgradeCheck.ts`
 
 Analyze locally patched files against a target release. Classifies each active patch as SAFE (carries forward), CONFLICT (merge needed), or RETIRE (upstream fixed it).
 
 **Usage:**
 ```bash
 # Analyze patches against a target version
-bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4
+bun ~/.pai/PAI/Tools/UpgradeCheck.ts v4.0.4
 
 # Analyze + create backup first
-bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4 --backup
+bun ~/.pai/PAI/Tools/UpgradeCheck.ts v4.0.4 --backup
 
 # Skip GitHub API calls
-bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4 --no-gh
+bun ~/.pai/PAI/Tools/UpgradeCheck.ts v4.0.4 --no-gh
 
 # Custom repo path
-bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4 --repo ~/projects/pai
+bun ~/.pai/PAI/Tools/UpgradeCheck.ts v4.0.4 --repo ~/projects/pai
 ```
 
 **Environment Variables:**
@@ -455,12 +455,12 @@ bun ~/.claude/PAI/Tools/UpgradeCheck.ts v4.0.4 --repo ~/projects/pai
 
 When adding a new utility tool to this system:
 
-1. **Add tool file:** Place `.ts` or `.py` file directly in `~/.claude/PAI/Tools/`
+1. **Add tool file:** Place `.ts` or `.py` file directly in `~/.pai/PAI/Tools/`
    - Use **Title Case** for filenames (e.g., `GetTranscript.ts`, not `get-transcript.ts`)
    - Keep the directory flat - NO subdirectories
 
 2. **Document here:** Add section to this file with:
-   - Tool location (e.g., `~/.claude/PAI/Tools/ToolName.ts`)
+   - Tool location (e.g., `~/.pai/PAI/Tools/ToolName.ts`)
    - Usage examples
    - When to use triggers
    - Environment variables (if any)

@@ -193,7 +193,7 @@ Metrics data is stored in the Substrate US-Common-Metrics dataset directory. The
 
 ### Recommended Customization
 
-Create a customization directory at `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/USMetrics/` with a `PREFERENCES.md` file to override default behavior (e.g., focus categories, output format preferences, custom data paths).
+Create a customization directory at `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/USMetrics/` with a `PREFERENCES.md` file to override default behavior (e.g., focus categories, output format preferences, custom data paths).
 
 ### Optional Customization
 

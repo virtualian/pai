@@ -251,4 +251,4 @@ Get-WmiObject -Class Win32_Product | Where-Object {$_.Name -like "*endpoint*"}
 - Identify similar extensions using same techniques
 - Correlate with threat actor TTPs
 
-**Reference:** See `~/.claude/skills/Utilities/Parser/Workflows/ExtractBrowserExtension.md` for analysis workflow.
+**Reference:** See `~/.pai/skills/Utilities/Parser/Workflows/ExtractBrowserExtension.md` for analysis workflow.

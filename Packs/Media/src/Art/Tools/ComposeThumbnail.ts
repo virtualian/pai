@@ -105,7 +105,7 @@ function printHelp(): void {
 ComposeThumbnail - YouTube Thumbnail Composition CLI
 
 USAGE:
-  bun ~/.claude/skills/Media/Art/Tools/ComposeThumbnail.ts [OPTIONS]
+  bun ~/.pai/skills/Media/Art/Tools/ComposeThumbnail.ts [OPTIONS]
 
 REQUIRED:
   --background <path>     Background image (dramatic tech art)
@@ -123,7 +123,7 @@ OPTIONAL:
   --help, -h              Show this help message
 
 EXAMPLE:
-  bun ~/.claude/skills/Media/Art/Tools/ComposeThumbnail.ts \\
+  bun ~/.pai/skills/Media/Art/Tools/ComposeThumbnail.ts \\
     --background ~/Downloads/tech-background.png \\
     --headshot ~/Downloads/headshot-nobg.png \\
     --title "AI AGENTS KILLING SOFTWARE" \\

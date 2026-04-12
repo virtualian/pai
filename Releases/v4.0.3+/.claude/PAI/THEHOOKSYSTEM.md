@@ -17,7 +17,7 @@ The PAI hook system is an event-driven automation infrastructure built on Claude
 **Core Capabilities:**
 - **Session Management** - Auto-load context, capture summaries, manage state
 - **Voice Notifications** - Text-to-speech announcements for task completions
-- **History Capture** - Automatic work/learning documentation to `~/.claude/MEMORY/`
+- **History Capture** - Automatic work/learning documentation to `~/.pai/MEMORY/`
 - **Multi-Agent Support** - Agent-specific hooks with voice routing
 - **Tab Titles** - Dynamic terminal tab updates with task context
 - **Unified Event Stream** - All hooks emit structured events to `events.jsonl` for real-time observability
@@ -152,7 +152,7 @@ Claude Code supports the following hook events:
 - Explicit path: Pattern match first (no inference needed), writes to `ratings.jsonl`
 - Implicit path: Haiku inference for sentiment if no explicit match
 - Low ratings (<6) auto-capture as learning opportunities
-- Writes to `~/.claude/MEMORY/SIGNALS/ratings.jsonl`
+- Writes to `~/.pai/MEMORY/SIGNALS/ratings.jsonl`
 - Uses shared libraries: `hooks/lib/learning-utils.ts`, `hooks/lib/time.ts`
 - **Inference:** `import { inference } from '../PAI/Tools/Inference'` → `inference({ level: 'fast', expectJson: true })`
 
@@ -556,7 +556,7 @@ else if (hookData.cwd && hookData.cwd.includes('/agents/')) {
 }
 ```
 
-**Session Mapping:** `~/.claude/MEMORY/STATE/agent-sessions.json`
+**Session Mapping:** `~/.pai/MEMORY/STATE/agent-sessions.json`
 ```json
 {
   "session-id-abc123": "engineer",
@@ -603,7 +603,7 @@ else if (hookData.cwd && hookData.cwd.includes('/agents/')) {
 - 🧠 Brain - AI inference in progress (Haiku/Sonnet thinking)
 - ⚙️ Gear - Processing/working state
 
-**Full Documentation:** See `~/.claude/PAI/TERMINALTABS.md`
+**Full Documentation:** See `~/.pai/PAI/TERMINALTABS.md`
 
 ---
 
@@ -847,22 +847,22 @@ curl -X POST http://localhost:8888/notify \
 ### Work Not Capturing
 
 **Check:**
-1. Does `~/.claude/MEMORY/` directory exist?
-2. Does current-work file exist? Check `~/.claude/MEMORY/STATE/current-work.json`
-3. Is hook actually running? Check `~/.claude/MEMORY/RAW/` for events
-4. File permissions? `ls -la ~/.claude/MEMORY/WORK/`
+1. Does `~/.pai/MEMORY/` directory exist?
+2. Does current-work file exist? Check `~/.pai/MEMORY/STATE/current-work.json`
+3. Is hook actually running? Check `~/.pai/MEMORY/RAW/` for events
+4. File permissions? `ls -la ~/.pai/MEMORY/WORK/`
 
 **Debug:**
 ```bash
 # Check current work
-cat ~/.claude/MEMORY/STATE/current-work.json
+cat ~/.pai/MEMORY/STATE/current-work.json
 
 # Check recent work directories
-ls -lt ~/.claude/MEMORY/WORK/ | head -10
-ls -lt ~/.claude/MEMORY/LEARNING/$(date +%Y-%m)/ | head -10
+ls -lt ~/.pai/MEMORY/WORK/ | head -10
+ls -lt ~/.pai/MEMORY/LEARNING/$(date +%Y-%m)/ | head -10
 
 # Check raw events
-tail ~/.claude/MEMORY/RAW/$(date +%Y-%m)/$(date +%Y-%m-%d)_all-events.jsonl
+tail ~/.pai/MEMORY/RAW/$(date +%Y-%m)/$(date +%Y-%m-%d)_all-events.jsonl
 ```
 
 **Common Issues:**
@@ -885,14 +885,14 @@ tail ~/.claude/MEMORY/RAW/$(date +%Y-%m)/$(date +%Y-%m-%d)_all-events.jsonl
 ### Agent Detection Failing
 
 **Check:**
-1. Is `~/.claude/MEMORY/STATE/agent-sessions.json` writable?
+1. Is `~/.pai/MEMORY/STATE/agent-sessions.json` writable?
 2. Is `[AGENT:type]` tag in `🎯 COMPLETED:` line?
 3. Is agent running from correct directory? (`/agents/name/`)
 
 **Debug:**
 ```bash
 # Check session mappings
-cat ~/.claude/MEMORY/STATE/agent-sessions.json | jq .
+cat ~/.pai/MEMORY/STATE/agent-sessions.json | jq .
 
 # Check subagent-stop debug log
 tail -f ~/.claude/hooks/subagent-stop-debug.log
@@ -933,7 +933,7 @@ grep '"type":"user"' ~/.claude/projects/-Users-username--claude/*.jsonl | head -
 ### Context Loading Issues (SessionStart)
 
 **Check:**
-1. Does `~/.claude/PAI/SKILL.md` exist?
+1. Does `~/.pai/PAI/SKILL.md` exist?
 2. Is `LoadContext.hook.ts` executable?
 3. Is `PAI_DIR` env variable set correctly?
 
@@ -1067,9 +1067,9 @@ Hooks in same event execute **sequentially** in order defined in settings.json:
 
 ## Related Documentation
 
-- **Voice System:** `~/.claude/VoiceServer/SKILL.md`
-- **Agent System:** `~/.claude/skills/Agents/SKILL.md`
-- **History/Memory:** `~/.claude/PAI/MEMORYSYSTEM.md`
+- **Voice System:** `~/.pai/VoiceServer/SKILL.md`
+- **Agent System:** `~/.pai/skills/Agents/SKILL.md`
+- **History/Memory:** `~/.pai/PAI/MEMORYSYSTEM.md`
 
 ---
 
@@ -1129,13 +1129,13 @@ KEY FILES:
 ~/.claude/hooks/lib/time.ts          PST timestamp utilities
 ~/.claude/hooks/lib/event-types.ts   Typed event definitions (22 interfaces)
 ~/.claude/hooks/lib/event-emitter.ts appendEvent() → events.jsonl
-~/.claude/MEMORY/WORK/               Work tracking
-~/.claude/MEMORY/LEARNING/           Learning captures
-~/.claude/MEMORY/STATE/              Runtime state
-~/.claude/MEMORY/STATE/events.jsonl  Unified event log (append-only)
+~/.pai/MEMORY/WORK/               Work tracking
+~/.pai/MEMORY/LEARNING/           Learning captures
+~/.pai/MEMORY/STATE/              Runtime state
+~/.pai/MEMORY/STATE/events.jsonl  Unified event log (append-only)
 
 INFERENCE TOOL (for hooks needing AI):
-Path: ~/.claude/PAI/Tools/Inference.ts
+Path: ~/.pai/PAI/Tools/Inference.ts
 Import: import { inference } from '../PAI/Tools/Inference'
 Levels: fast (haiku/15s) | standard (sonnet/30s) | smart (opus/90s)
 
@@ -1302,10 +1302,10 @@ Events use a dot-separated topic hierarchy for filtering. A `custom.*` escape ha
 
 ```bash
 # Live tail (real-time monitoring)
-tail -f ~/.claude/MEMORY/STATE/events.jsonl | jq
+tail -f ~/.pai/MEMORY/STATE/events.jsonl | jq
 
 # Filter by type
-tail -f ~/.claude/MEMORY/STATE/events.jsonl | jq 'select(.type | startswith("algorithm."))'
+tail -f ~/.pai/MEMORY/STATE/events.jsonl | jq 'select(.type | startswith("algorithm."))'
 
 # Programmatic (Node/Bun fs.watch)
 import { watch } from 'fs';

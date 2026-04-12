@@ -6,7 +6,10 @@
  * parseTranscriptFromInput() if it needs the full transcript.
  */
 
-import { parseTranscript, type ParsedTranscript } from '../../PAI/Tools/TranscriptParser';
+import { codePath } from './paths';
+
+const { parseTranscript } = await import(codePath('PAI', 'Tools', 'TranscriptParser'));
+type ParsedTranscript = import('../../PAI/Tools/TranscriptParser').ParsedTranscript;
 
 export interface HookInput {
   session_id: string;

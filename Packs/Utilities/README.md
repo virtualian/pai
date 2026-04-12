@@ -196,7 +196,7 @@ All other sub-skills work out of the box with no additional configuration.
 
 ### Recommended Customization
 
-Create a customization directory at `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Utilities/` with preferences for specific sub-skills.
+Create a customization directory at `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Utilities/` with preferences for specific sub-skills.
 
 ### Optional Customization
 

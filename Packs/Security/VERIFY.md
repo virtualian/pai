@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/Security/SKILL.md" ] && echo "OK SKILL.md" || echo "MISSING SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/Security/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/Security/SKILL.md`.
 
 ### Check sub-domain SKILL.md files
 
@@ -125,7 +125,7 @@ Mark each item as complete:
 ## Security Skill Installation Verification
 
 ### Files
-- [ ] Top-level SKILL.md installed at ~/.claude/skills/Security/SKILL.md
+- [ ] Top-level SKILL.md installed at ~/.pai/skills/Security/SKILL.md
 - [ ] Recon/SKILL.md installed with Tools/, Workflows/, Data/ directories
 - [ ] WebAssessment/SKILL.md installed with Workflows/, BugBountyTool/, FfufResources/, OsintTools/
 - [ ] PromptInjection/SKILL.md installed with Workflows/ directory

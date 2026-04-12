@@ -5,7 +5,7 @@ Word-level transcription via Whisper. Uses insanely-fast-whisper (MPS accelerate
 ## Usage
 
 ```bash
-bun ~/.claude/skills/Utilities/AudioEditor/Tools/Transcribe.ts <audio-file> [--output <path>]
+bun ~/.pai/skills/Utilities/AudioEditor/Tools/Transcribe.ts <audio-file> [--output <path>]
 ```
 
 ## Options

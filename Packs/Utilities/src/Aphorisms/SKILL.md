@@ -6,7 +6,7 @@ description: CRUD on {PRINCIPAL.NAME}'s curated aphorism collection — search b
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Aphorisms/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Aphorisms/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -125,7 +125,7 @@ Aphorisms categorized by themes matching user content:
 
 ## Database Structure
 
-**Location:** `~/.claude/skills/aphorisms/Database/aphorisms.md`
+**Location:** `~/.pai/skills/aphorisms/Database/aphorisms.md`
 
 **Current Collections:**
 1. **Initial Collection (Rahil Arora)** - 15 curated quotes covering core themes
@@ -346,7 +346,7 @@ All five thinkers align with TELOS themes of **wisdom, rationality, truth-seekin
 - "Search aphorisms about [theme]" → Theme-based search
 
 **Database Location:**
-`~/.claude/skills/aphorisms/Database/aphorisms.md`
+`~/.pai/skills/aphorisms/Database/aphorisms.md`
 
 **Current Collection Size:**
 - 15 initial quotes (Rahil Arora collection)

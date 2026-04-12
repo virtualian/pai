@@ -28,10 +28,12 @@
  * 2026-01-15-205500_LEARNING_voice-on-prompt-submit-architecture.md
  */
 
-import { inference } from '../PAI/Tools/Inference';
+import { codePath } from './lib/paths';
 import { isValidWorkingTitle, getWorkingFallback, trimToValidTitle } from './lib/output-validators';
 import { setTabState, getSessionOneWord } from './lib/tab-setter';
 import { getIdentity } from './lib/identity';
+
+const { inference } = await import(codePath('PAI', 'Tools', 'Inference'));
 
 interface HookInput {
   session_id: string;

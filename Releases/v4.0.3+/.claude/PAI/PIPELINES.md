@@ -83,7 +83,7 @@ The pipeline worker calls each action in sequence via service bindings, passing 
 
 ### PIPELINE.md Format (Local)
 
-Local pipeline definitions live in `~/.claude/PAI/PIPELINES/[Domain]_[Pipeline-Name]/PIPELINE.md`
+Local pipeline definitions live in `~/.pai/PAI/PIPELINES/[Domain]_[Pipeline-Name]/PIPELINE.md`
 
 ```markdown
 # [Pipeline_Name] Pipeline
@@ -106,7 +106,7 @@ Local pipeline definitions live in `~/.claude/PAI/PIPELINES/[Domain]_[Pipeline-N
 ### Naming Convention
 
 ```
-~/.claude/PAI/PIPELINES/
+~/.pai/PAI/PIPELINES/
 ├── Blog_Publish-Post/          # Domain_Action-Format
 │   └── PIPELINE.md
 ├── Newsletter_Full-Cycle/
@@ -159,10 +159,10 @@ Map out the complete workflow:
 ### Step 2: Create Pipeline Directory
 
 ```bash
-mkdir -p ~/.claude/PAI/PIPELINES/[Domain]_[Pipeline-Name]
+mkdir -p ~/.pai/PAI/PIPELINES/[Domain]_[Pipeline-Name]
 # PIPELINE-TEMPLATE.md is planned but not yet created
 # For now, copy an existing pipeline and modify it
-cp ~/.claude/PAI/PIPELINES/Blog_Publish-Post/PIPELINE.md ~/.claude/PAI/PIPELINES/[Domain]_[Pipeline-Name]/PIPELINE.md
+cp ~/.pai/PAI/PIPELINES/Blog_Publish-Post/PIPELINE.md ~/.pai/PAI/PIPELINES/[Domain]_[Pipeline-Name]/PIPELINE.md
 ```
 
 ### Step 3: Define Overview Table
@@ -249,10 +249,10 @@ Actions should not be tightly coupled to a specific pipeline. Design them to wor
 
 ## Related Documentation
 
-- **Actions:** `~/.claude/PAI/ACTIONS.md`
-- **Flows:** `~/.claude/PAI/FLOWS.md`
-- **Architecture:** `~/.claude/PAI/PAISYSTEMARCHITECTURE.md`
-- **Detailed README:** `~/.claude/PAI/PIPELINES/README.md`
+- **Actions:** `~/.pai/PAI/ACTIONS.md`
+- **Flows:** `~/.pai/PAI/FLOWS.md`
+- **Architecture:** `~/.pai/PAI/PAISYSTEMARCHITECTURE.md`
+- **Detailed README:** `~/.pai/PAI/PIPELINES/README.md`
 - **Source code:** `~/Projects/arbol/`
 
 ---

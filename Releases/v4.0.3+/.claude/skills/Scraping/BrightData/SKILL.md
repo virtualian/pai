@@ -6,7 +6,7 @@ description: 4-tier progressive URL scraping and multi-page crawling — WebFetc
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/BrightData/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/BrightData/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -197,7 +197,7 @@ Skill Response:
 ---
 
 **Related Documentation:**
-- `~/.claude/PAI/SkillSystem.md` - Canonical structure guide
-- `~/.claude/PAI/CONSTITUTION.md` - Overall PAI philosophy
+- `~/.pai/PAI/SkillSystem.md` - Canonical structure guide
+- `~/.pai/PAI/CONSTITUTION.md` - Overall PAI philosophy
 
 **Last Updated:** 2026-02-22

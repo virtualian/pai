@@ -36,7 +36,7 @@ Map the user's request to Pipeline.ts flags:
 ## Step 3: Run the Pipeline
 
 ```bash
-bun ~/.claude/skills/Utilities/AudioEditor/Tools/Pipeline.ts \
+bun ~/.pai/skills/Utilities/AudioEditor/Tools/Pipeline.ts \
   "<audio-file-path>" \
   [FLAGS_FROM_INTENT_MAPPING] \
   --output "<output-path>"
@@ -63,14 +63,14 @@ For debugging or partial workflows, individual tools can be run standalone:
 
 ```bash
 # Transcription only
-bun ~/.claude/skills/Utilities/AudioEditor/Tools/Transcribe.ts <file>
+bun ~/.pai/skills/Utilities/AudioEditor/Tools/Transcribe.ts <file>
 
 # Analysis only (requires transcript)
-bun ~/.claude/skills/Utilities/AudioEditor/Tools/Analyze.ts <transcript.json>
+bun ~/.pai/skills/Utilities/AudioEditor/Tools/Analyze.ts <transcript.json>
 
 # Edit only (requires audio + edits)
-bun ~/.claude/skills/Utilities/AudioEditor/Tools/Edit.ts <file> <edits.json>
+bun ~/.pai/skills/Utilities/AudioEditor/Tools/Edit.ts <file> <edits.json>
 
 # Polish only (requires CLEANVOICE_API_KEY)
-bun ~/.claude/skills/Utilities/AudioEditor/Tools/Polish.ts <file>
+bun ~/.pai/skills/Utilities/AudioEditor/Tools/Polish.ts <file>
 ```

@@ -8,7 +8,7 @@
 
 ### Social Skill Integration
 
-**Location:** `~/.claude/skills/social/SKILL.md`
+**Location:** `~/.pai/skills/social/SKILL.md`
 
 **Updated Section:** "Fetching Tweet Content"
 
@@ -200,7 +200,7 @@ Other Apify actors worth implementing:
 
 **For Users:**
 - Quick reference: `~/.claude/filesystem-mcps/SCRIPTS-REFERENCE.md`
-- Social skill: `~/.claude/skills/social/SKILL.md`
+- Social skill: `~/.pai/skills/social/SKILL.md`
 
 **For Developers:**
 - Implementation: `~/.claude/filesystem-mcps/apify/README.md`

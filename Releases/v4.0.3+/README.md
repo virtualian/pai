@@ -85,7 +85,7 @@ cp -r .claude ~/
 cd ~/.claude && bash install.sh
 
 # 4. Rebuild CLAUDE.md
-bun ~/.claude/PAI/Tools/BuildCLAUDE.ts
+bun ~/.pai/PAI/Tools/BuildCLAUDE.ts
 ```
 
 ### Quick Manual Upgrade (from v4.0.2)

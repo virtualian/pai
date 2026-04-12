@@ -124,7 +124,7 @@ the Learning sub-skill. The Utilities pack has already been updated to remove it
   "question": "Ready to install Learning v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/Learning/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/Learning/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -134,16 +134,16 @@ the Learning sub-skill. The Utilities pack has already been updated to remove it
 **If user chose "Show me what will change":**
 ```
 "Directories to be created:
-- ~/.claude/skills/Learning/
-- ~/.claude/skills/Learning/Workflows/ (3 workflow files)
-- ~/.claude/skills/Learning/Tools/ (1 TypeScript tool)
+- ~/.pai/skills/Learning/
+- ~/.pai/skills/Learning/Workflows/ (3 workflow files)
+- ~/.pai/skills/Learning/Tools/ (1 TypeScript tool)
 
 Files to be created:
-- ~/.claude/skills/Learning/SKILL.md (skill definition and routing)
-- ~/.claude/skills/Learning/Workflows/Check.md (Mine + Synthesise)
-- ~/.claude/skills/Learning/Workflows/Review.md (Propose + Review)
-- ~/.claude/skills/Learning/Workflows/Apply.md (Two-gate Apply)
-- ~/.claude/skills/Learning/Tools/MineRatings.ts (Behavioral analysis tool)
+- ~/.pai/skills/Learning/SKILL.md (skill definition and routing)
+- ~/.pai/skills/Learning/Workflows/Check.md (Mine + Synthesise)
+- ~/.pai/skills/Learning/Workflows/Review.md (Propose + Review)
+- ~/.pai/skills/Learning/Workflows/Apply.md (Two-gate Apply)
+- ~/.pai/skills/Learning/Tools/MineRatings.ts (Behavioral analysis tool)
 
 No other files will be modified. No hooks, no configuration changes.
 Existing MEMORY/LEARNING/ data is preserved."
@@ -236,6 +236,6 @@ to remove the old copy."
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md"
 ```

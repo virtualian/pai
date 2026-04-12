@@ -184,7 +184,7 @@ requires the Bright Data MCP. Tiers 1-3 work without it."
   "question": "Ready to install Scraping v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/Scraping/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/Scraping/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -194,15 +194,15 @@ requires the Bright Data MCP. Tiers 1-3 work without it."
 **If user chose "Show me what will change":**
 ```
 "Directories to be created:
-- ~/.claude/skills/Scraping/
-- ~/.claude/skills/Scraping/BrightData/
-- ~/.claude/skills/Scraping/BrightData/Workflows/ (2 workflow files)
-- ~/.claude/skills/Scraping/Apify/
-- ~/.claude/skills/Scraping/Apify/actors/ (4 subdirectories with 9 actor wrappers)
-- ~/.claude/skills/Scraping/Apify/types/ (type definitions)
-- ~/.claude/skills/Scraping/Apify/skills/ (pre-built scripts)
-- ~/.claude/skills/Scraping/Apify/examples/ (usage examples)
-- ~/.claude/skills/Scraping/Apify/Workflows/ (1 workflow file)
+- ~/.pai/skills/Scraping/
+- ~/.pai/skills/Scraping/BrightData/
+- ~/.pai/skills/Scraping/BrightData/Workflows/ (2 workflow files)
+- ~/.pai/skills/Scraping/Apify/
+- ~/.pai/skills/Scraping/Apify/actors/ (4 subdirectories with 9 actor wrappers)
+- ~/.pai/skills/Scraping/Apify/types/ (type definitions)
+- ~/.pai/skills/Scraping/Apify/skills/ (pre-built scripts)
+- ~/.pai/skills/Scraping/Apify/examples/ (usage examples)
+- ~/.pai/skills/Scraping/Apify/Workflows/ (1 workflow file)
 
 No other files will be modified. No hooks, no configuration changes."
 ```
@@ -399,7 +399,7 @@ Try it now: 'scrape [any URL]'"
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Verify bun is installed for Apify: curl -fsSL https://bun.sh/install | bash
 4. Run the verification commands in VERIFY.md
 

@@ -155,7 +155,7 @@ work but may use fewer parallel threads."
   "question": "Ready to install Investigation v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/Investigation/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/Investigation/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -165,22 +165,22 @@ work but may use fewer parallel threads."
 **If user chose "Show me what will change":**
 ```
 "Files and directories to be created:
-- ~/.claude/skills/Investigation/SKILL.md (top-level routing)
+- ~/.pai/skills/Investigation/SKILL.md (top-level routing)
 
 OSINT sub-skill (if selected):
-- ~/.claude/skills/Investigation/OSINT/SKILL.md (OSINT skill definition)
-- ~/.claude/skills/Investigation/OSINT/SOURCES.JSON (279 cataloged sources)
-- ~/.claude/skills/Investigation/OSINT/SOURCES.md (human-readable source reference)
-- ~/.claude/skills/Investigation/OSINT/EthicalFramework.md (authorization framework)
-- ~/.claude/skills/Investigation/OSINT/Methodology.md (collection and reporting standards)
-- ~/.claude/skills/Investigation/OSINT/PeopleTools.md (people search reference)
-- ~/.claude/skills/Investigation/OSINT/CompanyTools.md (business database reference)
-- ~/.claude/skills/Investigation/OSINT/EntityTools.md (threat intel reference)
-- ~/.claude/skills/Investigation/OSINT/Workflows/ (7 investigation workflows)
+- ~/.pai/skills/Investigation/OSINT/SKILL.md (OSINT skill definition)
+- ~/.pai/skills/Investigation/OSINT/SOURCES.JSON (279 cataloged sources)
+- ~/.pai/skills/Investigation/OSINT/SOURCES.md (human-readable source reference)
+- ~/.pai/skills/Investigation/OSINT/EthicalFramework.md (authorization framework)
+- ~/.pai/skills/Investigation/OSINT/Methodology.md (collection and reporting standards)
+- ~/.pai/skills/Investigation/OSINT/PeopleTools.md (people search reference)
+- ~/.pai/skills/Investigation/OSINT/CompanyTools.md (business database reference)
+- ~/.pai/skills/Investigation/OSINT/EntityTools.md (threat intel reference)
+- ~/.pai/skills/Investigation/OSINT/Workflows/ (7 investigation workflows)
 
 PrivateInvestigator sub-skill (if selected):
-- ~/.claude/skills/Investigation/PrivateInvestigator/SKILL.md (PI skill definition)
-- ~/.claude/skills/Investigation/PrivateInvestigator/Workflows/ (5 people-finding workflows)
+- ~/.pai/skills/Investigation/PrivateInvestigator/SKILL.md (PI skill definition)
+- ~/.pai/skills/Investigation/PrivateInvestigator/Workflows/ (5 people-finding workflows)
 
 No other files will be modified. User customizations are never touched."
 ```
@@ -383,8 +383,8 @@ Try it now:
 - 'reverse lookup [phone/email]'
 
 Customization: Add preferences at:
-  ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/OSINT/
-  ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/PrivateInvestigator/"
+  ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/OSINT/
+  ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/PrivateInvestigator/"
 ```
 
 ### On Failure
@@ -393,7 +393,7 @@ Customization: Add preferences at:
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md
 
 Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infrastructure/issues"
@@ -407,14 +407,14 @@ Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infras
 
 Ensure SOURCES.JSON was properly copied:
 ```bash
-[ -f ~/.claude/skills/Investigation/OSINT/SOURCES.JSON ] && echo "OK" || echo "MISSING"
+[ -f ~/.pai/skills/Investigation/OSINT/SOURCES.JSON ] && echo "OK" || echo "MISSING"
 ```
 
 ### Parallel agents not deploying
 
 The Investigation skill deploys parallel research agents through PAI's Research skill. If Research is not installed, investigations still work but may use fewer simultaneous threads. Check:
 ```bash
-[ -d ~/.claude/skills/Research ] && echo "Research skill available" || echo "Research skill not found"
+[ -d ~/.pai/skills/Research ] && echo "Research skill available" || echo "Research skill not found"
 ```
 
 ### Ethical framework blocking investigations

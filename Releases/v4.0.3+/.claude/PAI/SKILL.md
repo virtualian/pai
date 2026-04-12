@@ -289,7 +289,7 @@ Extended+: Rehearse verification for each CRITICAL criterion.
 
 - Validate prerequisites: env vars, credentials, dependencies, state, files.
 - Execution strategy: parallelize non-serial work at Extended+ (use Delegation skill).
-- Create PRD at `~/.claude/MEMORY/WORK/{session-slug}/PRD-{YYYYMMDD}-{slug}.md` via `generatePRDTemplate()`.
+- Create PRD at `~/.pai/MEMORY/WORK/{session-slug}/PRD-{YYYYMMDD}-{slug}.md` via `generatePRDTemplate()`.
 - Write PLAN section. Every PRD requires a plan.
 - For complex multi-approach tasks, use PlanMode skill.
 - Quality Gate re-check.

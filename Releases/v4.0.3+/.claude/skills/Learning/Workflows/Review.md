@@ -1,7 +1,7 @@
 # Review Workflow (Propose + Open Review File)
 
 ```bash
-bun ~/.claude/PAI/Tools/Notify.ts "Running the Review workflow in the Learning skill to generate change proposals"
+bun ~/.pai/PAI/Tools/Notify.ts "Running the Review workflow in the Learning skill to generate change proposals"
 ```
 
 Running the **Review** workflow in the **Learning** skill to generate change proposals...
@@ -89,7 +89,7 @@ Each upgrade candidate gets classified to one of three targets:
 ### Step 1: Ensure Fresh Synthesis
 
 ```
-Check if ~/.claude/MEMORY/LEARNING/last-synthesis.md exists.
+Check if ~/.pai/MEMORY/LEARNING/last-synthesis.md exists.
 
 If it does NOT exist:
   - Report: "No synthesis found — running Check workflow first..."
@@ -110,7 +110,7 @@ If it exists:
 ### Step 2: Read Synthesis for Upgrade Candidates
 
 ```
-Read ~/.claude/MEMORY/LEARNING/last-synthesis.md in full.
+Read ~/.pai/MEMORY/LEARNING/last-synthesis.md in full.
 Extract:
 - All upgrade candidates (from Algorithm Reflections section)
 - All STOP patterns (from Behavioral Signals section)
@@ -122,7 +122,7 @@ Extract:
 ### Step 3: Read Existing Review File (for Dedup/Status)
 
 ```
-Check if ~/.claude/MEMORY/LEARNING/review.md exists.
+Check if ~/.pai/MEMORY/LEARNING/review.md exists.
 
 If it exists:
   - Read the full file
@@ -174,7 +174,7 @@ For each new or updated candidate, generate a proposal entry:
 ### Step 6: Write review.md
 
 ```
-Write (or update) ~/.claude/MEMORY/LEARNING/review.md
+Write (or update) ~/.pai/MEMORY/LEARNING/review.md
 
 With YAML frontmatter:
 ---
@@ -200,7 +200,7 @@ Output instructions:
 ```
 ## Review File Ready
 
-**Location:** `~/.claude/MEMORY/LEARNING/review.md`
+**Location:** `~/.pai/MEMORY/LEARNING/review.md`
 **Proposals:** [N] total — [N] new PENDING, [N] updated, [N] unchanged
 
 ### How to Review

@@ -143,7 +143,7 @@ Or use the slash command:
 **Read the aesthetic file and select the appropriate emotional vocabulary.**
 
 ```bash
-Read ~/.claude/skills/Media/Art/SKILL.md
+Read ~/.pai/skills/Media/Art/SKILL.md
 ```
 
 **Match the contVent to one of these emotional registers:**
@@ -432,7 +432,7 @@ Before generating, verify:
 
 ```bash
 # ALWAYS output to Downloads first for user to review in Preview
-bun run ~/.claude/skills/art/Tools/Generate.ts \
+bun run ~/.pai/skills/art/Tools/Generate.ts \
   --model nano-banana-pro \
   --prompt "[YOUR PROMPT]" \
   --size 2K \
@@ -450,7 +450,7 @@ cp ~/Downloads/[name]-thumb.png ${PROJECTS_DIR}/YourWebsite/cms/public/images/
 Based on user's request and the mapping tables above, construct the CLI command:
 
 ```bash
-bun run ~/.claude/skills/art/Tools/Generate.ts \
+bun run ~/.pai/skills/art/Tools/Generate.ts \
   --model [SELECTED_MODEL from table] \
   --prompt "[PROMPT from Step 5]" \
   --size [SELECTED_SIZE] \
@@ -471,7 +471,7 @@ The `--thumbnail` flag generates TWO versions:
 
 ```bash
 # Example: Generates both header.png AND header-thumb.png
-bun run ~/.claude/skills/art/Tools/Generate.ts \
+bun run ~/.pai/skills/art/Tools/Generate.ts \
   --model nano-banana-pro \
   --prompt "[YOUR PROMPT]" \
   --size 2K \
@@ -513,13 +513,13 @@ For non-blog images that only need transparency, or to remove backgrounds after 
 
 ```bash
 # Use the Images Skill for background removal
-bun ~/.claude/PAI/Tools/RemoveBg.ts /path/to/output.png
+bun ~/.pai/PAI/Tools/RemoveBg.ts /path/to/output.png
 
 # Or batch process multiple images
-bun ~/.claude/PAI/Tools/RemoveBg.ts image1.png image2.png image3.png
+bun ~/.pai/PAI/Tools/RemoveBg.ts image1.png image2.png image3.png
 ```
 
-**See:** `~/.claude/skills/Images/Workflows/BackgroundRemoval.md` for full documentation.
+**See:** `~/.pai/skills/Images/Workflows/BackgroundRemoval.md` for full documentation.
 
 ### 🚨 COMPOSITION: USE FULL FRAME, MINIMALIST, NO BACKGROUNDS
 
@@ -822,7 +822,7 @@ open /path/to/generated-image.png
 ```
 1. UNDERSTAND → Deeply read and comprehend the content
 2. CSE-24 → Run Create Story Explanation (24 items) to extract narrative arc
-3. EMOTION → Match to register in ~/.claude/PAI/aesthetic.md
+3. EMOTION → Match to register in ~/.pai/PAI/aesthetic.md
 4. COMPOSITION → Design what to DRAW (content-relevant, NOT defaulting to architecture)
 5. PROMPT → Build using charcoal sketch TECHNIQUE template
 6. GENERATE → Execute with nano-banana-pro + --thumbnail flag

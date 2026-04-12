@@ -38,7 +38,7 @@ Technical diagrams for system architectures, process flows, and board presentati
 
 # Example image
 # Ignore for now
-# ~/.claude/skills/Media/Art/WorkflowExamples/TechnicalDiagrams/example.png
+# ~/.pai/skills/Media/Art/WorkflowExamples/TechnicalDiagrams/example.png
 
 ---
 
@@ -204,7 +204,7 @@ All the art components, labels, and such should mostly look hand-drawn, similar 
 ### Generate Command
 
 ```bash
-bun run ~/.claude/skills/art/Tools/Generate.ts \
+bun run ~/.pai/skills/art/Tools/Generate.ts \
   --model [SELECTED_MODEL] \
   --prompt "[PROMPT]" \
   --size [SELECTED_SIZE] \

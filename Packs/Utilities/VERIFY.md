@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/Utilities/SKILL.md" ] && echo "OK SKILL.md" || echo "MISSING SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/Utilities/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/Utilities/SKILL.md`.
 
 ### Check sub-skill directories exist
 
@@ -126,7 +126,7 @@ Mark each item as complete:
 ## Utilities Installation Verification
 
 ### Core Files
-- [ ] SKILL.md installed at ~/.claude/skills/Utilities/SKILL.md
+- [ ] SKILL.md installed at ~/.pai/skills/Utilities/SKILL.md
 - [ ] SKILL.md has valid YAML frontmatter with name and description
 - [ ] SKILL.md contains routing table with all 13 sub-skill entries
 

@@ -6,7 +6,7 @@ description: 240+ specialized prompt patterns for content analysis, extraction, 
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Fabric/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Fabric/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -27,7 +27,7 @@ If this directory exists, load and apply any PREFERENCES.md, configurations, or 
    Running the **WorkflowName** workflow in the **Fabric** skill to ACTION...
    ```
 
-**Full documentation:** `~/.claude/PAI/THENOTIFICATIONSYSTEM.md`
+**Full documentation:** `~/.pai/PAI/THENOTIFICATIONSYSTEM.md`
 
 # Fabric
 

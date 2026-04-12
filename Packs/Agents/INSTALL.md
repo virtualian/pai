@@ -139,7 +139,7 @@ Install it with: curl -fsSL https://bun.sh/install | bash"
   "question": "Ready to install Agents v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/Agents/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/Agents/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -149,25 +149,25 @@ Install it with: curl -fsSL https://bun.sh/install | bash"
 **If user chose "Show me what will change":**
 ```
 "Files and directories to be created:
-- ~/.claude/skills/Agents/SKILL.md (skill definition and routing)
-- ~/.claude/skills/Agents/Data/Traits.yaml (trait library)
-- ~/.claude/skills/Agents/Tools/ComposeAgent.ts (composition engine)
-- ~/.claude/skills/Agents/Tools/LoadAgentContext.ts (context loader)
-- ~/.claude/skills/Agents/Tools/SpawnAgentWithProfile.ts (agent launcher)
-- ~/.claude/skills/Agents/Tools/package.json (tool dependencies)
-- ~/.claude/skills/Agents/Tools/bun.lock (dependency lockfile)
-- ~/.claude/skills/Agents/Templates/DynamicAgent.hbs (prompt template)
-- ~/.claude/skills/Agents/Templates/CUSTOMAGENTTEMPLATE.md (custom agent template)
-- ~/.claude/skills/Agents/Workflows/CreateCustomAgent.md (composition workflow)
-- ~/.claude/skills/Agents/Workflows/ListTraits.md (trait listing workflow)
-- ~/.claude/skills/Agents/Workflows/SpawnParallelAgents.md (parallel launch workflow)
-- ~/.claude/skills/Agents/AgentPersonalities.md (personality definitions)
-- ~/.claude/skills/Agents/AgentProfileSystem.md (profile architecture)
-- ~/.claude/skills/Agents/*Context.md (8 agent context files)
-- ~/.claude/skills/Agents/Scratchpad/ (working notes)
+- ~/.pai/skills/Agents/SKILL.md (skill definition and routing)
+- ~/.pai/skills/Agents/Data/Traits.yaml (trait library)
+- ~/.pai/skills/Agents/Tools/ComposeAgent.ts (composition engine)
+- ~/.pai/skills/Agents/Tools/LoadAgentContext.ts (context loader)
+- ~/.pai/skills/Agents/Tools/SpawnAgentWithProfile.ts (agent launcher)
+- ~/.pai/skills/Agents/Tools/package.json (tool dependencies)
+- ~/.pai/skills/Agents/Tools/bun.lock (dependency lockfile)
+- ~/.pai/skills/Agents/Templates/DynamicAgent.hbs (prompt template)
+- ~/.pai/skills/Agents/Templates/CUSTOMAGENTTEMPLATE.md (custom agent template)
+- ~/.pai/skills/Agents/Workflows/CreateCustomAgent.md (composition workflow)
+- ~/.pai/skills/Agents/Workflows/ListTraits.md (trait listing workflow)
+- ~/.pai/skills/Agents/Workflows/SpawnParallelAgents.md (parallel launch workflow)
+- ~/.pai/skills/Agents/AgentPersonalities.md (personality definitions)
+- ~/.pai/skills/Agents/AgentProfileSystem.md (profile architecture)
+- ~/.pai/skills/Agents/*Context.md (8 agent context files)
+- ~/.pai/skills/Agents/Scratchpad/ (working notes)
 
 No other files will be modified. User customizations at
-~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/ are never touched."
+~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/ are never touched."
 ```
 
 Then re-ask the final confirmation question.
@@ -282,7 +282,7 @@ echo "Tool dependencies installed"
 **If user chose "Skip for now":**
 ```
 "Skipped dependency installation. To install later, run:
-  cd ~/.claude/skills/Agents/Tools && bun install"
+  cd ~/.pai/skills/Agents/Tools && bun install"
 ```
 
 **Mark todo as completed.**
@@ -354,7 +354,7 @@ Try it now:
 - 'Create a custom agent for code review'
 
 Customization: Add your own traits, voices, and named agents at:
-  ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/"
+  ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/"
 ```
 
 ### On Failure
@@ -363,7 +363,7 @@ Customization: Add your own traits, voices, and named agents at:
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Ensure Bun is installed for TypeScript tools: curl -fsSL https://bun.sh/install | bash
 4. Run the verification commands in VERIFY.md
 
@@ -383,7 +383,7 @@ curl -fsSL https://bun.sh/install | bash
 
 Then install dependencies:
 ```bash
-cd ~/.claude/skills/Agents/Tools && bun install
+cd ~/.pai/skills/Agents/Tools && bun install
 ```
 
 ### Agents have no voice
@@ -394,7 +394,7 @@ Voice output requires a running ElevenLabs voice server at localhost:8888. Witho
 
 User customizations must be placed in:
 ```
-~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml
+~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml
 ```
 
 The composition engine merges this with the base `Data/Traits.yaml` at runtime.

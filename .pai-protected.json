@@ -179,9 +179,9 @@
             "/Users/daniel/(?!Projects/PAI)",
             "/Users/[a-z]+/\\.claude/",
             "/home/[a-z]+/\\.claude/",
-            "~/.claude/skills/CORE/USER/",
-            "~/.claude/MEMORY/",
-            "~/.claude/History/",
+            "~/.pai/skills/CORE/USER/",
+            "~/.pai/MEMORY/",
+            "~/.pai/History/",
             "/Users/daniel/.claude/skills/personal"
           ]
         },

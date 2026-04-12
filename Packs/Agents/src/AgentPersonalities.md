@@ -73,7 +73,7 @@ PAI uses a **hybrid agent system** that combines:
 **Trigger words:** "custom agents", "custom", "specialized agents with different expertise"
 
 **What happens:**
-1. Run `bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts` for EACH agent
+1. Run `bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts` for EACH agent
 2. Use DIFFERENT trait combinations to get unique voices AND colors
 3. Each agent gets a personality-matched ElevenLabs voice and unique color
 4. Launch with `subagent_type: "general-purpose"` - NEVER use static types
@@ -147,15 +147,15 @@ Task(prompt="You are Dr. Nova...", subagent_type="general-purpose")
 - **Approach**: thorough, rapid, systematic, exploratory, comparative, synthesizing, adversarial, consultative
 
 **Internal Infrastructure** (for {DAIDENTITY.NAME}'s use):
-- Trait definitions: `~/.claude/skills/Agents/Data/Traits.yaml`
-- Agent template: `~/.claude/skills/Agents/Templates/DynamicAgent.hbs`
-- Composition tool: `~/.claude/skills/Agents/Tools/ComposeAgent.ts`
+- Trait definitions: `~/.pai/skills/Agents/Data/Traits.yaml`
+- Agent template: `~/.pai/skills/Agents/Templates/DynamicAgent.hbs`
+- Composition tool: `~/.pai/skills/Agents/Tools/ComposeAgent.ts`
 
 ---
 
 ## Named Agent Architecture
 
-- **Location**: Individual agent files in `~/.claude/agents/*.md`
+- **Location**: Individual agent files in `~/.pai/agents/*.md`
 - **Voice Config**: Each agent file contains voice settings in YAML frontmatter (`voiceId`, `voice:` block)
 - **Character Identity**: Each agent file contains persona frontmatter and full character backstory in body
 - **Template**: See `skills/Agents/Templates/CUSTOMAGENTTEMPLATE.md` for canonical identity schema

@@ -141,7 +141,7 @@ fi
 if [ -d "$CLAUDE_DIR/skills/Scraping/Apify/node_modules" ]; then
   echo "  AVAILABLE Apify dependencies installed"
 else
-  echo "  UNAVAILABLE Apify dependencies (run: cd ~/.claude/skills/Scraping/Apify && bun install)"
+  echo "  UNAVAILABLE Apify dependencies (run: cd ~/.pai/skills/Scraping/Apify && bun install)"
 fi
 
 # User customizations
@@ -168,7 +168,7 @@ Mark each item as complete:
 ## Scraping Installation Verification
 
 ### Files
-- [ ] Scraping SKILL.md installed at ~/.claude/skills/Scraping/SKILL.md
+- [ ] Scraping SKILL.md installed at ~/.pai/skills/Scraping/SKILL.md
 - [ ] BrightData SKILL.md installed (if BrightData selected)
 - [ ] Apify SKILL.md installed (if Apify selected)
 - [ ] All SKILL.md files have valid YAML frontmatter

@@ -187,9 +187,9 @@ WORK DIRECTORIES: None found
 No configuration required.
 
 The command searches these paths by default:
-- `~/.claude/MEMORY/STATE/work.json`
-- `~/.claude/MEMORY/WORK/`
-- `~/.claude/MEMORY/STATE/session-names.json`
+- `~/.pai/MEMORY/STATE/work.json`
+- `~/.pai/MEMORY/WORK/`
+- `~/.pai/MEMORY/STATE/session-names.json`
 - `~/.claude/` (git history)
 
 If these paths don't exist (e.g., PAI's MEMORY system isn't installed), the command gracefully returns "no matches found" for those sources. No errors, no crashes.

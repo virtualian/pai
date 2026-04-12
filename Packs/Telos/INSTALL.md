@@ -146,7 +146,7 @@ that require bun or npm to build. The core Telos skill works without them."
   "question": "Ready to install Telos v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies all skill files to ~/.claude/skills/Telos/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies all skill files to ~/.pai/skills/Telos/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -156,17 +156,17 @@ that require bun or npm to build. The core Telos skill works without them."
 **If user chose "Show me what will change":**
 ```
 "Directories to be created:
-- ~/.claude/skills/Telos/
-- ~/.claude/skills/Telos/Workflows/
-- ~/.claude/skills/Telos/Tools/
-- ~/.claude/skills/Telos/DashboardTemplate/ (full Next.js app with App/, Components/, Lib/)
-- ~/.claude/skills/Telos/ReportTemplate/ (full Next.js app with App/, Components/, Lib/, Public/Fonts/)
+- ~/.pai/skills/Telos/
+- ~/.pai/skills/Telos/Workflows/
+- ~/.pai/skills/Telos/Tools/
+- ~/.pai/skills/Telos/DashboardTemplate/ (full Next.js app with App/, Components/, Lib/)
+- ~/.pai/skills/Telos/ReportTemplate/ (full Next.js app with App/, Components/, Lib/, Public/Fonts/)
 
 Files to be created: 40+ files including SKILL.md, 4 workflow files, 1 TypeScript tool,
 dashboard pages and components, report pages and components, font files, and config files.
 
 No other files will be modified. No hooks, no configuration changes.
-Personal TELOS files at ~/.claude/PAI/USER/TELOS/ will NOT be touched."
+Personal TELOS files at ~/.pai/PAI/USER/TELOS/ will NOT be touched."
 ```
 
 Then re-ask the final confirmation question.
@@ -313,7 +313,7 @@ and routes accordingly."
 The skill is ready for project analysis, narrative generation, and report building.
 
 Personal TELOS features (beliefs, goals, books, etc.) require the TELOS files
-at ~/.claude/PAI/USER/TELOS/. These are created during PAI setup:
+at ~/.pai/PAI/USER/TELOS/. These are created during PAI setup:
 https://github.com/danielmiessler/Personal_AI_Infrastructure
 
 Try it now: 'analyze [any project directory] with TELOS'"
@@ -325,7 +325,7 @@ Try it now: 'analyze [any project directory] with TELOS'"
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md
 
 Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infrastructure/issues"
@@ -337,11 +337,11 @@ Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infras
 
 ### Skill not activating after installation
 
-Restart Claude Code. Skills from `~/.claude/skills/` are loaded at session start. Also verify that SKILL.md has valid YAML frontmatter with the `name` and `description` fields.
+Restart Claude Code. Skills from `~/.pai/skills/` are loaded at session start. Also verify that SKILL.md has valid YAML frontmatter with the `name` and `description` fields.
 
 ### "Personal TELOS not found" errors
 
-Personal TELOS files live at `~/.claude/PAI/USER/TELOS/`, which is created during PAI setup -- not by this skill pack. The Telos skill works for project analysis without personal TELOS files.
+Personal TELOS files live at `~/.pai/PAI/USER/TELOS/`, which is created during PAI setup -- not by this skill pack. The Telos skill works for project analysis without personal TELOS files.
 
 ### Dashboard or report template build fails
 
@@ -363,4 +363,4 @@ Ensure the personal TELOS directory has write permissions. The Update workflow c
 | `src/DashboardTemplate/` | Complete Next.js dashboard app with shadcn/ui components |
 | `src/ReportTemplate/` | Complete Next.js report app with professional typography and styling |
 
-All files in `src/` are copied to `~/.claude/skills/Telos/` during installation.
+All files in `src/` are copied to `~/.pai/skills/Telos/` during installation.

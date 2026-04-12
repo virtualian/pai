@@ -163,7 +163,7 @@ backend (Gemini, Flux, OpenAI, Midjourney). These are configured in the PAI .env
   "question": "Ready to install Media v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/Media/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/Media/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -173,15 +173,15 @@ backend (Gemini, Flux, OpenAI, Midjourney). These are configured in the PAI .env
 **If user chose "Show me what will change":**
 ```
 "Directories to be created:
-- ~/.claude/skills/Media/
-- ~/.claude/skills/Media/Art/
-- ~/.claude/skills/Media/Art/Workflows/ (20 workflow files)
-- ~/.claude/skills/Media/Art/Tools/ (4 TypeScript tools + config)
-- ~/.claude/skills/Media/Art/Lib/ (2 support files)
-- ~/.claude/skills/Media/Art/Examples/ (4 reference images)
-- ~/.claude/skills/Media/Remotion/
-- ~/.claude/skills/Media/Remotion/Tools/ (2 TypeScript tools + 28 reference docs)
-- ~/.claude/skills/Media/Remotion/Workflows/ (1 workflow file)
+- ~/.pai/skills/Media/
+- ~/.pai/skills/Media/Art/
+- ~/.pai/skills/Media/Art/Workflows/ (20 workflow files)
+- ~/.pai/skills/Media/Art/Tools/ (4 TypeScript tools + config)
+- ~/.pai/skills/Media/Art/Lib/ (2 support files)
+- ~/.pai/skills/Media/Art/Examples/ (4 reference images)
+- ~/.pai/skills/Media/Remotion/
+- ~/.pai/skills/Media/Remotion/Tools/ (2 TypeScript tools + 28 reference docs)
+- ~/.pai/skills/Media/Remotion/Workflows/ (1 workflow file)
 
 No other files will be modified. No hooks, no configuration changes."
 ```
@@ -370,7 +370,7 @@ Note: You'll need API keys for your preferred image generation model in ${PAI_DI
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Verify bun is installed: curl -fsSL https://bun.sh/install | bash
 4. Run the verification commands in VERIFY.md
 
@@ -391,11 +391,11 @@ Install bun: `curl -fsSL https://bun.sh/install | bash` — then restart your te
 
 ### Tool dependencies not installed
 
-Run `cd ~/.claude/skills/Media/Art/Tools && bun install` and `cd ~/.claude/skills/Media/Remotion/Tools && bun install` manually.
+Run `cd ~/.pai/skills/Media/Art/Tools && bun install` and `cd ~/.pai/skills/Media/Remotion/Tools && bun install` manually.
 
 ### Generated images look wrong
 
-Create or update `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md` with your aesthetic preferences, default model, and reference images.
+Create or update `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Art/PREFERENCES.md` with your aesthetic preferences, default model, and reference images.
 
 ---
 

@@ -6,7 +6,7 @@ description: Read, write, convert, and analyze documents — routes to PDF, DOCX
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Documents/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Documents/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 
@@ -36,7 +36,7 @@ If this directory exists, load and apply any PREFERENCES.md, configurations, or 
 
 **Before starting any task with this skill, load complete PAI context:**
 
-`read ~/.claude/PAI/SKILL.md`
+`read ~/.pai/PAI/SKILL.md`
 
 
 ## When to Activate This Skill
@@ -119,9 +119,9 @@ This skill organizes document processing across 4 document types plus specialize
 - "Document review", "track changes" → Redlining workflow
 
 **Supporting Resources:**
-- Scripts: `~/.claude/skills/Utilities/Documents/Docx/Scripts/`
-- OOXML tools: `~/.claude/skills/Utilities/Documents/Docx/ooxml/`
-- License: `~/.claude/skills/Utilities/Documents/Docx/LICENSE.txt`
+- Scripts: `~/.pai/skills/Utilities/Documents/Docx/Scripts/`
+- OOXML tools: `~/.pai/skills/Utilities/Documents/Docx/ooxml/`
+- License: `~/.pai/skills/Utilities/Documents/Docx/LICENSE.txt`
 
 **Key Capabilities:**
 - Create professional documents with docx-js
@@ -145,8 +145,8 @@ This skill organizes document processing across 4 document types plus specialize
 - "Extract tables from PDF" → Table extraction (pdfplumber + pandas)
 
 **Supporting Resources:**
-- Scripts: `~/.claude/skills/Utilities/Documents/Pdf/Scripts/`
-- License: `~/.claude/skills/Utilities/Documents/Pdf/LICENSE.txt`
+- Scripts: `~/.pai/skills/Utilities/Documents/Pdf/Scripts/`
+- License: `~/.pai/skills/Utilities/Documents/Pdf/LICENSE.txt`
 
 **Key Capabilities:**
 - Create PDFs with reportlab
@@ -171,9 +171,9 @@ This skill organizes document processing across 4 document types plus specialize
 - "Create thumbnail grid" → Thumbnail workflow
 
 **Supporting Resources:**
-- Scripts: `~/.claude/skills/Utilities/Documents/Pptx/Scripts/`
-- OOXML tools: `~/.claude/skills/Utilities/Documents/Pptx/ooxml/`
-- License: `~/.claude/skills/Utilities/Documents/Pptx/LICENSE.txt`
+- Scripts: `~/.pai/skills/Utilities/Documents/Pptx/Scripts/`
+- OOXML tools: `~/.pai/skills/Utilities/Documents/Pptx/ooxml/`
+- License: `~/.pai/skills/Utilities/Documents/Pptx/LICENSE.txt`
 
 **Key Capabilities:**
 - Create presentations with html2pptx (HTML → PPTX)
@@ -197,8 +197,8 @@ This skill organizes document processing across 4 document types plus specialize
 - "Recalculate formulas" → Recalculation workflow (recalc.py)
 
 **Supporting Resources:**
-- Recalc script: `~/.claude/skills/Utilities/Documents/Xlsx/recalc.py`
-- License: `~/.claude/skills/Utilities/Documents/Xlsx/LICENSE.txt`
+- Recalc script: `~/.pai/skills/Utilities/Documents/Xlsx/recalc.py`
+- License: `~/.pai/skills/Utilities/Documents/Xlsx/LICENSE.txt`
 
 **Key Capabilities:**
 - Create spreadsheets with formulas (openpyxl)
@@ -309,23 +309,23 @@ User: "Create a consulting report from the assessment data"
 ## 📚 Full Reference Documentation
 
 **Word Documents (DOCX):**
-- Main Guide: `~/.claude/skills/Utilities/Documents/Docx/SKILL.md`
-- Creation Reference: `~/.claude/skills/Utilities/Documents/Docx/docx-js.md`
-- Editing Reference: `~/.claude/skills/Utilities/Documents/Docx/ooxml.md`
+- Main Guide: `~/.pai/skills/Utilities/Documents/Docx/SKILL.md`
+- Creation Reference: `~/.pai/skills/Utilities/Documents/Docx/docx-js.md`
+- Editing Reference: `~/.pai/skills/Utilities/Documents/Docx/ooxml.md`
 
 **PDF Processing:**
-- Main Guide: `~/.claude/skills/Utilities/Documents/Pdf/SKILL.md`
-- Forms Guide: `~/.claude/skills/Utilities/Documents/Pdf/forms.md`
-- Advanced Reference: `~/.claude/skills/Utilities/Documents/Pdf/reference.md`
+- Main Guide: `~/.pai/skills/Utilities/Documents/Pdf/SKILL.md`
+- Forms Guide: `~/.pai/skills/Utilities/Documents/Pdf/forms.md`
+- Advanced Reference: `~/.pai/skills/Utilities/Documents/Pdf/reference.md`
 
 **PowerPoint Presentations (PPTX):**
-- Main Guide: `~/.claude/skills/Utilities/Documents/Pptx/SKILL.md`
-- Creation Reference: `~/.claude/skills/Utilities/Documents/Pptx/html2pptx.md`
-- Editing Reference: `~/.claude/skills/Utilities/Documents/Pptx/ooxml.md`
+- Main Guide: `~/.pai/skills/Utilities/Documents/Pptx/SKILL.md`
+- Creation Reference: `~/.pai/skills/Utilities/Documents/Pptx/html2pptx.md`
+- Editing Reference: `~/.pai/skills/Utilities/Documents/Pptx/ooxml.md`
 
 **Excel Spreadsheets (XLSX):**
-- Main Guide: `~/.claude/skills/Utilities/Documents/Xlsx/SKILL.md`
-- Recalc Script: `~/.claude/skills/Utilities/Documents/Xlsx/recalc.py`
+- Main Guide: `~/.pai/skills/Utilities/Documents/Xlsx/SKILL.md`
+- Recalc Script: `~/.pai/skills/Utilities/Documents/Xlsx/recalc.py`
 
 ---
 

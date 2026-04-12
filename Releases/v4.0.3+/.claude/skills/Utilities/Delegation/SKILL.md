@@ -84,7 +84,7 @@ Standard `Task()` calls that block until complete:
 
 ```bash
 # Step 1: Compose agent identity
-bun run ~/.claude/skills/Agents/Tools/ComposeAgent.ts --traits "security,skeptical,thorough" --task "Review auth" --output json
+bun run ~/.pai/skills/Agents/Tools/ComposeAgent.ts --traits "security,skeptical,thorough" --task "Review auth" --output json
 
 # Step 2: Launch with composed prompt
 Task(subagent_type="general-purpose", prompt=<ComposeAgent JSON .prompt field>)

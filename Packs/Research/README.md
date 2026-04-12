@@ -55,7 +55,7 @@ The Research skill provides four research modes that scale from a 10-second quic
 13. **Interview Research** -- Tyler Cowen-style interview preparation
 14. **Claude Research** -- Free web search using Claude's built-in WebSearch (no API keys)
 
-Every URL in every research output is verified before delivery. Research artifacts persist at `~/.claude/MEMORY/RESEARCH/` across sessions.
+Every URL in every research output is verified before delivery. Research artifacts persist at `~/.pai/MEMORY/RESEARCH/` across sessions.
 
 ---
 
@@ -160,7 +160,7 @@ AI:
 2. Iteration 1: Broad landscape scan + first entity deep-dive
 3. Scores all discovered entities by importance and effort
 4. Each subsequent iteration deep-dives the next highest-priority entity
-5. Builds persistent vault at ~/.claude/MEMORY/RESEARCH/2026-03-15_ai-agent-market/
+5. Builds persistent vault at ~/.pai/MEMORY/RESEARCH/2026-03-15_ai-agent-market/
 6. Exits when all CRITICAL/HIGH entities researched + all categories covered
 ```
 
@@ -192,9 +192,9 @@ AI:
 
 ### Research Output Locations
 
-- **Working files:** `~/.claude/MEMORY/WORK/{current_work}/` (tied to active work item)
+- **Working files:** `~/.pai/MEMORY/WORK/{current_work}/` (tied to active work item)
 - **Permanent history:** `~/.claude/History/research/YYYY-MM/YYYY-MM-DD_[topic]/`
-- **Deep investigation vaults:** `~/.claude/MEMORY/RESEARCH/{date}_{topic}/`
+- **Deep investigation vaults:** `~/.pai/MEMORY/RESEARCH/{date}_{topic}/`
 
 ---
 
@@ -202,7 +202,7 @@ AI:
 
 ### Recommended Customization
 
-Create `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Research/PREFERENCES.md` to define:
+Create `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Research/PREFERENCES.md` to define:
 - Default research mode
 - Preferred sources or domains to prioritize
 - Output format preferences

@@ -213,7 +213,7 @@ This ensures fresh installs get the full PAI configuration without the installer
 |------|----------|----------|
 | `settings.json` | `~/.claude/settings.json` | Merged config (template + user fields) |
 | `.env` | `~/.config/PAI/.env` | `ELEVENLABS_API_KEY=...` |
-| `LATEST` | `~/.claude/PAI/Algorithm/LATEST` | Algorithm version (patched to current) |
+| `LATEST` | `~/.pai/PAI/Algorithm/LATEST` | Algorithm version (patched to current) |
 | Shell alias | `~/.zshrc` | `alias pai='cd ~/.claude && claude'` |
 
 ### Directory Structure Created
@@ -279,7 +279,7 @@ This reloads your shell config (activates the `pai` alias) and launches PAI for 
 | Permission denied | Run `chmod -R 755 ~/.claude` |
 | `pai` command not found | Run `source ~/.zshrc` to reload shell config |
 | Voice server won't start | Check port 8888 is free: `lsof -ti:8888`. Kill any process using it. |
-| Banner shows wrong algorithm version | Check `~/.claude/PAI/Algorithm/LATEST` contains correct version |
+| Banner shows wrong algorithm version | Check `~/.pai/PAI/Algorithm/LATEST` contains correct version |
 | Banner counts all show 0 | Normal on first launch — counts populate after your first Claude Code session ends |
 | WebSocket "Connection lost" | The installer auto-reconnects. If persistent, check if another process is using port 1337 |
 | Electron window blank | Try `--mode web` instead and open `http://localhost:1337` in your browser |

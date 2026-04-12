@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/Investigation/SKILL.md" ] && echo "OK SKILL.md" || echo "MISSING SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/Investigation/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/Investigation/SKILL.md`.
 
 ### Check OSINT sub-skill directories
 
@@ -163,7 +163,7 @@ Mark each item as complete:
 ## Investigation Skill Installation Verification
 
 ### Core Files
-- [ ] SKILL.md installed at ~/.claude/skills/Investigation/SKILL.md
+- [ ] SKILL.md installed at ~/.pai/skills/Investigation/SKILL.md
 - [ ] SKILL.md has valid YAML frontmatter with name and description
 - [ ] SKILL.md contains routing for both OSINT and PrivateInvestigator
 
@@ -204,7 +204,7 @@ do OSINT on [any well-known company]
 - Deploys research agents for parallel data collection
 - Returns structured company intelligence report
 
-If the skill is not recognized, ensure `~/.claude/skills/Investigation/SKILL.md` exists with valid frontmatter.
+If the skill is not recognized, ensure `~/.pai/skills/Investigation/SKILL.md` exists with valid frontmatter.
 
 ---
 

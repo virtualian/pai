@@ -6,7 +6,7 @@ description: 32 adversarial agents to destroy weak arguments and find fatal flaw
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/RedTeam/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/RedTeam/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 

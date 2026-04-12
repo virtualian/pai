@@ -178,7 +178,7 @@ The base trait library lives at `Data/Traits.yaml` inside the skill directory. I
 User customizations are stored separately and never overwritten by updates:
 
 ```
-~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/
+~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/
   Traits.yaml       -- Your custom traits, voices, prosody settings
   NamedAgents.md    -- Your named agent backstories
   VoiceConfig.json  -- Voice server configuration

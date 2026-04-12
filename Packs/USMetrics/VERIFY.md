@@ -13,7 +13,7 @@ CLAUDE_DIR="$HOME/.claude"
 [ -f "$CLAUDE_DIR/skills/USMetrics/SKILL.md" ] && echo "OK SKILL.md" || echo "MISSING SKILL.md"
 ```
 
-**Expected:** SKILL.md present at `~/.claude/skills/USMetrics/SKILL.md`.
+**Expected:** SKILL.md present at `~/.pai/skills/USMetrics/SKILL.md`.
 
 ### Check subdirectories exist
 
@@ -82,7 +82,7 @@ Mark each item as complete:
 ## USMetrics Installation Verification
 
 ### Files
-- [ ] SKILL.md installed at ~/.claude/skills/USMetrics/SKILL.md
+- [ ] SKILL.md installed at ~/.pai/skills/USMetrics/SKILL.md
 - [ ] SKILL.md has valid YAML frontmatter with name and description
 - [ ] Tools/ directory exists with 3 TypeScript files
 - [ ] Workflows/ directory exists with 2 workflow files

@@ -15,7 +15,7 @@ Running the **CollisionDetection** workflow in the **Parser** skill to prevent d
 Prevent duplicate entities across parsed content by maintaining a global entity index with GUIDs for people, companies, links, and sources.
 
 ## Entity Index Location
-`~/.claude/skills/parser/entity-index.json`
+`~/.pai/skills/parser/entity-index.json`
 
 ## How It Works
 

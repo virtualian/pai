@@ -37,9 +37,10 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync, rmdirSync, renameSync, statSync } from 'fs';
 import { dirname } from 'path';
 import { spawn as nodeSpawn } from 'child_process';
-import { paiPath } from './lib/paths';
-import { inference } from '../PAI/Tools/Inference';
+import { configPath, codePath } from './lib/paths';
 import { updateSessionNameInWorkJson, upsertSession } from './lib/prd-utils';
+
+const { inference } = await import(codePath('PAI', 'Tools', 'Inference'));
 
 interface HookInput {
   session_id: string;
@@ -47,7 +48,7 @@ interface HookInput {
   user_prompt?: string;
 }
 
-const SESSION_NAMES_PATH = paiPath('MEMORY', 'STATE', 'session-names.json');
+const SESSION_NAMES_PATH = codePath('MEMORY', 'STATE', 'session-names.json');
 const LOCK_PATH = SESSION_NAMES_PATH + '.lock';
 const LOCK_TIMEOUT = 3000;  // 3s max wait
 const LOCK_STALE = 10000;   // 10s = stale lock
@@ -257,8 +258,8 @@ function getCustomTitle(sessionId: string): string | null {
   try {
     // Search both lowercase (Claude Code native) and uppercase (PAI) project dirs
     const searchDirs = [
-      paiPath('projects'),  // Claude Code native (lowercase) — primary
-      paiPath('Projects'),  // PAI uppercase — fallback
+      configPath('projects'),  // Claude Code native (lowercase) — primary
+      configPath('Projects'),  // PAI uppercase — fallback
     ];
 
     for (const projectsDir of searchDirs) {
@@ -352,7 +353,7 @@ function storeName(sessionId: string, label: string, source: string): void {
   }
   // Cache update is session-local, no lock needed
   const cacheContent = `cached_session_id='${sessionId}'\ncached_session_label='${label}'\n`;
-  const cachePath = paiPath('MEMORY', 'STATE', 'session-name-cache.sh');
+  const cachePath = codePath('MEMORY', 'STATE', 'session-name-cache.sh');
   writeFileSync(cachePath, cacheContent, 'utf-8');
   // Propagate to work.json so admin dashboard stays in sync
   updateSessionNameInWorkJson(sessionId, label);
@@ -411,7 +412,7 @@ async function upgradeWithInference(sessionId: string, promptB64: string, expect
         }
         // Update cache outside lock
         const cacheContent = `cached_session_id='${sessionId}'\ncached_session_label='${label}'\n`;
-        const cachePath = paiPath('MEMORY', 'STATE', 'session-name-cache.sh');
+        const cachePath = codePath('MEMORY', 'STATE', 'session-name-cache.sh');
         writeFileSync(cachePath, cacheContent, 'utf-8');
         console.error(`[SessionAutoName] Background upgrade: "${label}"`);
       } else {

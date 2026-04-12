@@ -106,14 +106,14 @@ CLAUDE_DIR="$HOME/.claude"
 if [ -d "$CLAUDE_DIR/skills/Media/Art/Tools/node_modules" ]; then
   echo "  AVAILABLE Art tool dependencies installed"
 else
-  echo "  UNAVAILABLE Art tool dependencies (run: cd ~/.claude/skills/Media/Art/Tools && bun install)"
+  echo "  UNAVAILABLE Art tool dependencies (run: cd ~/.pai/skills/Media/Art/Tools && bun install)"
 fi
 
 # Node modules for Remotion tools
 if [ -d "$CLAUDE_DIR/skills/Media/Remotion/Tools/node_modules" ]; then
   echo "  AVAILABLE Remotion tool dependencies installed"
 else
-  echo "  UNAVAILABLE Remotion tool dependencies (run: cd ~/.claude/skills/Media/Remotion/Tools && bun install)"
+  echo "  UNAVAILABLE Remotion tool dependencies (run: cd ~/.pai/skills/Media/Remotion/Tools && bun install)"
 fi
 
 # User customizations
@@ -134,7 +134,7 @@ Mark each item as complete:
 ## Media Installation Verification
 
 ### Files
-- [ ] Media SKILL.md installed at ~/.claude/skills/Media/SKILL.md
+- [ ] Media SKILL.md installed at ~/.pai/skills/Media/SKILL.md
 - [ ] Art SKILL.md installed (if Art selected)
 - [ ] Remotion SKILL.md installed (if Remotion selected)
 - [ ] All SKILL.md files have valid YAML frontmatter

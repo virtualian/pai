@@ -40,8 +40,8 @@ This methodology uses browser automation to systematically extract and analyze w
 **Documentation:**
 ```bash
 # Create testing directory in current work
-WORK_DIR=$(jq -r '.work_dir' ~/.claude/MEMORY/STATE/current-work.json)
-WORK_SUBDIR=~/.claude/MEMORY/WORK/${WORK_DIR}/$(date +%Y-%m-%d-%H%M%S)_prompt-injection-test-TARGET
+WORK_DIR=$(jq -r '.work_dir' ~/.pai/MEMORY/STATE/current-work.json)
+WORK_SUBDIR=~/.pai/MEMORY/WORK/${WORK_DIR}/$(date +%Y-%m-%d-%H%M%S)_prompt-injection-test-TARGET
 mkdir -p ${WORK_SUBDIR}
 cd ${WORK_SUBDIR}
 

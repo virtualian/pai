@@ -127,7 +127,7 @@ immediately after installation."
   "question": "Ready to install Thinking v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies all skill files to ~/.claude/skills/Thinking/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies all skill files to ~/.pai/skills/Thinking/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -137,14 +137,14 @@ immediately after installation."
 **If user chose "Show me what will change":**
 ```
 "Directories to be created:
-- ~/.claude/skills/Thinking/
-- ~/.claude/skills/Thinking/FirstPrinciples/ (with Workflows/)
-- ~/.claude/skills/Thinking/IterativeDepth/ (with Workflows/)
-- ~/.claude/skills/Thinking/BeCreative/ (with Assets/, Workflows/)
-- ~/.claude/skills/Thinking/Council/ (with Workflows/)
-- ~/.claude/skills/Thinking/RedTeam/ (with Workflows/)
-- ~/.claude/skills/Thinking/WorldThreatModelHarness/ (with Workflows/)
-- ~/.claude/skills/Thinking/Science/ (with Workflows/)
+- ~/.pai/skills/Thinking/
+- ~/.pai/skills/Thinking/FirstPrinciples/ (with Workflows/)
+- ~/.pai/skills/Thinking/IterativeDepth/ (with Workflows/)
+- ~/.pai/skills/Thinking/BeCreative/ (with Assets/, Workflows/)
+- ~/.pai/skills/Thinking/Council/ (with Workflows/)
+- ~/.pai/skills/Thinking/RedTeam/ (with Workflows/)
+- ~/.pai/skills/Thinking/WorldThreatModelHarness/ (with Workflows/)
+- ~/.pai/skills/Thinking/Science/ (with Workflows/)
 
 Files to be created: 50+ files across all modes (SKILL.md files, workflows,
 principles, methodology, templates, examples, assets)
@@ -296,7 +296,7 @@ of thinking you need and the right mode activates."
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md
 
 Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infrastructure/issues"
@@ -308,7 +308,7 @@ Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infras
 
 ### Skill not activating after installation
 
-Restart Claude Code. Skills from `~/.claude/skills/` are loaded at session start. Also verify that SKILL.md has valid YAML frontmatter with the `name` and `description` fields.
+Restart Claude Code. Skills from `~/.pai/skills/` are loaded at session start. Also verify that SKILL.md has valid YAML frontmatter with the `name` and `description` fields.
 
 ### Wrong thinking mode selected
 
@@ -337,4 +337,4 @@ The Science skill has nine distinct workflows. For iterative investigation, use 
 | `src/WorldThreatModelHarness/` | World model management with model template and output format |
 | `src/Science/` | Nine scientific method workflows with methodology, protocol, examples, and templates |
 
-All files in `src/` are copied to `~/.claude/skills/Thinking/` during installation.
+All files in `src/` are copied to `~/.pai/skills/Thinking/` during installation.

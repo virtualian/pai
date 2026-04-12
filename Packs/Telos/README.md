@@ -35,7 +35,7 @@ The fundamental issue: your life context and your project context are both rich 
 
 TELOS (Telic Evolution and Life Operating System) is a comprehensive context-gathering system with two applications:
 
-**Personal TELOS** -- Your life context system stored at `~/.claude/PAI/USER/TELOS/`:
+**Personal TELOS** -- Your life context system stored at `~/.pai/PAI/USER/TELOS/`:
 - Core philosophy: mission, beliefs, wisdom, mental models, frames, narratives, strategies
 - Life data: books, movies, lessons learned, things you were wrong about
 - Goals and challenges: goals, projects, problems, challenges, predictions, traumas
@@ -200,14 +200,14 @@ Run `bun dev` to view. Includes:
 
 No configuration required for project analysis.
 
-Personal TELOS requires the TELOS files to exist at `~/.claude/PAI/USER/TELOS/`. These are created as part of PAI setup, not by this skill pack.
+Personal TELOS requires the TELOS files to exist at `~/.pai/PAI/USER/TELOS/`. These are created as part of PAI setup, not by this skill pack.
 
 | Configuration | Location | Purpose |
 |--------------|----------|---------|
-| Personal TELOS files | `~/.claude/PAI/USER/TELOS/` | Life context: beliefs, goals, books, wisdom, etc. |
+| Personal TELOS files | `~/.pai/PAI/USER/TELOS/` | Life context: beliefs, goals, books, wisdom, etc. |
 | Dashboard theme | `DashboardTemplate/` config files | Modify Tokyo Night Day color scheme |
 | Report typography | `ReportTemplate/Public/Fonts/` | Custom fonts for McKinsey-style reports |
-| Skill customizations | `~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Telos/` | Per-user preferences and overrides |
+| Skill customizations | `~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Telos/` | Per-user preferences and overrides |
 
 ---
 
@@ -238,7 +238,7 @@ No customization needed -- the skill works as-is for both personal and project a
 
 ## Related Work
 
-- **PAI USER Directory** -- The `~/.claude/PAI/USER/TELOS/` directory where personal TELOS files live
+- **PAI USER Directory** -- The `~/.pai/PAI/USER/TELOS/` directory where personal TELOS files live
 - **PAI Algorithm** -- The structured workflow system that coordinates multi-phase analysis and report generation
 
 ---

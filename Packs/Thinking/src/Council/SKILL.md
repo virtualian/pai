@@ -6,7 +6,7 @@ description: Multi-agent debate with visible transcripts where agents respond to
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Council/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Council/`
 
 If this directory exists, load and apply any PREFERENCES.md, configurations, or resources found there. These override default behavior. If the directory does not exist, proceed with skill defaults.
 

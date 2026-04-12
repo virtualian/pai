@@ -29,7 +29,7 @@ Create professional videos programmatically with React.
 ## Customization
 
 **Before executing, check for user customizations at:**
-`~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Remotion/`
+`~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Remotion/`
 
 ## Workflow Routing
 

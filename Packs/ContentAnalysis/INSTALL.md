@@ -125,7 +125,7 @@ built-in conversational voice standards which work well out of the box."
   "question": "Ready to install ContentAnalysis v1.0.0?",
   "multiSelect": false,
   "options": [
-    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.claude/skills/ContentAnalysis/"},
+    {"label": "Yes, install now (Recommended)", "description": "Copies skill files to ~/.pai/skills/ContentAnalysis/"},
     {"label": "Show me what will change", "description": "Lists all files and directories that will be created"},
     {"label": "Cancel", "description": "Abort installation"}
   ]
@@ -135,12 +135,12 @@ built-in conversational voice standards which work well out of the box."
 **If user chose "Show me what will change":**
 ```
 "Files and directories to be created:
-- ~/.claude/skills/ContentAnalysis/SKILL.md (skill definition and routing)
-- ~/.claude/skills/ContentAnalysis/ExtractWisdom/SKILL.md (extraction methodology and rules)
-- ~/.claude/skills/ContentAnalysis/ExtractWisdom/Workflows/Extract.md (extraction workflow)
+- ~/.pai/skills/ContentAnalysis/SKILL.md (skill definition and routing)
+- ~/.pai/skills/ContentAnalysis/ExtractWisdom/SKILL.md (extraction methodology and rules)
+- ~/.pai/skills/ContentAnalysis/ExtractWisdom/Workflows/Extract.md (extraction workflow)
 
 No other files will be modified. User customizations at
-~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/ are never touched."
+~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/ are never touched."
 ```
 
 Then re-ask the final confirmation question.
@@ -277,7 +277,7 @@ Try it now:
 - 'analyze this podcast at comprehensive level'
 
 Customization: Add preferences at:
-  ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/"
+  ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/ExtractWisdom/"
 ```
 
 ### On Failure
@@ -286,7 +286,7 @@ Customization: Add preferences at:
 "Installation encountered issues. Here's what to check:
 
 1. Ensure ~/.claude/ directory exists (created by Claude Code)
-2. Check write permissions on ~/.claude/skills/
+2. Check write permissions on ~/.pai/skills/
 3. Run the verification commands in VERIFY.md
 
 Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infrastructure/issues"
@@ -300,14 +300,14 @@ Need help? Open an issue at https://github.com/danielmiessler/Personal_AI_Infras
 
 Ensure the ExtractWisdom sub-skill SKILL.md was properly installed. Check:
 ```bash
-cat ~/.claude/skills/ContentAnalysis/ExtractWisdom/SKILL.md | head -5
+cat ~/.pai/skills/ContentAnalysis/ExtractWisdom/SKILL.md | head -5
 ```
 
 The file should contain the dynamic section methodology, not a static template.
 
 ### Voice sounds too formal or compressed
 
-The extraction voice calibrates from `~/.claude/PAI/USER/WRITINGSTYLE.md` if present. Without it, the skill uses built-in Level 3 conversational standards. If output feels too formal, check that the ExtractWisdom SKILL.md's tone rules section is intact.
+The extraction voice calibrates from `~/.pai/PAI/USER/WRITINGSTYLE.md` if present. Without it, the skill uses built-in Level 3 conversational standards. If output feels too formal, check that the ExtractWisdom SKILL.md's tone rules section is intact.
 
 ### YouTube URLs not working
 

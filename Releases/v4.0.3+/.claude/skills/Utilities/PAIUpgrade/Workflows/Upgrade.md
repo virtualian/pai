@@ -42,11 +42,11 @@ Use Task tool with subagent_type=general-purpose, run 4 agents in parallel:
 
 Agent 1 - TELOS Analysis:
 "Read and analyze the user's TELOS files to understand their current focus:
-- ~/.claude/PAI/USER/TELOS/TELOS.md
-- ~/.claude/PAI/USER/TELOS/GOALS.md
-- ~/.claude/PAI/USER/TELOS/PROJECTS.md
-- ~/.claude/PAI/USER/TELOS/CHALLENGES.md
-- ~/.claude/PAI/USER/TELOS/STATUS.md
+- ~/.pai/PAI/USER/TELOS/TELOS.md
+- ~/.pai/PAI/USER/TELOS/GOALS.md
+- ~/.pai/PAI/USER/TELOS/PROJECTS.md
+- ~/.pai/PAI/USER/TELOS/CHALLENGES.md
+- ~/.pai/PAI/USER/TELOS/STATUS.md
 
 Extract and return:
 1. Current high-priority goals
@@ -58,7 +58,7 @@ Format as structured JSON."
 
 Agent 2 - Recent Work Analysis:
 "Analyze the user's recent work patterns:
-- Read ~/.claude/MEMORY/STATE/current-work.json
+- Read ~/.pai/MEMORY/STATE/current-work.json
 - Check recent MEMORY/WORK/ directories (last 7 days)
 
 Extract and return:
@@ -71,7 +71,7 @@ Format as structured JSON."
 
 Agent 3 - PAI System State:
 "Analyze the current state of the user's PAI system:
-- List skills in ~/.claude/skills/
+- List skills in ~/.pai/skills/
 - List hooks in ~/.claude/hooks/
 - Read ~/.claude/settings.json
 
@@ -144,7 +144,7 @@ Agent 2 - YouTube Channels:
 "Check configured YouTube channels for new content and EXTRACT GRANULAR TECHNIQUES:
 
 1. Load channel config:
-   bun ~/.claude/PAI/Tools/LoadSkillConfig.ts ../youtube-channels.json
+   bun ~/.pai/PAI/Tools/LoadSkillConfig.ts ../youtube-channels.json
 
 2. For each channel, check recent videos:
    yt-dlp --flat-playlist --dump-json 'https://www.youtube.com/@channelhandle/videos' 2>/dev/null | head -5
@@ -153,7 +153,7 @@ Agent 2 - YouTube Channels:
    cat ../State/youtube-videos.json
 
 4. For NEW videos, extract transcripts:
-   bun ~/.claude/PAI/Tools/GetTranscript.ts '<video-url>'
+   bun ~/.pai/PAI/Tools/GetTranscript.ts '<video-url>'
 
 5. CRITICAL - For each transcript, extract SPECIFIC TECHNIQUES:
    - Look for code patterns, configurations, command examples
@@ -178,7 +178,7 @@ If a video has no extractable techniques, mark it as 'skipped: no techniques fou
 Agent 3 - Custom Sources:
 "Check for any custom sources defined by the user:
 
-1. Look in ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/PAIUpgrade/
+1. Look in ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/PAIUpgrade/
 2. Check for additional source definitions beyond YouTube and GitHub trending
 3. If sources exist, check them for updates
 
@@ -189,7 +189,7 @@ Agent 4 - GitHub Trending Projects:
 "Discover trending GitHub projects relevant to PAI for inspiration.
 
 1. Load the github_trending config from user-sources.json:
-   Read ~/.claude/PAI/USER/SKILLCUSTOMIZATIONS/PAIUpgrade/user-sources.json
+   Read ~/.pai/PAI/USER/SKILLCUSTOMIZATIONS/PAIUpgrade/user-sources.json
    Parse the 'github_trending' section.
 
 2. If github_trending.enabled is false or missing, return:
@@ -260,7 +260,7 @@ Use Task tool with subagent_type=general-purpose, run 1 agent in parallel with a
 Agent - Learning Synthesizer:
 "Run the Synthesize workflow from the Learning skill.
 
-Read and follow: ~/.claude/skills/Learning/Workflows/Check.md
+Read and follow: ~/.pai/skills/Learning/Workflows/Check.md
 
 Return the full output from that workflow.
 
@@ -446,7 +446,7 @@ Upgrade candidates mined from our own algorithm reflections and user ratings (Th
 
 ### Algorithm Reflections
 
-**Source:** ~/.claude/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
+**Source:** ~/.pai/MEMORY/LEARNING/REFLECTIONS/algorithm-reflections.jsonl
 **Entries analyzed:** [N] | **High-signal:** [N] (low sentiment, over-budget, or failed criteria)
 
 [For each upgrade candidate from the reflection miner:]
@@ -463,7 +463,7 @@ Upgrade candidates mined from our own algorithm reflections and user ratings (Th
 
 ### Behavioral Signals from Ratings
 
-**Source:** ~/.claude/MEMORY/LEARNING/SIGNALS/ratings.jsonl
+**Source:** ~/.pai/MEMORY/LEARNING/SIGNALS/ratings.jsonl
 **Entries analyzed:** [N] | **Explicit feedback:** [N] | **Problem sessions:** [N]
 
 #### STOP (Low-Rating Patterns)

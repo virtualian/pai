@@ -590,7 +590,7 @@ AI should orchestrate deterministic tools, not replace them with ad-hoc promptin
 
 ## Related Documentation
 
-- **Architecture**: `~/.claude/PAI/PAISYSTEMARCHITECTURE.md`
+- **Architecture**: `~/.pai/PAI/PAISYSTEMARCHITECTURE.md`
 
 ---
 
