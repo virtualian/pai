@@ -112,7 +112,7 @@ function loadStartupFiles(paiDir: string, settings: Settings): string | null {
  * Load relationship context for session startup.
  * Returns a lightweight summary of key opinions and recent notes.
  */
-function loadRelationshipContext(configDir: string, paiDir: string): string | null {
+function loadRelationshipContext(paiDir: string): string | null {
   const parts: string[] = [];
 
   // Load high-confidence opinions (>0.85) from OPINIONS.md (PAI code root)
@@ -154,7 +154,7 @@ function loadRelationshipContext(configDir: string, paiDir: string): string | nu
   const recentNotes: string[] = [];
   for (const date of [today, yesterday]) {
     const notePath = join(
-      configDir,
+      paiDir,
       'MEMORY/RELATIONSHIP',
       formatMonth(date),
       `${formatDate(date)}.md`
@@ -468,7 +468,7 @@ async function main() {
     // Load relationship context (lightweight summary)
     let relationshipContext: string | null = null;
     if (isDynamicEnabled(settings, 'relationshipContext')) {
-      relationshipContext = loadRelationshipContext(configDir, paiDir);
+      relationshipContext = loadRelationshipContext(paiDir);
       if (relationshipContext) {
         console.error(`💕 Loaded relationship context (${relationshipContext.length} chars)`);
       }
@@ -479,10 +479,10 @@ async function main() {
     // Load learning readback context
     let learningContext = '';
     if (isDynamicEnabled(settings, 'learningReadback')) {
-      const learningDigest = loadLearningDigest(configDir);
-      const wisdomFrames = loadWisdomFrames(configDir);
-      const failurePatterns = loadFailurePatterns(configDir);
-      const signalTrends = loadSignalTrends(configDir);
+      const learningDigest = loadLearningDigest(paiDir);
+      const wisdomFrames = loadWisdomFrames(paiDir);
+      const failurePatterns = loadFailurePatterns(paiDir);
+      const signalTrends = loadSignalTrends(paiDir);
 
       const learningParts: string[] = [];
       if (signalTrends) learningParts.push(signalTrends);
@@ -518,7 +518,7 @@ Dynamic context loaded. Core identity, rules, and format are in CLAUDE.md.
 
     // Active work summary
     if (isDynamicEnabled(settings, 'activeWorkSummary')) {
-      const activeProgress = await checkActiveProgress(configDir);
+      const activeProgress = await checkActiveProgress(paiDir);
       if (activeProgress) {
         console.log(activeProgress);
         console.error(`📋 Active work summary loaded (${activeProgress.length} chars)`);

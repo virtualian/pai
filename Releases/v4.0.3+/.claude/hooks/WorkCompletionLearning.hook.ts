@@ -54,12 +54,11 @@ import { writeFileSync, existsSync, readFileSync, readdirSync, mkdirSync } from 
 import { join, dirname } from 'path';
 import { getISOTimestamp, getPSTDate } from './lib/time';
 import { getLearningCategory } from './lib/learning-utils';
+import { codePath } from './lib/paths';
 
-const BASE_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.claude');
-const MEMORY_DIR = join(BASE_DIR, 'MEMORY');
-const STATE_DIR = join(MEMORY_DIR, 'STATE');
-const WORK_DIR = join(MEMORY_DIR, 'WORK');
-const LEARNING_DIR = join(MEMORY_DIR, 'LEARNING');
+const STATE_DIR = codePath('MEMORY', 'STATE');
+const WORK_DIR = codePath('MEMORY', 'WORK');
+const LEARNING_DIR = codePath('MEMORY', 'LEARNING');
 
 // Session-scoped state file lookup with legacy fallback
 function findStateFile(sessionId?: string): string | null {

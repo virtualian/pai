@@ -38,11 +38,10 @@ import { writeFileSync, existsSync, readFileSync, unlinkSync } from 'fs';
 import { join } from 'path';
 import { getISOTimestamp } from './lib/time';
 import { setTabState, cleanupKittySession } from './lib/tab-setter';
+import { codePath } from './lib/paths';
 
-const BASE_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.claude');
-const MEMORY_DIR = join(BASE_DIR, 'MEMORY');
-const STATE_DIR = join(MEMORY_DIR, 'STATE');
-const WORK_DIR = join(MEMORY_DIR, 'WORK');
+const STATE_DIR = codePath('MEMORY', 'STATE');
+const WORK_DIR = codePath('MEMORY', 'WORK');
 
 // Session-scoped state file lookup with legacy fallback
 function findStateFile(sessionId?: string): string | null {

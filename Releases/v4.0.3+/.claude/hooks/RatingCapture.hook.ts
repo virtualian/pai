@@ -62,10 +62,9 @@ interface RatingEntry {
 
 // ── Shared Constants ──
 
-const BASE_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.claude');
-const SIGNALS_DIR = join(BASE_DIR, 'MEMORY', 'LEARNING', 'SIGNALS');
-const RATINGS_FILE = join(SIGNALS_DIR, 'ratings.jsonl');
-const LAST_RESPONSE_CACHE = join(BASE_DIR, 'MEMORY', 'STATE', 'last-response.txt');
+const SIGNALS_DIR = codePath('MEMORY', 'LEARNING', 'SIGNALS');
+const RATINGS_FILE = codePath('MEMORY', 'LEARNING', 'SIGNALS', 'ratings.jsonl');
+const LAST_RESPONSE_CACHE = codePath('MEMORY', 'STATE', 'last-response.txt');
 const MIN_PROMPT_LENGTH = 3;
 const MIN_CONFIDENCE = 0.5;
 
@@ -333,7 +332,7 @@ function captureLowRatingLearning(
   const { year, month, day, hours, minutes, seconds } = getPSTComponents();
   const yearMonth = `${year}-${month}`;
   const category = getLearningCategory(detailedContext, summaryOrComment);
-  const learningsDir = join(BASE_DIR, 'MEMORY', 'LEARNING', category, yearMonth);
+  const learningsDir = codePath('MEMORY', 'LEARNING', category, yearMonth);
 
   if (!existsSync(learningsDir)) mkdirSync(learningsDir, { recursive: true });
 
