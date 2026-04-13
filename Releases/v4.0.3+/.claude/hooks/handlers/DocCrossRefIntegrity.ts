@@ -71,7 +71,7 @@ interface DriftReport {
 // ============================================================================
 
 const SYSTEM_DIR = codePath('PAI');
-const HOOKS_DIR = configPath('hooks');
+const HOOKS_DIR = codePath('hooks');
 const HANDLERS_DIR = join(HOOKS_DIR, 'handlers');
 const LIB_DIR = join(HOOKS_DIR, 'lib');
 const DRIFT_STATE_FILE = codePath('MEMORY', 'STATE', 'doc-drift-state.json');

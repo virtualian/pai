@@ -34,7 +34,7 @@
 
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
-import { getConfigDir, getPaiDir } from './lib/paths';
+import { getConfigDir, codePath } from './lib/paths';
 import { recordSessionStart } from './lib/notifications';
 import { loadLearningDigest, loadWisdomFrames, loadFailurePatterns, loadSignalTrends } from './lib/learning-readback';
 
@@ -67,9 +67,10 @@ function isDynamicEnabled(settings: Settings, key: keyof DynamicContextConfig): 
 
 /**
  * Load settings.json and return the settings object.
+ * settings.json lives in CONFIG root, not PAI root.
  */
-function loadSettings(paiDir: string): Settings {
-  const settingsPath = join(paiDir, 'settings.json');
+function loadSettings(configDir: string): Settings {
+  const settingsPath = join(configDir, 'settings.json');
   if (existsSync(settingsPath)) {
     try {
       return JSON.parse(readFileSync(settingsPath, 'utf-8'));
@@ -84,13 +85,13 @@ function loadSettings(paiDir: string): Settings {
  * Load files listed in settings.json → loadAtStartup.files
  * Reads each file and injects as a system-reminder block.
  */
-function loadStartupFiles(paiDir: string, settings: Settings): string | null {
+function loadStartupFiles(settings: Settings): string | null {
   const config = settings.loadAtStartup;
   if (!config?.files || config.files.length === 0) return null;
 
   const parts: string[] = [];
   for (const relPath of config.files) {
-    const fullPath = join(paiDir, relPath);
+    const fullPath = codePath(relPath);
     if (!existsSync(fullPath)) {
       console.error(`⚠️ loadAtStartup: file not found: ${relPath}`);
       continue;
@@ -112,11 +113,11 @@ function loadStartupFiles(paiDir: string, settings: Settings): string | null {
  * Load relationship context for session startup.
  * Returns a lightweight summary of key opinions and recent notes.
  */
-function loadRelationshipContext(configDir: string, paiDir: string): string | null {
+function loadRelationshipContext(): string | null {
   const parts: string[] = [];
 
   // Load high-confidence opinions (>0.85) from OPINIONS.md (PAI code root)
-  const opinionsPath = join(paiDir, 'PAI/USER/OPINIONS.md');
+  const opinionsPath = codePath('PAI', 'USER', 'OPINIONS.md');
   if (existsSync(opinionsPath)) {
     try {
       const content = readFileSync(opinionsPath, 'utf-8');
@@ -153,9 +154,9 @@ function loadRelationshipContext(configDir: string, paiDir: string): string | nu
 
   const recentNotes: string[] = [];
   for (const date of [today, yesterday]) {
-    const notePath = join(
-      configDir,
-      'MEMORY/RELATIONSHIP',
+    const notePath = codePath(
+      'MEMORY',
+      'RELATIONSHIP',
       formatMonth(date),
       `${formatDate(date)}.md`
     );
@@ -207,12 +208,12 @@ interface WorkSession {
 /**
  * Scan recent WORK/ directories (last 48h) for active sessions.
  */
-function getRecentWorkSessions(paiDir: string): WorkSession[] {
-  const workDir = join(paiDir, 'MEMORY', 'WORK');
+function getRecentWorkSessions(): WorkSession[] {
+  const workDir = codePath('MEMORY', 'WORK');
   if (!existsSync(workDir)) return [];
 
   let sessionNames: Record<string, string> = {};
-  const namesPath = join(paiDir, 'MEMORY', 'STATE', 'session-names.json');
+  const namesPath = codePath('MEMORY', 'STATE', 'session-names.json');
   try {
     if (existsSync(namesPath)) {
       sessionNames = JSON.parse(readFileSync(namesPath, 'utf-8'));
@@ -331,8 +332,8 @@ function getRecentWorkSessions(paiDir: string): WorkSession[] {
 /**
  * Load persistent project progress files, flagging stale ones (>14 days).
  */
-function getProjectProgress(paiDir: string): WorkSession[] {
-  const progressDir = join(paiDir, 'MEMORY', 'STATE', 'progress');
+function getProjectProgress(): WorkSession[] {
+  const progressDir = codePath('MEMORY', 'STATE', 'progress');
   if (!existsSync(progressDir)) return [];
 
   const sessions: WorkSession[] = [];
@@ -384,9 +385,9 @@ function getProjectProgress(paiDir: string): WorkSession[] {
 /**
  * Unified activity dashboard — merges recent WORK sessions + persistent projects.
  */
-async function checkActiveProgress(paiDir: string): Promise<string | null> {
-  const recentSessions = getRecentWorkSessions(paiDir);
-  const projects = getProjectProgress(paiDir);
+async function checkActiveProgress(): Promise<string | null> {
+  const recentSessions = getRecentWorkSessions();
+  const projects = getProjectProgress();
 
   if (recentSessions.length === 0 && projects.length === 0) {
     return null;
@@ -427,9 +428,9 @@ async function checkActiveProgress(paiDir: string): Promise<string | null> {
     }
   }
 
-  const pDir = getPaiDir();
-  summary += `\n💡 To resume project: \`bun run ${pDir}/PAI/Tools/SessionProgress.ts resume <project>\`\n`;
-  summary += `💡 To complete project: \`bun run ${pDir}/PAI/Tools/SessionProgress.ts complete <project>\`\n`;
+  const sessionProgressPath = codePath('PAI', 'Tools', 'SessionProgress.ts');
+  summary += `\n💡 To resume project: \`bun run ${sessionProgressPath} resume <project>\`\n`;
+  summary += `💡 To complete project: \`bun run ${sessionProgressPath} complete <project>\`\n`;
 
   return summary;
 }
@@ -447,7 +448,6 @@ async function main() {
     }
 
     const configDir = getConfigDir();
-    const paiDir = getPaiDir();
 
     // Tab reset is handled by KittyEnvPersist.hook.ts (runs before this hook)
 
@@ -460,7 +460,7 @@ async function main() {
     console.error('✅ Loaded settings.json');
 
     // Force-load startup files from settings.json → loadAtStartup (paths relative to PAI code root)
-    const startupContent = loadStartupFiles(paiDir, settings);
+    const startupContent = loadStartupFiles(settings);
     if (startupContent) {
       console.log(`<system-reminder>\n${startupContent}\n</system-reminder>`);
     }
@@ -468,7 +468,7 @@ async function main() {
     // Load relationship context (lightweight summary)
     let relationshipContext: string | null = null;
     if (isDynamicEnabled(settings, 'relationshipContext')) {
-      relationshipContext = loadRelationshipContext(configDir, paiDir);
+      relationshipContext = loadRelationshipContext();
       if (relationshipContext) {
         console.error(`💕 Loaded relationship context (${relationshipContext.length} chars)`);
       }
@@ -479,10 +479,10 @@ async function main() {
     // Load learning readback context
     let learningContext = '';
     if (isDynamicEnabled(settings, 'learningReadback')) {
-      const learningDigest = loadLearningDigest(configDir);
-      const wisdomFrames = loadWisdomFrames(configDir);
-      const failurePatterns = loadFailurePatterns(configDir);
-      const signalTrends = loadSignalTrends(configDir);
+      const learningDigest = loadLearningDigest();
+      const wisdomFrames = loadWisdomFrames();
+      const failurePatterns = loadFailurePatterns();
+      const signalTrends = loadSignalTrends();
 
       const learningParts: string[] = [];
       if (signalTrends) learningParts.push(signalTrends);
@@ -518,7 +518,7 @@ Dynamic context loaded. Core identity, rules, and format are in CLAUDE.md.
 
     // Active work summary
     if (isDynamicEnabled(settings, 'activeWorkSummary')) {
-      const activeProgress = await checkActiveProgress(configDir);
+      const activeProgress = await checkActiveProgress();
       if (activeProgress) {
         console.log(activeProgress);
         console.error(`📋 Active work summary loaded (${activeProgress.length} chars)`);
