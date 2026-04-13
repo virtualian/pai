@@ -34,7 +34,7 @@
 
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
-import { getConfigDir, getPaiDir } from './lib/paths';
+import { getConfigDir, getPaiDir, codePath } from './lib/paths';
 import { recordSessionStart } from './lib/notifications';
 import { loadLearningDigest, loadWisdomFrames, loadFailurePatterns, loadSignalTrends } from './lib/learning-readback';
 
@@ -67,9 +67,10 @@ function isDynamicEnabled(settings: Settings, key: keyof DynamicContextConfig): 
 
 /**
  * Load settings.json and return the settings object.
+ * settings.json lives in CONFIG root, not PAI root.
  */
-function loadSettings(paiDir: string): Settings {
-  const settingsPath = join(paiDir, 'settings.json');
+function loadSettings(configDir: string): Settings {
+  const settingsPath = join(configDir, 'settings.json');
   if (existsSync(settingsPath)) {
     try {
       return JSON.parse(readFileSync(settingsPath, 'utf-8'));
@@ -116,7 +117,7 @@ function loadRelationshipContext(paiDir: string): string | null {
   const parts: string[] = [];
 
   // Load high-confidence opinions (>0.85) from OPINIONS.md (PAI code root)
-  const opinionsPath = join(paiDir, 'PAI/USER/OPINIONS.md');
+  const opinionsPath = codePath('PAI', 'USER', 'OPINIONS.md');
   if (existsSync(opinionsPath)) {
     try {
       const content = readFileSync(opinionsPath, 'utf-8');
@@ -153,9 +154,9 @@ function loadRelationshipContext(paiDir: string): string | null {
 
   const recentNotes: string[] = [];
   for (const date of [today, yesterday]) {
-    const notePath = join(
-      paiDir,
-      'MEMORY/RELATIONSHIP',
+    const notePath = codePath(
+      'MEMORY',
+      'RELATIONSHIP',
       formatMonth(date),
       `${formatDate(date)}.md`
     );
@@ -208,11 +209,11 @@ interface WorkSession {
  * Scan recent WORK/ directories (last 48h) for active sessions.
  */
 function getRecentWorkSessions(paiDir: string): WorkSession[] {
-  const workDir = join(paiDir, 'MEMORY', 'WORK');
+  const workDir = codePath('MEMORY', 'WORK');
   if (!existsSync(workDir)) return [];
 
   let sessionNames: Record<string, string> = {};
-  const namesPath = join(paiDir, 'MEMORY', 'STATE', 'session-names.json');
+  const namesPath = codePath('MEMORY', 'STATE', 'session-names.json');
   try {
     if (existsSync(namesPath)) {
       sessionNames = JSON.parse(readFileSync(namesPath, 'utf-8'));
@@ -332,7 +333,7 @@ function getRecentWorkSessions(paiDir: string): WorkSession[] {
  * Load persistent project progress files, flagging stale ones (>14 days).
  */
 function getProjectProgress(paiDir: string): WorkSession[] {
-  const progressDir = join(paiDir, 'MEMORY', 'STATE', 'progress');
+  const progressDir = codePath('MEMORY', 'STATE', 'progress');
   if (!existsSync(progressDir)) return [];
 
   const sessions: WorkSession[] = [];
@@ -427,9 +428,9 @@ async function checkActiveProgress(paiDir: string): Promise<string | null> {
     }
   }
 
-  const pDir = getPaiDir();
-  summary += `\n💡 To resume project: \`bun run ${pDir}/PAI/Tools/SessionProgress.ts resume <project>\`\n`;
-  summary += `💡 To complete project: \`bun run ${pDir}/PAI/Tools/SessionProgress.ts complete <project>\`\n`;
+  const sessionProgressPath = codePath('PAI', 'Tools', 'SessionProgress.ts');
+  summary += `\n💡 To resume project: \`bun run ${sessionProgressPath} resume <project>\`\n`;
+  summary += `💡 To complete project: \`bun run ${sessionProgressPath} complete <project>\`\n`;
 
   return summary;
 }

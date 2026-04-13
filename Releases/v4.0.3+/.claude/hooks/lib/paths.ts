@@ -2,8 +2,8 @@
  * Centralized Path Resolution
  *
  * Two-root architecture:
- *   - CONFIG root (CLAUDE_CONFIG_DIR): CC config — hooks, MEMORY, settings.json, projects
- *   - PAI root (PAI_DIR): PAI code — PAI/Tools, Algorithm, skills, agents
+ *   - CONFIG root (CLAUDE_CONFIG_DIR): CC config — hooks, settings.json, projects
+ *   - PAI root (PAI_DIR): PAI code + data — PAI/Tools, Algorithm, skills, agents, MEMORY, USER
  *
  * Usage:
  *   import { getConfigDir, getPaiDir, configPath, codePath } from './lib/paths';
@@ -70,7 +70,12 @@ export function codePath(...segments: string[]): string {
 }
 
 /**
- * Get a path relative to PAI_DIR (backward compat alias for codePath)
+ * @deprecated Use codePath() instead. Retained only for backward compatibility.
+ *
+ * Semantic change in v4.0.3: prior to the CONFIG/PAI root split this resolved
+ * under ~/.claude (because PAI_DIR was set to ~/.claude). After the split it
+ * resolves under ~/.pai via getPaiDir(). Any caller that assumed the pre-split
+ * meaning will silently resolve to a different directory — migrate to codePath().
  */
 export function paiPath(...segments: string[]): string {
   return join(getPaiDir(), ...segments);

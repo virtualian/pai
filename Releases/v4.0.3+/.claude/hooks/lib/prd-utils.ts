@@ -11,7 +11,7 @@
 
 import { readFileSync, writeFileSync, readdirSync, statSync, existsSync, mkdirSync, renameSync } from 'fs';
 import { join } from 'path';
-import { configPath, codePath } from './paths';
+import { codePath } from './paths';
 
 export const WORK_DIR = codePath('MEMORY', 'WORK');
 export const WORK_JSON = codePath('MEMORY', 'STATE', 'work.json');
@@ -110,8 +110,8 @@ export function writeRegistry(reg: { sessions: Record<string, any> }): void {
 
 export function syncToWorkJson(fm: Record<string, string>, prdPath: string, content?: string, sessionId?: string): void {
   if (!fm.slug) return;
-  const cfgDir = configPath();
-  const relativePrd = prdPath.replace(cfgDir + '/', '');
+  const paiRoot = codePath();
+  const relativePrd = prdPath.replace(paiRoot + '/', '');
   const registry = readRegistry();
 
   // Migration: if there's a 'starting' or 'native' placeholder entry for this session UUID,

@@ -998,7 +998,7 @@
     },
     "_migration": "Identity configuration moved from DAIDENTITY.md to settings.json. The daidentity and principal sections replace the old env.DA and env.PRINCIPAL patterns. All hooks now read from settings.json via the centralized identity module (hooks/lib/identity.ts).",
     "_env": {
-      "CLAUDE_CONFIG_DIR": "CC config root (~/.claude). Hooks, MEMORY, settings.json, projects live here.",
+      "CLAUDE_CONFIG_DIR": "CC config root (~/.claude). Hooks, settings.json, projects live here. MEMORY and USER live under PAI_DIR.",
       "PAI_DIR": "Root directory for PAI code installation (~/.pai). Skills, agents, tools, algorithm live here.",
       "PROJECTS_DIR": "Base directory for projects. Use ${PROJECTS_DIR}/PAI for PAI repo, ${PROJECTS_DIR}/fabric for fabric, etc.",
       "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "Maximum tokens for Claude responses. Higher values allow longer outputs but cost more.",

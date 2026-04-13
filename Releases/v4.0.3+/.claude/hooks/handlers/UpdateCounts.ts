@@ -19,7 +19,7 @@
 import { readFileSync, writeFileSync, readdirSync, existsSync, statSync } from 'fs';
 import { join } from 'path';
 import { execSync, spawn } from 'child_process';
-import { getConfigDir, getPaiDir, getSettingsPath } from '../lib/paths';
+import { getConfigDir, getPaiDir, getSettingsPath, codePath } from '../lib/paths';
 
 
 interface Counts {
@@ -148,17 +148,17 @@ function countSubdirs(dir: string): number {
  * Get all counts
  */
 function getCounts(configDir: string, paiDir: string): Counts {
-  const ratingsPath = join(configDir, 'MEMORY/LEARNING/SIGNALS/ratings.jsonl');
+  const ratingsPath = codePath('MEMORY', 'LEARNING', 'SIGNALS', 'ratings.jsonl');
   return {
     skills: countSkills(paiDir),
     workflows: countWorkflowFiles(join(paiDir, 'skills')),
     hooks: countHooks(configDir),
-    signals: countFilesRecursive(join(configDir, 'MEMORY/LEARNING'), '.md'),
+    signals: countFilesRecursive(codePath('MEMORY', 'LEARNING'), '.md'),
     files: countFilesRecursive(join(paiDir, 'PAI/USER')),
-    work: countSubdirs(join(configDir, 'MEMORY/WORK')),
-    sessions: countFilesRecursive(join(configDir, 'MEMORY'), '.jsonl'),
-    research: countFilesRecursive(join(configDir, 'MEMORY/RESEARCH'), '.md') +
-              countFilesRecursive(join(configDir, 'MEMORY/RESEARCH'), '.json'),
+    work: countSubdirs(codePath('MEMORY', 'WORK')),
+    sessions: countFilesRecursive(codePath('MEMORY'), '.jsonl'),
+    research: countFilesRecursive(codePath('MEMORY', 'RESEARCH'), '.md') +
+              countFilesRecursive(codePath('MEMORY', 'RESEARCH'), '.json'),
     ratings: countRatingsLines(ratingsPath),
     updatedAt: new Date().toISOString(),
   };
@@ -168,8 +168,8 @@ function getCounts(configDir: string, paiDir: string): Counts {
  * Refresh usage cache from Anthropic OAuth API.
  * Called by stop hook so status line never needs to make this 700ms API call.
  */
-async function refreshUsageCache(paiDir: string): Promise<void> {
-  const usageCachePath = join(paiDir, 'MEMORY/STATE/usage-cache.json');
+async function refreshUsageCache(): Promise<void> {
+  const usageCachePath = codePath('MEMORY', 'STATE', 'usage-cache.json');
 
   try {
     // Extract OAuth token — macOS Keychain or Linux credentials file
@@ -302,7 +302,7 @@ export async function handleUpdateCounts(): Promise<void> {
 // - UPDATE_COUNTS_REFRESH_ONLY=1: only refresh usage cache — spawned as detached bg process by the hook
 if (import.meta.main) {
   if (process.env.UPDATE_COUNTS_REFRESH_ONLY === '1') {
-    refreshUsageCache(getConfigDir()).then(() => process.exit(0)).catch(() => process.exit(0));
+    refreshUsageCache().then(() => process.exit(0)).catch(() => process.exit(0));
   } else {
     handleUpdateCounts().then(() => process.exit(0));
   }

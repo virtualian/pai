@@ -17,10 +17,9 @@
  */
 
 import { readFileSync, existsSync } from 'fs';
-import { join } from 'path';
-import { homedir } from 'os';
 import { readHookInput, parseTranscriptFromInput } from './lib/hook-io';
 import { handleVoice } from './handlers/VoiceNotification';
+import { getSettingsPath } from './lib/paths';
 
 /**
  * Voice gate: only main terminal sessions get voice.
@@ -39,7 +38,7 @@ function isMainSession(): boolean {
  */
 function isVoiceEnabled(): boolean {
   try {
-    const settingsPath = join(homedir(), '.claude', 'settings.json');
+    const settingsPath = getSettingsPath();
     if (!existsSync(settingsPath)) return true;
     const settings = JSON.parse(readFileSync(settingsPath, 'utf-8'));
     return settings.notifications?.voice?.enabled !== false;

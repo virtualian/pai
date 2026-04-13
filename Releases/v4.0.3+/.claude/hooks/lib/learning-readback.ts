@@ -220,3 +220,163 @@ export function loadSignalTrends(paiDir: string): string | null {
     return null;
   }
 }
+
+/**
+ * Load the most recent synthesis report for context injection.
+ * Reads from LEARNING/SYNTHESIS/ monthly directories, returns a compact
+ * summary of the latest pattern analysis. Cap at 256 tokens (~1000 chars).
+ */
+export function loadLatestSynthesis(paiDir: string): string | null {
+  const synthesisDir = join(paiDir, 'MEMORY', 'LEARNING', 'SYNTHESIS');
+  if (!existsSync(synthesisDir)) return null;
+
+  try {
+    // Get month dirs sorted descending (newest first)
+    const months = readdirSync(synthesisDir, { withFileTypes: true })
+      .filter(d => d.isDirectory() && /^\d{4}-\d{2}$/.test(d.name))
+      .map(d => d.name)
+      .sort()
+      .reverse();
+
+    for (const month of months) {
+      const monthPath = join(synthesisDir, month);
+      try {
+        const files = readdirSync(monthPath)
+          .filter(f => f.endsWith('.md'))
+          .sort()
+          .reverse();
+
+        if (files.length === 0) continue;
+
+        // Read the most recent synthesis file
+        const content = readFileSync(join(monthPath, files[0]), 'utf-8');
+
+        // Extract key sections compactly
+        const parts: string[] = [];
+
+        // Extract period and avg rating
+        const periodMatch = content.match(/\*\*Period:\*\*\s*(.+)/);
+        const avgMatch = content.match(/\*\*Average Rating:\*\*\s*(.+)/);
+        if (periodMatch) parts.push(`Period: ${periodMatch[1]}`);
+        if (avgMatch) parts.push(`Avg: ${avgMatch[1]}`);
+
+        // Extract top issues (most valuable for context)
+        const issuesSection = content.match(/## Top Issues\n\n([\s\S]*?)(?=\n##|\n---)/);
+        if (issuesSection && !issuesSection[1].includes('No significant issues')) {
+          const issues = issuesSection[1].trim().split('\n')
+            .filter(l => l.match(/^\d+\./))
+            .map(l => l.replace(/^\d+\.\s*/, '').substring(0, 80))
+            .slice(0, 3);
+          if (issues.length > 0) {
+            parts.push('Top issues:');
+            issues.forEach(i => parts.push(`  - ${i}`));
+          }
+        }
+
+        // Extract recommendations
+        const recsSection = content.match(/## Recommendations\n\n([\s\S]*?)(?=\n---)/);
+        if (recsSection) {
+          const recs = recsSection[1].trim().split('\n')
+            .filter(l => l.match(/^\d+\./))
+            .map(l => l.replace(/^\d+\.\s*/, '').substring(0, 80))
+            .slice(0, 3);
+          if (recs.length > 0) {
+            parts.push('Recommendations:');
+            recs.forEach(r => parts.push(`  - ${r}`));
+          }
+        }
+
+        if (parts.length === 0) return null;
+
+        const result = `**Latest Synthesis:**\n${parts.join('\n')}`;
+        // Hard cap at ~1000 chars (256 tokens)
+        return result.length > 1000 ? result.substring(0, 997) + '...' : result;
+      } catch { /* skip unreadable months */ }
+    }
+  } catch { /* skip if dir scan fails */ }
+
+  return null;
+}
+
+/**
+ * Load unified behavioral feedback trends for context injection.
+ * Reads behavioral-feedback.json state and behavioral-signals.jsonl entries
+ * to produce a compact summary of correction + reinforcement system health.
+ */
+export function loadBehavioralTrends(paiDir: string): string | null {
+  const statePath = join(paiDir, 'MEMORY', 'STATE', 'behavioral-feedback.json');
+  if (!existsSync(statePath)) return null;
+
+  try {
+    const state = JSON.parse(readFileSync(statePath, 'utf-8'));
+    if (!state.enabled) return null;
+
+    const signalsPath = join(paiDir, 'MEMORY', 'LEARNING', 'SIGNALS', 'behavioral-signals.jsonl');
+    let correctionTriggers = 0;
+    let correctionVerified = 0;
+    let avgDelta = 0;
+    let ratedCount = 0;
+    let reinforcementCount = 0;
+    let latestReinforcement: { summary: string; rating: number } | null = null;
+
+    if (existsSync(signalsPath)) {
+      const lines = readFileSync(signalsPath, 'utf-8').trim().split('\n').filter(Boolean);
+      const entries = lines.map(l => { try { return JSON.parse(l); } catch { return null; } }).filter(Boolean);
+
+      // Correction stats
+      const corrections = entries.filter((e: any) => e.signal_type === 'correction');
+      correctionTriggers = corrections.filter((e: any) => e.phase === 'triggered' && !e.suppressed).length;
+      correctionVerified = corrections.filter((e: any) => e.phase === 'verified').length;
+      const rated = corrections.filter((e: any) => e.phase === 'rated');
+      ratedCount = rated.length;
+      if (ratedCount > 0) {
+        const deltas = rated.map((e: any) => parseFloat(e.outcome?.delta_from_trigger || '0'));
+        avgDelta = deltas.reduce((a: number, b: number) => a + b, 0) / deltas.length;
+      }
+
+      // Reinforcement stats
+      const reinforcements = entries.filter((e: any) => e.signal_type === 'reinforcement');
+      reinforcementCount = reinforcements.length;
+      if (reinforcements.length > 0) {
+        const latest = reinforcements[reinforcements.length - 1];
+        latestReinforcement = {
+          summary: latest.behavior_summary || latest.behavior_type || 'unknown',
+          rating: latest.rating || 0,
+        };
+      }
+    }
+
+    const parts: string[] = [];
+
+    // Correction section
+    const corrStatus = state.correction.enabled ? 'ACTIVE' : `DISABLED (${state.correction.auto_disabled_reason || 'manual'})`;
+    if (correctionTriggers > 0) {
+      const compliance = Math.round((correctionVerified / correctionTriggers) * 100);
+      parts.push(`Corrections: ${correctionTriggers} triggers, ${compliance}% compliance, ${avgDelta > 0 ? '+' : ''}${avgDelta.toFixed(1)} delta, ${corrStatus}`);
+    } else {
+      parts.push(`Corrections: ${corrStatus}, none yet`);
+    }
+
+    // Reinforcement section
+    if (reinforcementCount > 0) {
+      const topBehaviors = (state.reinforcement?.top_behaviors || []).slice(0, 3);
+      const freqs = state.reinforcement?.behavior_frequency || {};
+      const topStr = topBehaviors.map((b: string) => `${b} (${freqs[b] || 0})`).join(', ');
+      let reinfLine = `Reinforcements: ${reinforcementCount} signals`;
+      if (topStr) reinfLine += ` | Top: ${topStr}`;
+      if (latestReinforcement) {
+        const summary = latestReinforcement.summary.length > 40
+          ? latestReinforcement.summary.substring(0, 37) + '...'
+          : latestReinforcement.summary;
+        reinfLine += ` | Latest: "${summary}" (${latestReinforcement.rating}/10)`;
+      }
+      parts.push(reinfLine);
+    } else {
+      parts.push('Reinforcements: none yet');
+    }
+
+    return `**Behavioral Feedback:** ${parts.join(' | ')}`;
+  } catch {
+    return null;
+  }
+}
