@@ -1,0 +1,86 @@
+name: Hook Symbol Guard
+
+on:
+  pull_request:
+    paths:
+      - 'Releases/*/.claude/hooks/**'
+      - '.github/workflows/hook-symbol-guard.yml'
+
+jobs:
+  symbol-guard:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout PR head
+        uses: actions/checkout@v4
+
+      - name: Install Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Bun build critical hook files
+        run: |
+          set -eo pipefail
+          files=(
+            "Releases/v4.0.3+/.claude/hooks/RatingCapture.hook.ts"
+            "Releases/v4.0.3+/.claude/hooks/lib/learning-readback.ts"
+            "Releases/v4.0.3+/.claude/hooks/lib/paths.ts"
+            "Releases/v4.0.3+/.claude/hooks/LoadContext.hook.ts"
+          )
+          for f in "${files[@]}"; do
+            if [ -f "$f" ]; then
+              bun build --target=bun "$f" --outdir /tmp/guard-build > /dev/null
+              echo "build OK: $f"
+            else
+              echo "skip (not present): $f"
+            fi
+          done
+
+      - name: Assert required symbols present
+        run: |
+          set -eo pipefail
+          fail=0
+          check() {
+            local file="$1" symbol="$2"
+            if [ ! -f "$file" ]; then
+              echo "skip (not present): $file"
+              return 0
+            fi
+            if ! grep -q "$symbol" "$file"; then
+              echo "::error file=$file::required symbol '$symbol' is missing - was it unintentionally deleted?"
+              fail=1
+            else
+              echo "symbol OK: $file :: $symbol"
+            fi
+          }
+
+          # RatingCapture subsystems that have been silently deleted before
+          # (see PR #101 -> PR #104 restoration). Any PR that drops one of
+          # these symbols without a matching allowlist bump must be examined.
+          check "Releases/v4.0.3+/.claude/hooks/RatingCapture.hook.ts" "CorrectionMode"
+          check "Releases/v4.0.3+/.claude/hooks/RatingCapture.hook.ts" "BehavioralSignal"
+          check "Releases/v4.0.3+/.claude/hooks/RatingCapture.hook.ts" "BEHAVIORAL_FEEDBACK_STATE"
+
+          # learning-readback functions consumed by LoadContext at session start.
+          check "Releases/v4.0.3+/.claude/hooks/lib/learning-readback.ts" "loadLatestSynthesis"
+          check "Releases/v4.0.3+/.claude/hooks/lib/learning-readback.ts" "loadBehavioralTrends"
+          check "Releases/v4.0.3+/.claude/hooks/lib/learning-readback.ts" "loadLearningDigest"
+          check "Releases/v4.0.3+/.claude/hooks/lib/learning-readback.ts" "loadWisdomFrames"
+          check "Releases/v4.0.3+/.claude/hooks/lib/learning-readback.ts" "loadFailurePatterns"
+          check "Releases/v4.0.3+/.claude/hooks/lib/learning-readback.ts" "loadSignalTrends"
+
+          # Two-root path primitives - removing any of these is a breaking change.
+          check "Releases/v4.0.3+/.claude/hooks/lib/paths.ts" "getConfigDir"
+          check "Releases/v4.0.3+/.claude/hooks/lib/paths.ts" "getPaiDir"
+          check "Releases/v4.0.3+/.claude/hooks/lib/paths.ts" "configPath"
+          check "Releases/v4.0.3+/.claude/hooks/lib/paths.ts" "codePath"
+
+          if [ "$fail" -ne 0 ]; then
+            echo ""
+            echo "One or more required symbols are missing. If you are intentionally"
+            echo "removing a symbol, update this workflow in the same PR and justify"
+            echo "the removal in the PR description."
+            exit 1
+          fi
