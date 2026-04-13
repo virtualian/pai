@@ -24,15 +24,16 @@
 
 import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
+import { codePath } from './paths';
 
 /**
  * Read the N most recent learning files from a LEARNING subdirectory.
  * Files are named YYYY-MM-DD-HHMMSS_LEARNING_*.md with YAML frontmatter.
  * Extracts the **Feedback:** line and rating for compact display.
  */
-function getRecentLearnings(baseDir: string, subdir: string, count: number): string[] {
+function getRecentLearnings(subdir: string, count: number): string[] {
   const insights: string[] = [];
-  const learningDir = join(baseDir, 'MEMORY', 'LEARNING', subdir);
+  const learningDir = codePath('MEMORY', 'LEARNING', subdir);
   if (!existsSync(learningDir)) return insights;
 
   try {
@@ -77,9 +78,9 @@ function getRecentLearnings(baseDir: string, subdir: string, count: number): str
  * Load recent learning signals from ALGORITHM and SYSTEM directories.
  * Returns the 3 most recent from each, formatted as a compact bullet list.
  */
-export function loadLearningDigest(paiDir: string): string | null {
-  const algorithmInsights = getRecentLearnings(paiDir, 'ALGORITHM', 3);
-  const systemInsights = getRecentLearnings(paiDir, 'SYSTEM', 3);
+export function loadLearningDigest(): string | null {
+  const algorithmInsights = getRecentLearnings('ALGORITHM', 3);
+  const systemInsights = getRecentLearnings('SYSTEM', 3);
 
   if (algorithmInsights.length === 0 && systemInsights.length === 0) return null;
 
@@ -102,8 +103,8 @@ export function loadLearningDigest(paiDir: string): string | null {
  * Reads all WISDOM/FRAMES/*.md files and extracts principle headers
  * (lines matching "### Name [CRYSTAL: N%]").
  */
-export function loadWisdomFrames(paiDir: string): string | null {
-  const framesDir = join(paiDir, 'MEMORY', 'WISDOM', 'FRAMES');
+export function loadWisdomFrames(): string | null {
+  const framesDir = codePath('MEMORY', 'WISDOM', 'FRAMES');
   if (!existsSync(framesDir)) return null;
 
   const principles: string[] = [];
@@ -138,8 +139,8 @@ export function loadWisdomFrames(paiDir: string): string | null {
  * Reads the 5 most recent FAILURES directories and extracts the CONTEXT.md
  * first paragraph for a compact summary of what went wrong.
  */
-export function loadFailurePatterns(paiDir: string): string | null {
-  const failuresDir = join(paiDir, 'MEMORY', 'LEARNING', 'FAILURES');
+export function loadFailurePatterns(): string | null {
+  const failuresDir = codePath('MEMORY', 'LEARNING', 'FAILURES');
   if (!existsSync(failuresDir)) return null;
 
   const patterns: string[] = [];
@@ -192,8 +193,8 @@ export function loadFailurePatterns(paiDir: string): string | null {
  * Load performance signal trends from the pre-computed learning-cache.sh.
  * Extracts numeric averages and trend direction for a compact status line.
  */
-export function loadSignalTrends(paiDir: string): string | null {
-  const cachePath = join(paiDir, 'MEMORY', 'STATE', 'learning-cache.sh');
+export function loadSignalTrends(): string | null {
+  const cachePath = codePath('MEMORY', 'STATE', 'learning-cache.sh');
   if (!existsSync(cachePath)) return null;
 
   try {
@@ -226,8 +227,8 @@ export function loadSignalTrends(paiDir: string): string | null {
  * Reads from LEARNING/SYNTHESIS/ monthly directories, returns a compact
  * summary of the latest pattern analysis. Cap at 256 tokens (~1000 chars).
  */
-export function loadLatestSynthesis(paiDir: string): string | null {
-  const synthesisDir = join(paiDir, 'MEMORY', 'LEARNING', 'SYNTHESIS');
+export function loadLatestSynthesis(): string | null {
+  const synthesisDir = codePath('MEMORY', 'LEARNING', 'SYNTHESIS');
   if (!existsSync(synthesisDir)) return null;
 
   try {
@@ -303,15 +304,15 @@ export function loadLatestSynthesis(paiDir: string): string | null {
  * Reads behavioral-feedback.json state and behavioral-signals.jsonl entries
  * to produce a compact summary of correction + reinforcement system health.
  */
-export function loadBehavioralTrends(paiDir: string): string | null {
-  const statePath = join(paiDir, 'MEMORY', 'STATE', 'behavioral-feedback.json');
+export function loadBehavioralTrends(): string | null {
+  const statePath = codePath('MEMORY', 'STATE', 'behavioral-feedback.json');
   if (!existsSync(statePath)) return null;
 
   try {
     const state = JSON.parse(readFileSync(statePath, 'utf-8'));
     if (!state.enabled) return null;
 
-    const signalsPath = join(paiDir, 'MEMORY', 'LEARNING', 'SIGNALS', 'behavioral-signals.jsonl');
+    const signalsPath = codePath('MEMORY', 'LEARNING', 'SIGNALS', 'behavioral-signals.jsonl');
     let correctionTriggers = 0;
     let correctionVerified = 0;
     let avgDelta = 0;
