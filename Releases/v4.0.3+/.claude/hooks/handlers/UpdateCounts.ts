@@ -152,7 +152,7 @@ function getCounts(configDir: string, paiDir: string): Counts {
   return {
     skills: countSkills(paiDir),
     workflows: countWorkflowFiles(join(paiDir, 'skills')),
-    hooks: countHooks(configDir),
+    hooks: countHooks(paiDir),
     signals: countFilesRecursive(codePath('MEMORY', 'LEARNING'), '.md'),
     files: countFilesRecursive(join(paiDir, 'PAI/USER')),
     work: countSubdirs(codePath('MEMORY', 'WORK')),
@@ -281,7 +281,7 @@ export async function handleUpdateCounts(): Promise<void> {
     // signal aborting it ("Hook cancelled"). A detached process runs independently
     // and isn't killed when the hook exits.
     try {
-      const scriptPath = join(configDir, 'hooks', 'handlers', 'UpdateCounts.ts');
+      const scriptPath = join(paiDir, 'hooks', 'handlers', 'UpdateCounts.ts');
       const child = spawn('bun', ['run', scriptPath], {
         detached: true,
         stdio: 'ignore',

@@ -398,8 +398,6 @@
           "USER/",
           "USER directory",
           "USER tier",
-          "~/.claude/skills",
-          "~/.claude/hooks",
           "$PAI_DIR/skills",
           "$PAI_DIR/hooks",
           "ANTHROPIC_API_KEY=your",
