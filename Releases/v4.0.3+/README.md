@@ -23,6 +23,27 @@ This is the active development release — all personal improvements and customi
 
 ## What Changed (from upstream v4.0.3)
 
+### Breaking Changes
+
+#### `CLAUDE_CONFIG_DIR` + `PAI_DIR` two-root split
+
+Prior releases conflated Claude Code's own config with the PAI installation under a single `~/.claude/` root. v4.0.3+ splits them in two:
+
+| Root | Env var | Contents |
+|------|---------|----------|
+| `~/.claude/` | `CLAUDE_CONFIG_DIR` | Claude Code's own config: `settings.json`, `sessions/`, `projects/`, CC's `CLAUDE.md` |
+| `~/.pai/` | `PAI_DIR` | PAI installation: `hooks/`, `PAI/`, `skills/`, `agents/`, `VoiceServer/`, `MEMORY/`, `USER/` |
+
+Hook files, skills, agents, and — importantly — `MEMORY/` now live under `~/.pai/`. The `paths.ts` helper module exposes `getConfigDir()`, `getPaiDir()`, `configPath()`, and `codePath()` for programmatic resolution of either root. Both env vars fall back to sensible defaults if unset.
+
+**Required manual migration for v4.0.2 upgraders:** if you have an existing `~/.claude/MEMORY/` directory from a prior release, you must move it to `~/.pai/MEMORY/` **before** running v4.0.3+ for the first time. The installer does not automate this yet (see the open issue on `virtualian/pai` for the migration automator follow-up). Failing to migrate causes the first post-upgrade session to boot with no correction history, no behavioral signals, and no synthesis — and any new writes will land in `~/.pai/MEMORY/`, orphaning the old data.
+
+```bash
+# Before your first v4.0.3+ session:
+mkdir -p ~/.pai
+mv ~/.claude/MEMORY ~/.pai/MEMORY
+```
+
 ### Upstream Fixes (inherited from v4.0.3)
 
 Community-contributed fixes from open PRs — no new features, no breaking changes.
@@ -76,15 +97,22 @@ cp -r .claude ~/ && cd ~/.claude && bash install.sh
 # 1. Back up
 cp -r ~/.claude ~/.claude-backup-$(date +%Y%m%d)
 
-# 2. Clone and copy
+# 2. Migrate MEMORY to the new PAI root (REQUIRED for v4.0.2 upgraders)
+#    Skip this step only if ~/.claude/MEMORY/ does not exist.
+if [ -d ~/.claude/MEMORY ]; then
+  mkdir -p ~/.pai
+  mv ~/.claude/MEMORY ~/.pai/MEMORY
+fi
+
+# 3. Clone and copy
 git clone https://github.com/danielmiessler/Personal_AI_Infrastructure.git
 cd Personal_AI_Infrastructure/Releases/v4.0.3
 cp -r .claude ~/
 
-# 3. Run the installer
+# 4. Run the installer
 cd ~/.claude && bash install.sh
 
-# 4. Rebuild CLAUDE.md
+# 5. Rebuild CLAUDE.md
 bun ~/.pai/PAI/Tools/BuildCLAUDE.ts
 ```
 

@@ -398,8 +398,6 @@
           "USER/",
           "USER directory",
           "USER tier",
-          "~/.claude/skills",
-          "~/.claude/hooks",
           "$PAI_DIR/skills",
           "$PAI_DIR/hooks",
           "ANTHROPIC_API_KEY=your",
@@ -417,7 +415,7 @@
   "kai_to_pai_workflow": {
     "description": "How to safely sync Kai improvements to PAI",
     "steps": [
-      "1. Make changes in Kai (~/.claude/)",
+      "1. Make changes in Kai (~/.claude/ + ~/.pai/ under the two-root split)",
       "2. Test thoroughly in Kai environment",
       "3. Identify which changes should go to public PAI",
       "4. Copy changes to PAI repo (~/Projects/PAI/)",

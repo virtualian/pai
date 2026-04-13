@@ -265,9 +265,8 @@ async function main() {
       process.exit(0);
     }
 
-    // Write to daily relationship file
-    const configDir = getConfigDir();
-    const filepath = ensureRelationshipDir(configDir);
+    // Write to daily relationship file (RELATIONSHIP lives under PAI root)
+    const filepath = ensureRelationshipDir(getPaiDir());
     initDailyFile(filepath);
 
     const formatted = formatNotes(notes);

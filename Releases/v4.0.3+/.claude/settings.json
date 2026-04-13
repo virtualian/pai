@@ -72,7 +72,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/SecurityValidator.hook.ts"
+            "command": "${PAI_DIR}/hooks/SecurityValidator.hook.ts"
           }
         ]
       },
@@ -81,7 +81,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/SecurityValidator.hook.ts"
+            "command": "${PAI_DIR}/hooks/SecurityValidator.hook.ts"
           }
         ]
       },
@@ -90,7 +90,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/SecurityValidator.hook.ts"
+            "command": "${PAI_DIR}/hooks/SecurityValidator.hook.ts"
           }
         ]
       },
@@ -99,7 +99,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/SecurityValidator.hook.ts"
+            "command": "${PAI_DIR}/hooks/SecurityValidator.hook.ts"
           }
         ]
       },
@@ -108,7 +108,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/SetQuestionTab.hook.ts"
+            "command": "${PAI_DIR}/hooks/SetQuestionTab.hook.ts"
           }
         ]
       },
@@ -117,7 +117,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/AgentExecutionGuard.hook.ts"
+            "command": "${PAI_DIR}/hooks/AgentExecutionGuard.hook.ts"
           }
         ]
       },
@@ -126,7 +126,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/SkillGuard.hook.ts"
+            "command": "${PAI_DIR}/hooks/SkillGuard.hook.ts"
           }
         ]
       }
@@ -137,7 +137,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/QuestionAnswered.hook.ts"
+            "command": "${PAI_DIR}/hooks/QuestionAnswered.hook.ts"
           }
         ]
       },
@@ -146,7 +146,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/PRDSync.hook.ts"
+            "command": "${PAI_DIR}/hooks/PRDSync.hook.ts"
           }
         ]
       },
@@ -155,7 +155,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/PRDSync.hook.ts"
+            "command": "${PAI_DIR}/hooks/PRDSync.hook.ts"
           }
         ]
       }
@@ -165,23 +165,23 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/WorkCompletionLearning.hook.ts"
+            "command": "${PAI_DIR}/hooks/WorkCompletionLearning.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/SessionCleanup.hook.ts"
+            "command": "${PAI_DIR}/hooks/SessionCleanup.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/RelationshipMemory.hook.ts"
+            "command": "${PAI_DIR}/hooks/RelationshipMemory.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/UpdateCounts.hook.ts"
+            "command": "${PAI_DIR}/hooks/UpdateCounts.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/IntegrityCheck.hook.ts"
+            "command": "${PAI_DIR}/hooks/IntegrityCheck.hook.ts"
           }
         ]
       }
@@ -191,15 +191,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/RatingCapture.hook.ts"
+            "command": "${PAI_DIR}/hooks/RatingCapture.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/UpdateTabTitle.hook.ts"
+            "command": "${PAI_DIR}/hooks/UpdateTabTitle.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/SessionAutoName.hook.ts"
+            "command": "${PAI_DIR}/hooks/SessionAutoName.hook.ts"
           }
         ]
       }
@@ -209,15 +209,15 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/KittyEnvPersist.hook.ts"
+            "command": "${PAI_DIR}/hooks/KittyEnvPersist.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/LoadContext.hook.ts"
+            "command": "${PAI_DIR}/hooks/LoadContext.hook.ts"
           },
           {
             "type": "command",
-            "command": "bun ${CLAUDE_CONFIG_DIR}/hooks/handlers/BuildCLAUDE.ts"
+            "command": "bun ${PAI_DIR}/hooks/handlers/BuildCLAUDE.ts"
           }
         ]
       }
@@ -227,19 +227,19 @@
         "hooks": [
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/LastResponseCache.hook.ts"
+            "command": "${PAI_DIR}/hooks/LastResponseCache.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/ResponseTabReset.hook.ts"
+            "command": "${PAI_DIR}/hooks/ResponseTabReset.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/VoiceCompletion.hook.ts"
+            "command": "${PAI_DIR}/hooks/VoiceCompletion.hook.ts"
           },
           {
             "type": "command",
-            "command": "${CLAUDE_CONFIG_DIR}/hooks/DocIntegrity.hook.ts"
+            "command": "${PAI_DIR}/hooks/DocIntegrity.hook.ts"
           }
         ]
       }
@@ -998,7 +998,7 @@
     },
     "_migration": "Identity configuration moved from DAIDENTITY.md to settings.json. The daidentity and principal sections replace the old env.DA and env.PRINCIPAL patterns. All hooks now read from settings.json via the centralized identity module (hooks/lib/identity.ts).",
     "_env": {
-      "CLAUDE_CONFIG_DIR": "CC config root (~/.claude). Hooks, MEMORY, settings.json, projects live here.",
+      "CLAUDE_CONFIG_DIR": "Claude Code config root (~/.claude). Claude Code's own settings.json, sessions, projects live here. PAI hooks, code, skills, agents, MEMORY, USER all live under PAI_DIR.",
       "PAI_DIR": "Root directory for PAI code installation (~/.pai). Skills, agents, tools, algorithm live here.",
       "PROJECTS_DIR": "Base directory for projects. Use ${PROJECTS_DIR}/PAI for PAI repo, ${PROJECTS_DIR}/fabric for fabric, etc.",
       "CLAUDE_CODE_MAX_OUTPUT_TOKENS": "Maximum tokens for Claude responses. Higher values allow longer outputs but cost more.",

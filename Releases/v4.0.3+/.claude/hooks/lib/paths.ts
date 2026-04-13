@@ -2,8 +2,8 @@
  * Centralized Path Resolution
  *
  * Two-root architecture:
- *   - CONFIG root (CLAUDE_CONFIG_DIR): CC config — hooks, MEMORY, settings.json, projects
- *   - PAI root (PAI_DIR): PAI code — PAI/Tools, Algorithm, skills, agents
+ *   - CONFIG root (CLAUDE_CONFIG_DIR): Claude Code config — CC's own settings.json, sessions, projects
+ *   - PAI root (PAI_DIR): PAI install — hooks, PAI/Tools, Algorithm, skills, agents, VoiceServer, MEMORY, USER
  *
  * Usage:
  *   import { getConfigDir, getPaiDir, configPath, codePath } from './lib/paths';
@@ -70,13 +70,6 @@ export function codePath(...segments: string[]): string {
 }
 
 /**
- * Get a path relative to PAI_DIR (backward compat alias for codePath)
- */
-export function paiPath(...segments: string[]): string {
-  return join(getPaiDir(), ...segments);
-}
-
-/**
  * Get the settings.json path (lives in CONFIG root)
  */
 export function getSettingsPath(): string {
@@ -84,10 +77,10 @@ export function getSettingsPath(): string {
 }
 
 /**
- * Get the hooks directory (lives in CONFIG root)
+ * Get the hooks directory (lives in PAI root — PAI's hooks are part of the PAI install)
  */
 export function getHooksDir(): string {
-  return configPath('hooks');
+  return codePath('hooks');
 }
 
 /**

@@ -164,10 +164,10 @@ When creating a new configurable component:
 3. **Implement cascading lookup**
    ```typescript
    function getConfigPath(): string | null {
-     const userPath = paiPath('USER', 'ComponentName', 'config.yaml');
+     const userPath = codePath('USER', 'ComponentName', 'config.yaml');
      if (existsSync(userPath)) return userPath;
 
-     const systemPath = paiPath('ComponentName', 'config.example.yaml');
+     const systemPath = codePath('ComponentName', 'config.example.yaml');
      if (existsSync(systemPath)) return systemPath;
 
      return null;  // Will use hardcoded defaults
@@ -196,8 +196,8 @@ To add USER extensibility to an existing component:
 
 ```typescript
 // From SecurityValidator.hook.ts
-const USER_PATTERNS_PATH = paiPath('PAI', 'USER', 'PAISECURITYSYSTEM', 'patterns.yaml');
-const SYSTEM_PATTERNS_PATH = paiPath('PAI', 'PAISECURITYSYSTEM', 'patterns.example.yaml');
+const USER_PATTERNS_PATH = codePath('PAI', 'USER', 'PAISECURITYSYSTEM', 'patterns.yaml');
+const SYSTEM_PATTERNS_PATH = codePath('PAI', 'PAISECURITYSYSTEM', 'patterns.example.yaml');
 
 function getPatternsPath(): string | null {
   // USER first
