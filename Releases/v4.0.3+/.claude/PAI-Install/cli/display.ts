@@ -85,7 +85,7 @@ export function printBanner(): void {
   print(`           ${c.navy}████${c.reset}        ${c.blue}████${c.reset}${c.lightBlue}████${c.reset}   ${sep}`);
   print("");
   print("");
-  print(`                       ${c.steel}→${c.reset} ${c.blue}github.com/danielmiessler/PAI${c.reset}`);
+  print(`                       ${c.steel}→${c.reset} ${c.blue}danielmiessler/Personal_AI_Infrastructure${c.reset}`);
   print("");
   print(`${c.steel}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛${c.reset}`);
   print("");

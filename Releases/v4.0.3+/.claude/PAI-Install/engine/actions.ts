@@ -12,6 +12,7 @@ import type { InstallState, EngineEventHandler, DetectionResult } from "./types"
 import { PAI_VERSION, ALGORITHM_VERSION } from "./types";
 import { detectSystem, validateElevenLabsKey } from "./detect";
 import { generateSettingsJson } from "./config-gen";
+import { resolveRepoUrl, readOriginRemote } from "./repo-url";
 
 /**
  * Remove duplicate bun PATH entries from shell config.
@@ -508,6 +509,12 @@ export async function runRepository(
     // Check if it's a git repo
     const isGitRepo = existsSync(join(paiDir, ".git"));
     if (isGitRepo) {
+      // Helps fork installs confirm their origin is what they expect (#115).
+      const currentRemote = readOriginRemote(paiDir);
+      if (currentRemote) {
+        await emit({ event: "message", content: `Pulling updates from ${currentRemote}` });
+      }
+
       const pullResult = tryExec(`cd "${paiDir}" && git pull origin main 2>&1`, 60000);
       if (pullResult !== null) {
         await emit({ event: "message", content: "PAI repository updated from GitHub." });
@@ -518,7 +525,15 @@ export async function runRepository(
       await emit({ event: "message", content: "Existing installation is not a git repo. Preserving current files." });
     }
   } else {
-    // Fresh install — clone repo
+    // Fresh install — clone repo. See resolveRepoUrl for priority order (#115).
+    const resolved = resolveRepoUrl(paiDir);
+    if (resolved.source !== "default") {
+      await emit({
+        event: "message",
+        content: `Using repo URL from ${resolved.sourceLabel}: ${resolved.url}`,
+      });
+    }
+
     await emit({ event: "progress", step: "repository", percent: 20, detail: "Cloning PAI repository..." });
 
     if (!existsSync(paiDir)) {
@@ -526,7 +541,7 @@ export async function runRepository(
     }
 
     const cloneResult = tryExec(
-      `git clone https://github.com/danielmiessler/PAI.git "${paiDir}" 2>&1`,
+      `git clone "${resolved.url}" "${paiDir}" 2>&1`,
       120000
     );
 
@@ -536,13 +551,13 @@ export async function runRepository(
       // If clone fails (dir not empty), try to init and pull
       await emit({ event: "progress", step: "repository", percent: 50, detail: "Directory exists, trying alternative approach..." });
 
-      const initResult = tryExec(`cd "${paiDir}" && git init && git remote add origin https://github.com/danielmiessler/PAI.git && git fetch origin && git checkout -b main origin/main 2>&1`, 120000);
+      const initResult = tryExec(`cd "${paiDir}" && git init && git remote add origin "${resolved.url}" && git fetch origin && git checkout -b main origin/main 2>&1`, 120000);
       if (initResult !== null) {
         await emit({ event: "message", content: "PAI repository initialized and synced." });
       } else {
         await emit({
           event: "message",
-          content: "Could not clone PAI repo automatically. You can clone it manually later: git clone https://github.com/danielmiessler/PAI.git ~/.claude",
+          content: `Could not clone PAI repo automatically. You can clone it manually later: git clone ${resolved.url} ${paiDir}`,
         });
       }
     }
