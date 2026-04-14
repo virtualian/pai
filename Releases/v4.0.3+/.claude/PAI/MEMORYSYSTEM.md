@@ -55,8 +55,10 @@ Harvesting (periodic):
 │   │       └── weekly-patterns.md
 │   ├── REFLECTIONS/        # Algorithm performance reflections
 │   │   └── algorithm-reflections.jsonl
-│   └── SIGNALS/            # User satisfaction ratings
-│       └── ratings.jsonl
+│   ├── SIGNALS/            # User satisfaction ratings
+│   │   └── ratings.jsonl
+│   └── FEEDBACK/           # PAI-native behavioral feedback memories (Path B, issue #109)
+│       └── feedback_*.md
 ├── RESEARCH/               # Agent output captures
 │   └── YYYY-MM/
 ├── SECURITY/               # Security audit events
@@ -139,6 +141,7 @@ This is the actual "firehose" - every message, tool call, and response. PAI leve
 - `LEARNING/SYNTHESIS/YYYY-MM/` - Aggregated pattern analysis (weekly/monthly reports)
 - `LEARNING/REFLECTIONS/algorithm-reflections.jsonl` - Algorithm performance reflections (Q1/Q2/Q3 from LEARN phase)
 - `LEARNING/SIGNALS/ratings.jsonl` - All user satisfaction ratings
+- `LEARNING/FEEDBACK/feedback_*.md` - PAI-native behavioral feedback memories (flat .md files with YAML frontmatter)
 
 **Categorization logic:**
 | Directory | When Used | Example Triggers |
@@ -148,6 +151,7 @@ This is the actual "firehose" - every message, tool call, and response. PAI leve
 | `FAILURES/` | Full context for low ratings (1-3) | severe frustration, repeated errors |
 | `REFLECTIONS/` | Algorithm performance analysis | per-session 3-question reflection from LEARN phase |
 | `SYNTHESIS/` | Pattern aggregation | weekly analysis, recurring issues |
+| `FEEDBACK/` | Behavioral feedback memories (PAI-native) | DO-MORE patterns accepted via `/learn apply`; hand-written feedback |
 
 ### LEARNING/FAILURES/ - Full Context Failure Analysis
 
@@ -184,6 +188,20 @@ This is the actual "firehose" - every message, tool call, and response. PAI leve
 1. Root cause identification - what sequence led to the failure?
 2. Pattern detection - do similar failures share characteristics?
 3. Systemic improvement - what changes would prevent this class of failure?
+
+### LEARNING/FEEDBACK/ - PAI-Native Behavioral Feedback Memories
+
+**What populates it:**
+- `/learn apply` workflow (Packs/Learning/src/Workflows/Apply.md, Step 7) when a DO-MORE behavioral pattern is accepted
+- Hand-written feedback files placed directly under this directory by the user
+
+**Content:** Flat `.md` files with YAML frontmatter (`name`, `description`, `type: feedback`) and a free-form body describing the behavior to reinforce
+**Format:** `feedback_{short_slug}.md` — no month buckets (feedback memories are durable, low-volume, and globally relevant across cwds)
+**Purpose:** Path B home for PAI-native behavioral feedback under issue #109. Replaces the prior per-cwd siloing of feedback memories under `~/.claude/projects/<cwd-slug>/memory/feedback_*.md`, which was mislabeled as "the PAI memory directory" in pre-Part-1 Apply.md.
+
+**Readback at SessionStart:** `learning-readback.ts → loadFeedbackMemories(count)` reads the N most recent files by filename-sort-descending, extracts `name` + `description`, and surfaces them via `LoadContext.hook.ts` in the same `<system-reminder>` block as the other learning readback sections. Controlled by the `dynamicContext.learningReadback` flag in `settings.json` (default: enabled).
+
+**Migration status:** Existing pre-Part-1 feedback files under `~/.claude/projects/*/memory/feedback_*.md` are left dormant. They are no longer the authoritative home for new feedback. A user who wants the pre-existing files re-surfaced at SessionStart can copy them manually into `~/.pai/MEMORY/LEARNING/FEEDBACK/`. No automated migration is provided — the prior files remain readable via their original mechanism.
 
 ### RESEARCH/ - Agent Outputs
 
@@ -337,6 +355,12 @@ bun run ~/.pai/PAI/Tools/LearningPatternSynthesis.ts --week
 ---
 
 ## Migration History
+
+**2026-04-14:** v7.3 - PAI-native feedback memory home (Path B, issue #109)
+- Added `LEARNING/FEEDBACK/` directory for behavioral feedback memories
+- Part 1 (PR #118, squash `bb73f89`): Apply.md path strings moved off Claude Code per-cwd auto-memory; AISTEERINGRULES phantom-file read path corrected
+- Part 2 (this change): directory location finalized under `LEARNING/`; loader added to `learning-readback.ts` (`loadFeedbackMemories`); wired into `LoadContext.hook.ts` via the existing `learningReadback` flag; Apply.md Step 7 updated to `mkdir -p` on first write for idempotent bootstrap
+- Existing pre-Part-1 feedback files under `~/.claude/projects/*/memory/feedback_*.md` left dormant with manual-migration instructions above
 
 **2026-02-22:** v7.2 - PRD Consolidation (v4.0 work directories)
 - Consolidated META.yaml, ISC.json, THREAD.md into single PRD.md per work directory
