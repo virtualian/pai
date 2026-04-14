@@ -37,7 +37,11 @@ import { readdirSync, existsSync, statSync } from "fs";
 import { join } from "path";
 
 const HOME = process.env.HOME!;
-const PAI_DIR = process.env.PAI_DIR || join(HOME, ".claude");
+// Two-root default: ~/.pai is the PAI code root (PR #101). PAI_DIR env var
+// overrides if set. Previously fell back to ~/.claude, which is the Claude Code
+// config root and contains no hooks/MEMORY/ structure — silently producing
+// zero counts on any shell that didn't export PAI_DIR. See #124.
+const PAI_DIR = process.env.PAI_DIR || join(HOME, ".pai");
 
 interface Counts {
   skills: number;
@@ -73,19 +77,27 @@ function countFilesRecursive(dir: string, extension?: string): number {
 }
 
 /**
- * Count .md files inside any Workflows directory
+ * Count .md files inside any Workflows directory.
+ *
+ * Accepts real dirs AND symlinks pointing at directories — matches the
+ * pattern used by countSkills below. After #110 per-pack symlinks ship,
+ * pack dirs under ~/.claude/skills/ are symlinks, and Dirent.isDirectory()
+ * returns false for symlinks on POSIX; without the fallback this function
+ * would collapse to near-zero on any read of the ~/.claude side.
  */
 function countWorkflowFiles(dir: string): number {
   let count = 0;
   try {
     for (const entry of readdirSync(dir, { withFileTypes: true })) {
       const fullPath = join(dir, entry.name);
-      if (entry.isDirectory()) {
+      let isDir = entry.isDirectory();
+      if (!isDir && entry.isSymbolicLink()) {
+        try { isDir = statSync(fullPath).isDirectory(); } catch { /* dangling */ }
+      }
+      if (isDir) {
         if (entry.name.toLowerCase() === 'workflows') {
-          // Found a Workflows directory - count all .md files inside
           count += countFilesRecursive(fullPath, '.md');
         } else {
-          // Recurse into subdirectories to find more Workflows dirs
           count += countWorkflowFiles(fullPath);
         }
       }
