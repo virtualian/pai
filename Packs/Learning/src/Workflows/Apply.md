@@ -66,8 +66,8 @@ For each ACCEPTED proposal, read the current state of its target file:
 | Target | File to Read |
 |--------|-------------|
 | Algorithm spec | Read `~/.pai/PAI/Algorithm/LATEST` to get version, then read `~/.pai/PAI/Algorithm/v{VERSION}.md` |
-| AISTEERINGRULES.md | Read `~/.claude/AISTEERINGRULES.md` |
-| Feedback memories | Read the PAI memory directory `~/.claude/projects/*/memory/` to understand existing structure |
+| AISTEERINGRULES.md | Read `~/.pai/PAI/AISTEERINGRULES.md` |
+| Feedback memories | Read the PAI feedback memory directory `~/.pai/MEMORY/FEEDBACK/` to understand existing structure. If the directory does not exist yet, there are no existing feedback memories. |
 
 ### Step 3: Generate Concrete Diffs
 
@@ -79,7 +79,7 @@ For each ACCEPTED proposal, generate a concrete edit against the **current** tar
 |--------|---------------------|
 | **Algorithm spec** | Section-aware edit. Read the spec structure, identify the correct section using the Algorithm Section Routing Table (from Review workflow). Generate a diff that inserts, replaces, or augments the specific section. Most changes are additions or rewording of existing steps. |
 | **AISTEERINGRULES.md** | Append. Almost always a new rule added to an existing section. Identify the appropriate section in AISTEERINGRULES.md and generate an append diff. Simplest target. |
-| **Feedback memories** | File-based. Generate a new memory file with proper frontmatter (name, description, type: feedback). The file will be written to the PAI memory directory. |
+| **Feedback memories** | File-based. Generate a new memory file with proper frontmatter (name, description, type: feedback). The file will be written to `~/.pai/MEMORY/FEEDBACK/` (global, not per-cwd). |
 
 **Edge cases to handle:**
 - **Target file changed since proposal:** Diffs are generated against the current file, not a snapshot from proposal time. If someone already made the change by hand, detect the overlap and flag it rather than duplicating.
