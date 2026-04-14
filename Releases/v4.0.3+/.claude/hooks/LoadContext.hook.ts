@@ -36,7 +36,7 @@ import { readFileSync, existsSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { getConfigDir, codePath } from './lib/paths';
 import { recordSessionStart } from './lib/notifications';
-import { loadLearningDigest, loadWisdomFrames, loadFailurePatterns, loadSignalTrends } from './lib/learning-readback';
+import { loadLearningDigest, loadWisdomFrames, loadFailurePatterns, loadSignalTrends, loadFeedbackMemories } from './lib/learning-readback';
 
 interface DynamicContextConfig {
   relationshipContext?: boolean;
@@ -483,12 +483,14 @@ async function main() {
       const wisdomFrames = loadWisdomFrames();
       const failurePatterns = loadFailurePatterns();
       const signalTrends = loadSignalTrends();
+      const feedbackMemories = loadFeedbackMemories();
 
       const learningParts: string[] = [];
       if (signalTrends) learningParts.push(signalTrends);
       if (wisdomFrames) learningParts.push(wisdomFrames);
       if (learningDigest) learningParts.push(learningDigest);
       if (failurePatterns) learningParts.push(failurePatterns);
+      if (feedbackMemories) learningParts.push(feedbackMemories);
 
       learningContext = learningParts.length > 0
         ? '\n## Learning Context (auto-loaded)\n\n' + learningParts.join('\n\n')

@@ -381,3 +381,48 @@ export function loadBehavioralTrends(): string | null {
     return null;
   }
 }
+
+/**
+ * Load recent PAI-native feedback memories from MEMORY/LEARNING/FEEDBACK/.
+ *
+ * Feedback memories are flat .md files (no month buckets) with YAML frontmatter
+ * containing `name`, `description`, and `type: feedback`. They are written by
+ * the Learning skill's Apply workflow when a DO-MORE behavioral pattern is
+ * accepted — see issue #109 and Packs/Learning/src/Workflows/Apply.md.
+ *
+ * Returns the N most recent (by filename sort descending) with name+description
+ * extracted for compact context injection. Returns null if the directory does
+ * not exist or contains no feedback files — matches the null-return pattern of
+ * the other readback functions above.
+ */
+export function loadFeedbackMemories(count: number = 5): string | null {
+  const feedbackDir = codePath('MEMORY', 'LEARNING', 'FEEDBACK');
+  if (!existsSync(feedbackDir)) return null;
+
+  const entries: string[] = [];
+
+  try {
+    const files = readdirSync(feedbackDir)
+      .filter(f => f.endsWith('.md') && f !== 'README.md' && f !== 'MEMORY.md')
+      .sort()
+      .reverse()
+      .slice(0, count);
+
+    for (const file of files) {
+      try {
+        const content = readFileSync(join(feedbackDir, file), 'utf-8');
+        const nameMatch = content.match(/^name:\s*(.+)$/m);
+        const descMatch = content.match(/^description:\s*(.+)$/m);
+        if (nameMatch && descMatch) {
+          const name = nameMatch[1].trim().substring(0, 40);
+          const desc = descMatch[1].trim().substring(0, 80);
+          entries.push(`${name} — ${desc}`);
+        }
+      } catch { /* skip unreadable files */ }
+    }
+  } catch { /* skip if dir scan fails */ }
+
+  if (entries.length === 0) return null;
+
+  return `**Feedback Memories (PAI-native):**\n${entries.map(e => `  • ${e}`).join('\n')}`;
+}

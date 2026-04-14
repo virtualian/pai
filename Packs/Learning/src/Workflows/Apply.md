@@ -67,7 +67,7 @@ For each ACCEPTED proposal, read the current state of its target file:
 |--------|-------------|
 | Algorithm spec | Read `~/.pai/PAI/Algorithm/LATEST` to get version, then read `~/.pai/PAI/Algorithm/v{VERSION}.md` |
 | AISTEERINGRULES.md | Read `~/.pai/PAI/AISTEERINGRULES.md` |
-| Feedback memories | Read the PAI feedback memory directory `~/.pai/MEMORY/FEEDBACK/` to understand existing structure. If the directory does not exist yet, there are no existing feedback memories. |
+| Feedback memories | Read the PAI feedback memory directory `~/.pai/MEMORY/LEARNING/FEEDBACK/` to understand existing structure. If the directory does not exist yet, there are no existing feedback memories. |
 
 ### Step 3: Generate Concrete Diffs
 
@@ -79,7 +79,7 @@ For each ACCEPTED proposal, generate a concrete edit against the **current** tar
 |--------|---------------------|
 | **Algorithm spec** | Section-aware edit. Read the spec structure, identify the correct section using the Algorithm Section Routing Table (from Review workflow). Generate a diff that inserts, replaces, or augments the specific section. Most changes are additions or rewording of existing steps. |
 | **AISTEERINGRULES.md** | Append. Almost always a new rule added to an existing section. Identify the appropriate section in AISTEERINGRULES.md and generate an append diff. Simplest target. |
-| **Feedback memories** | File-based. Generate a new memory file with proper frontmatter (name, description, type: feedback). The file will be written to `~/.pai/MEMORY/FEEDBACK/` (global, not per-cwd). |
+| **Feedback memories** | File-based. Generate a new memory file with proper frontmatter (name, description, type: feedback). The file will be written to `~/.pai/MEMORY/LEARNING/FEEDBACK/` (global, not per-cwd). |
 
 **Edge cases to handle:**
 - **Target file changed since proposal:** Diffs are generated against the current file, not a snapshot from proposal time. If someone already made the change by hand, detect the overlap and flag it rather than duplicating.
@@ -164,7 +164,7 @@ For each proposal where the checkbox is checked (`[x]`):
 |--------|-------------|
 | **Algorithm spec** | Section-aware Edit. Read the current spec, find the target section, apply the insert/replace/augment using the Edit tool. Verify the edit was applied correctly by re-reading the section. |
 | **AISTEERINGRULES.md** | Append. Read the current file, find the target section, use the Edit tool to append the new rule. |
-| **Feedback memories** | Write new file. Use the Write tool to create a new memory file at the appropriate path with proper frontmatter. Then update MEMORY.md index if applicable. |
+| **Feedback memories** | Write new file. Ensure the destination directory exists first (`mkdir -p ~/.pai/MEMORY/LEARNING/FEEDBACK/`) — idempotent bootstrap, only has effect on the first apply run after a fresh install. Then use the Write tool to create a new memory file under that directory with proper frontmatter. Then update MEMORY.md index if applicable. |
 
 For each proposal where the checkbox is unchecked (`[ ]`):
 - Skip — do not apply
