@@ -52,10 +52,24 @@ echo -e "           ${NAVY}████${RESET}        ${BLUE}████${RESE
 echo -e "           ${NAVY}████${RESET}        ${BLUE}████${RESET}${LIGHT_BLUE}████${RESET}   ${SEP}"
 echo ""
 echo ""
-echo -e "                       ${STEEL}→${RESET} ${BLUE}github.com/danielmiessler/PAI${RESET}"
+echo -e "                       ${STEEL}→${RESET} ${BLUE}danielmiessler/Personal_AI_Infrastructure${RESET}"
 echo ""
 echo -e "${STEEL}┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛${RESET}"
 echo ""
+
+# ─── Parse CLI Flags ──────────────────────────────────────
+# --repo-url=<git-url> lets fork installs override the clone source
+# (GitHub #115). PAI_REPO_URL from ambient env is honored as-is.
+for arg in "$@"; do
+  case "$arg" in
+    --repo-url=*)
+      PAI_REPO_URL="${arg#--repo-url=}"
+      ;;
+  esac
+done
+if [ -n "${PAI_REPO_URL:-}" ]; then
+  export PAI_REPO_URL
+fi
 
 # ─── Resolve Script Directory ─────────────────────────────
 # Follow symlinks so install.sh works from ~/.claude/ symlink

@@ -1,6 +1,6 @@
 # PAI Installer v4.0
 
-> Install [PAI (Personal AI Infrastructure)](https://github.com/danielmiessler/PAI) with a single command.
+> Install [PAI (Personal AI Infrastructure)](https://github.com/danielmiessler/Personal_AI_Infrastructure) with a single command.
 
 ## Quick Start
 
@@ -23,6 +23,30 @@ That's it. The script handles everything:
 - Internet connection
 
 Everything else (Bun, Git, Claude Code) is installed automatically.
+
+---
+
+## Installing from a Fork
+
+By default the installer clones from `github.com/danielmiessler/Personal_AI_Infrastructure`. If you are running from a fork and want fresh installs to pull from your fork instead, pass the fork URL to the installer. Three equivalent mechanisms are supported, checked in this priority order:
+
+1. **`--repo-url=` CLI flag** — highest priority, wins over everything:
+
+   ```bash
+   bash PAI-Install/install.sh --repo-url=https://github.com/YOUR_USER/pai.git
+   ```
+
+2. **`PAI_REPO_URL` environment variable** — useful for CI and scripted installs:
+
+   ```bash
+   PAI_REPO_URL=https://github.com/YOUR_USER/pai.git bash PAI-Install/install.sh
+   ```
+
+3. **Existing `origin` remote preservation** — if `~/.claude/.git/` already exists with a remote configured (for example, you previously cloned a fork manually), the installer detects it via `git remote get-url origin` and uses that URL for re-clone/init operations. This means users who have already switched their existing install to a fork can re-run the installer without re-specifying the URL.
+
+If none of the above apply, the installer falls back to the upstream default. The upgrade path (`git pull origin main` against an existing installation) always respects whatever remote is already configured, and now logs the remote URL it is pulling from so fork users can confirm the right origin is in use.
+
+See GitHub issue [#115](https://github.com/virtualian/pai/issues/115) for design context.
 
 ---
 
@@ -325,4 +349,4 @@ bun run PAI-Install/main.ts --mode gui
 
 ## License
 
-Part of [PAI — Personal AI Infrastructure](https://github.com/danielmiessler/PAI).
+Part of [PAI — Personal AI Infrastructure](https://github.com/danielmiessler/Personal_AI_Infrastructure).
