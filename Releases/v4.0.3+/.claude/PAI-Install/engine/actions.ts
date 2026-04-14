@@ -5,7 +5,7 @@
  */
 
 import { execSync, spawn } from "child_process";
-import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync, symlinkSync, unlinkSync, chmodSync, lstatSync, cpSync, rmSync } from "fs";
+import { existsSync, mkdirSync, writeFileSync, readFileSync, readdirSync, symlinkSync, unlinkSync, chmodSync, lstatSync, statSync, cpSync, rmSync } from "fs";
 import { homedir } from "os";
 import { join, basename } from "path";
 import type { InstallState, EngineEventHandler, DetectionResult } from "./types";
@@ -13,6 +13,7 @@ import { PAI_VERSION, ALGORITHM_VERSION } from "./types";
 import { detectSystem, validateElevenLabsKey } from "./detect";
 import { generateSettingsJson } from "./config-gen";
 import { resolveRepoUrl, readOriginRemote } from "./repo-url";
+import { migratePerPackSymlinks } from "./skill-migration";
 
 /**
  * Remove duplicate bun PATH entries from shell config.
@@ -589,6 +590,12 @@ export async function runRepository(
     await migrateUserContext(paiDir, emit);
   }
 
+  // Canonicalize each PAI-owned skill pack as a symlink from ~/.claude/skills
+  // to ~/.pai/skills (GitHub #110). Runs on both fresh and upgrade paths:
+  // on fresh, closes the drift window before it opens; on upgrade, converts
+  // pre-existing real directories to symlinks idempotently.
+  await migratePerPackSymlinks(paiDir, emit);
+
   await emit({ event: "progress", step: "repository", percent: 100, detail: "Repository ready" });
   await emit({ event: "step_complete", step: "repository" });
 }
@@ -676,11 +683,24 @@ export async function runConfiguration(
       return count;
     };
 
+    // Accept both real directories AND symlinks whose targets are directories.
+    // Post-#110 per-pack symlinks: PAI skill packs under ~/.claude/skills/ are
+    // now symlinks to ~/.pai/skills/<pack>, and readdirSync's Dirent returns
+    // isDirectory() === false for symlinks (it uses lstat semantics). Without
+    // the symlink-aware branch below, the skill-count banner would undercount
+    // every canonicalized pack.
     const countDirs = (dir: string, filter?: (name: string) => boolean): number => {
       if (!existsSync(dir)) return 0;
       try {
         return readdirSync(dir, { withFileTypes: true })
-          .filter(e => e.isDirectory() && (!filter || filter(e.name))).length;
+          .filter(e => {
+            if (e.isDirectory()) return true;
+            if (e.isSymbolicLink()) {
+              try { return statSync(join(dir, e.name)).isDirectory(); } catch { return false; }
+            }
+            return false;
+          })
+          .filter(e => !filter || filter(e.name)).length;
       } catch { return 0; }
     };
 
@@ -695,7 +715,12 @@ export async function runConfiguration(
     if (existsSync(skillsDir)) {
       try {
         for (const s of readdirSync(skillsDir, { withFileTypes: true })) {
-          if (s.isDirectory()) {
+          // Accept real dirs and symlinks-to-dirs (post-#110 per-pack symlinks).
+          let isDirLike = s.isDirectory();
+          if (!isDirLike && s.isSymbolicLink()) {
+            try { isDirLike = statSync(join(skillsDir, s.name)).isDirectory(); } catch {}
+          }
+          if (isDirLike) {
             const toolsDir = join(skillsDir, s.name, "Tools");
             if (existsSync(toolsDir)) {
               workflowCount += countFiles(toolsDir, ".ts");
