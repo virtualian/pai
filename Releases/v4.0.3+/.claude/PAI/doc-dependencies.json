@@ -35,10 +35,6 @@
           "heading": "## Agent System Architecture",
           "dependents": ["PAIAGENTSYSTEM.md"]
         },
-        "notification-system": {
-          "heading": "## Notification System Architecture",
-          "dependents": ["THENOTIFICATIONSYSTEM.md"]
-        },
         "security": {
           "heading": "## Security Architecture",
           "dependents": ["PAISECURITYSYSTEM/ARCHITECTURE.md"]
@@ -109,12 +105,6 @@
 
     "THEDELEGATIONSYSTEM.md": {
       "description": "Delegation patterns documentation",
-      "tier": 2,
-      "upstream": "PAISYSTEMARCHITECTURE.md"
-    },
-
-    "THENOTIFICATIONSYSTEM.md": {
-      "description": "Notification system documentation",
       "tier": 2,
       "upstream": "PAISYSTEMARCHITECTURE.md"
     },

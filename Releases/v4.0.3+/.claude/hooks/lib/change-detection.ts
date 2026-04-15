@@ -75,7 +75,6 @@ const HIGH_PRIORITY_PATHS = [
   'MEMORYSYSTEM.md',
   'THEHOOKSYSTEM.md',
   'THEDELEGATIONSYSTEM.md',
-  'THENOTIFICATIONSYSTEM.md',
   'settings.json',
 ];
 

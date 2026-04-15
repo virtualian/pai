@@ -186,7 +186,6 @@ Claude Code supports the following hook events:
       "hooks": [
         { "type": "command", "command": "${PAI_DIR}/hooks/LastResponseCache.hook.ts" },
         { "type": "command", "command": "${PAI_DIR}/hooks/ResponseTabReset.hook.ts" },
-        { "type": "command", "command": "${PAI_DIR}/hooks/VoiceCompletion.hook.ts" },
         { "type": "command", "command": "${PAI_DIR}/hooks/DocIntegrity.hook.ts" }
       ]
     }
@@ -205,11 +204,6 @@ Each Stop hook is a self-contained `.hook.ts` file that reads stdin via shared `
 **`ResponseTabReset.hook.ts`** — Reset Kitty tab title/color after response
 - Calls `handlers/TabState.ts` to set completed state
 - Converts working gerund title to past tense
-
-**`VoiceCompletion.hook.ts`** — Send 🗣️ voice line to TTS server
-- Calls `handlers/VoiceNotification.ts` for voice delivery
-- Voice gate: only main sessions (checks `kitty-sessions/{sessionId}.json`)
-- Subagents have no kitty-sessions file → voice blocked
 
 **`DocIntegrity.hook.ts`** — Cross-reference + semantic drift checks
 - Calls `handlers/DocCrossRefIntegrity.ts` — deterministic + inference-powered doc updates
@@ -450,38 +444,7 @@ All hooks receive JSON data on stdin:
 
 ## Common Patterns
 
-### 1. Voice Notifications
-
-**Pattern:** Extract completion message → Send to voice server
-
-```typescript
-// handlers/VoiceNotification.ts pattern
-import { getIdentity } from './lib/identity';
-
-const identity = getIdentity();
-const completionMessage = extractCompletionMessage(lastMessage);
-
-const payload = {
-  title: identity.name,
-  message: completionMessage,
-  voice_enabled: true,
-  voice_id: identity.voiceId  // From settings.json
-};
-
-await fetch('http://localhost:8888/notify', {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify(payload)
-});
-```
-
-**Agent-Specific Voices:**
-Configure voice IDs via `settings.json` daidentity section or environment variables.
-Each agent can have a unique ElevenLabs voice configured. See the Agents skill for voice registry.
-
----
-
-### 2. History Capture (UOCS Pattern)
+### 1. History Capture (UOCS Pattern)
 
 **Pattern:** Parse structured response → Save to appropriate history directory
 
@@ -817,29 +780,6 @@ setTimeout(() => {
 
 ---
 
-### Voice Notifications Not Working
-
-**Check:**
-1. Is voice server running? `curl http://localhost:8888/health`
-2. Is voice_id correct? See `PAI/SKILL.md` for mappings
-3. Is message format correct? `{"message":"...", "voice_id":"...", "title":"..."}`
-4. Is ElevenLabs API key in `${PAI_DIR}/.env`?
-
-**Debug:**
-```bash
-# Test voice server directly
-curl -X POST http://localhost:8888/notify \
-  -H "Content-Type: application/json" \
-  -d '{"message":"Test message","voice_id":"[YOUR_VOICE_ID]","title":"Test"}'
-```
-
-**Common Issues:**
-- Wrong voice_id → Silent failure (invalid ID)
-- Voice server offline → Hook continues (graceful failure)
-- No `🎯 COMPLETED:` line → No voice notification extracted
-
----
-
 ### Work Not Capturing
 
 **Check:**
@@ -1099,10 +1039,9 @@ USER PROMPT SUBMIT (3 hooks):
   UpdateTabTitle.hook.ts         Tab title + working state (orange)
   SessionAutoName.hook.ts        Auto-name session from first prompt
 
-STOP (4 hooks):
+STOP (3 hooks):
   LastResponseCache.hook.ts      Cache response for RatingCapture bridge
   ResponseTabReset.hook.ts       Tab title/color reset after response
-  VoiceCompletion.hook.ts        Voice TTS (main sessions only)
   DocIntegrity.hook.ts           Cross-ref + semantic drift checks
 
 PRE TOOL USE (4 hooks):
@@ -1141,11 +1080,6 @@ Completed:      Green  #022800  (task done)
 Awaiting:  ?    Teal   #0D4F4F  (needs input)
 Error:     !    Orange #B35A00  (problem detected)
 Active Tab: Always Dark Blue #002B80 (state colors = inactive only)
-
-VOICE SERVER:
-URL: http://localhost:8888/notify
-Payload: {"message":"...", "voice_id":"...", "title":"..."}
-Configure voice IDs in individual agent files (`agents/*.md` persona frontmatter)
 
 ```
 
@@ -1198,7 +1132,7 @@ const identity = getIdentity();    // { name, fullName, displayName, voiceId, co
 const principal = getPrincipal();  // { name, pronunciation, timezone }
 ```
 
-**Used by:** handlers/VoiceNotification.ts, RatingCapture, handlers/TabState.ts
+**Used by:** RatingCapture, handlers/TabState.ts
 
 ### `PAI/Tools/Inference.ts`
 Unified AI inference with three run levels.
@@ -1283,7 +1217,6 @@ Events use a dot-separated topic hierarchy for filtering. A `custom.*` escape ha
 | `session.*` | named, completed | SessionCleanup |
 | `rating.*` | captured | RatingCapture |
 | `learning.*` | captured | WorkCompletionLearning |
-| `voice.*` | sent | VoiceNotification |
 | `prd.*` | synced | PRDSync |
 | `doc.*` | integrity | DocIntegrity |
 | `build.*` | rebuild | BuildCLAUDE (SessionStart handler) |

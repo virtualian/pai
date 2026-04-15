@@ -13,7 +13,6 @@ Load context on-demand by reading the file at the path listed. Only load what th
 | Hook system | `PAI/THEHOOKSYSTEM.md` |
 | Agent system | `PAI/PAIAGENTSYSTEM.md` |
 | Delegation system | `PAI/THEDELEGATIONSYSTEM.md` |
-| Notification system | `PAI/THENOTIFICATIONSYSTEM.md` |
 | CLI architecture | `PAI/CLIFIRSTARCHITECTURE.md` |
 | Tools reference | `PAI/TOOLS.md` |
 | Actions & pipelines | `PAI/ACTIONS.md`, `PAI/PIPELINES.md` |
