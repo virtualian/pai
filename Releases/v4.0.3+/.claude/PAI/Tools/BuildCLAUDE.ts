@@ -14,6 +14,7 @@
 
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { join } from "path";
+import { applyPreservation } from "./preserve-claudemd";
 
 const PAI_DIR = join(process.env.HOME!, ".claude");
 const TEMPLATE_PATH = join(PAI_DIR, "CLAUDE.md.template");
@@ -97,15 +98,19 @@ export function build(): { rebuilt: boolean; reason?: string } {
     content = content.replaceAll(key, value);
   }
 
-  // Check if output already matches
-  if (existsSync(OUTPUT_PATH)) {
-    const existing = readFileSync(OUTPUT_PATH, "utf-8");
-    if (existing === content) {
-      return { rebuilt: false, reason: "CLAUDE.md already current" };
-    }
+  // Preserve user @-imports and take a safety backup before overwrite (#126, #127).
+  const { finalContent, unchanged, log } = applyPreservation({
+    existingPath: OUTPUT_PATH,
+    newContent: content,
+    rootDir: PAI_DIR,
+  });
+  for (const line of log) console.error(line);
+
+  if (unchanged) {
+    return { rebuilt: false, reason: "CLAUDE.md already current" };
   }
 
-  writeFileSync(OUTPUT_PATH, content);
+  writeFileSync(OUTPUT_PATH, finalContent);
   return { rebuilt: true };
 }
 
