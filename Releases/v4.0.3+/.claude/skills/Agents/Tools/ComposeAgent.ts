@@ -35,7 +35,7 @@ import Handlebars from "handlebars";
 // Paths
 const HOME = process.env.HOME || "~";
 const BASE_TRAITS_PATH = `${HOME}/.claude/skills/Agents/Data/Traits.yaml`;
-const USER_TRAITS_PATH = `${HOME}/.claude/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml`;
+const USER_TRAITS_PATH = `${HOME}/.pai/PAI/USER/SKILLCUSTOMIZATIONS/Agents/Traits.yaml`;
 const TEMPLATE_PATH = `${HOME}/.claude/skills/Agents/Templates/DynamicAgent.hbs`;
 const CUSTOM_AGENTS_DIR = `${HOME}/.claude/custom-agents`;
 
