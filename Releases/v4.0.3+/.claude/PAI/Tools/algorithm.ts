@@ -46,7 +46,7 @@ import { generatePRDTemplate } from "../../hooks/lib/prd-template";
 // ─── Paths ───────────────────────────────────────────────────────────────────
 
 const HOME = process.env.HOME || "~";
-const BASE_DIR = process.env.PAI_DIR || join(HOME, ".claude");
+const BASE_DIR = process.env.PAI_DIR || join(HOME, ".pai");
 const ALGORITHMS_DIR = join(BASE_DIR, "MEMORY", "STATE", "algorithms");
 const SESSION_NAMES_PATH = join(BASE_DIR, "MEMORY", "STATE", "session-names.json");
 const PROJECTS_DIR = process.env.PROJECTS_DIR || join(HOME, "Projects");

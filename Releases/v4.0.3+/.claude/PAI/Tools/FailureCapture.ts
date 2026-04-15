@@ -29,7 +29,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync, copyFileSync } from
 import { join, basename } from 'path';
 import { inference } from './Inference';
 
-const PAI_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.claude');
+const PAI_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.pai');
 
 interface FailureCaptureInput {
   transcriptPath: string;
