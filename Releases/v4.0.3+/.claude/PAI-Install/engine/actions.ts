@@ -15,6 +15,8 @@ import { generateSettingsJson } from "./config-gen";
 import { resolveRepoUrl, readOriginRemote } from "./repo-url";
 import { migratePerPackSymlinks } from "./skill-migration";
 import { migratePerPackCommands } from "./command-migration";
+import { migrateMemoryDirectory } from "./memory-migration";
+import { tryExec } from "./exec";
 
 /**
  * Remove duplicate bun PATH entries from shell config.
@@ -145,14 +147,6 @@ function findExistingVoiceConfig(): { voiceId: string; aiName: string; source: s
     }
   }
   return null;
-}
-
-function tryExec(cmd: string, timeout = 30000): string | null {
-  try {
-    return execSync(cmd, { timeout, stdio: ["pipe", "pipe", "pipe"] }).toString().trim();
-  } catch {
-    return null;
-  }
 }
 
 // ─── User Context Migration (v2.5/v3.0 → v4.x) ─────────────────
@@ -589,6 +583,20 @@ export async function runRepository(
   // Migrate user context from v2.5/v3.0 location to v4.x canonical location
   if (state.installType === "upgrade") {
     await migrateUserContext(paiDir, emit);
+  }
+
+  // Relocate ~/.claude/MEMORY → ~/.pai/MEMORY for upgraders from v4.0.2
+  // (GitHub #107). Idempotent via marker file, refuses on ambiguity. Must
+  // run before any subsequent step that might write new MEMORY state at
+  // the canonical location. `paiDir` here is semantically the Claude Code
+  // config root — same naming convention as the skill/command migrators.
+  {
+    let canonicalPaiHome = (process.env.PAI_DIR || "").trim();
+    if (canonicalPaiHome === "~" || canonicalPaiHome.startsWith("~/")) {
+      canonicalPaiHome = join(homedir(), canonicalPaiHome.slice(1));
+    }
+    if (!canonicalPaiHome) canonicalPaiHome = join(homedir(), ".pai");
+    await migrateMemoryDirectory(paiDir, canonicalPaiHome, emit);
   }
 
   // Canonicalize each PAI-owned skill pack as a symlink from ~/.claude/skills
