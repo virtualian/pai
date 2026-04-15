@@ -29,7 +29,7 @@ import { readFileSync, writeFileSync, existsSync, readdirSync, mkdirSync } from 
 import { join } from 'path';
 import { execFileSync } from 'child_process';
 
-const PAI_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.claude');
+const PAI_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.pai');
 
 interface RelationshipNote {
   type: 'W' | 'B' | 'O';

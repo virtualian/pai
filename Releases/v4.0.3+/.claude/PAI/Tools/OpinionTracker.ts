@@ -24,7 +24,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { join } from 'path';
 
-const PAI_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.claude');
+const PAI_DIR = process.env.PAI_DIR || join(process.env.HOME!, '.pai');
 const OPINIONS_FILE = join(PAI_DIR, 'PAI/USER/OPINIONS.md');
 const RELATIONSHIP_LOG = join(PAI_DIR, 'MEMORY/RELATIONSHIP');
 
