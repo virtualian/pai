@@ -2,6 +2,8 @@
 
 **This guide is designed for AI agents installing this pack into a user's infrastructure.**
 
+> **Architecture note (#113):** This wizard is transitional. Under the post-#113 two-root model, slash commands canonically live at `~/.pai/commands/` and are symlinked into `~/.claude/commands/` by the main PAI installer's `migratePerPackCommands` action. The bash scripts below still copy directly to `~/.claude/commands/` for standalone installs, but the next main-installer run will detect the drift and convert real files to symlinks automatically. New pack wizards should delegate command placement to the main installer rather than copying directly.
+
 ---
 
 ## AI Agent Instructions

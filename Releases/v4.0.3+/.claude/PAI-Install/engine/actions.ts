@@ -14,6 +14,7 @@ import { detectSystem, validateElevenLabsKey } from "./detect";
 import { generateSettingsJson } from "./config-gen";
 import { resolveRepoUrl, readOriginRemote } from "./repo-url";
 import { migratePerPackSymlinks } from "./skill-migration";
+import { migratePerPackCommands } from "./command-migration";
 
 /**
  * Remove duplicate bun PATH entries from shell config.
@@ -595,6 +596,13 @@ export async function runRepository(
   // on fresh, closes the drift window before it opens; on upgrade, converts
   // pre-existing real directories to symlinks idempotently.
   await migratePerPackSymlinks(paiDir, emit);
+
+  // Canonicalize slash commands: ~/.claude/commands/<name>.md → symlinks
+  // pointing at ~/.pai/commands/<name>.md (GitHub #113). Same pattern as
+  // migratePerPackSymlinks above but scaled for flat files. Pack installers
+  // stage canonical sources into ~/.pai/commands/; this migrator wires up
+  // the harness scan path.
+  await migratePerPackCommands(paiDir, emit);
 
   await emit({ event: "progress", step: "repository", percent: 100, detail: "Repository ready" });
   await emit({ event: "step_complete", step: "repository" });

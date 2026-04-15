@@ -268,7 +268,7 @@ Topic name acts as password - use random string for security.
 
 ### Implementation
 
-The notification service is in `~/.claude/hooks/lib/notifications.ts`:
+The notification service is in `~/.pai/hooks/lib/notifications.ts`:
 
 ```typescript
 import { notify, notifyTaskComplete, notifyBackgroundAgent, notifyError } from './lib/notifications';

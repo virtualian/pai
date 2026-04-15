@@ -344,7 +344,7 @@ Extract: What user has been working on, patterns, open tasks
 ### Agent 3: PAI System State
 Analyze:
 - ~/.pai/skills/ (installed skills)
-- ~/.claude/hooks/ (active hooks)
+- ~/.pai/hooks/ (active hooks)
 - ~/.claude/settings.json (configuration)
 
 Extract: Current capabilities, potential gaps, system health

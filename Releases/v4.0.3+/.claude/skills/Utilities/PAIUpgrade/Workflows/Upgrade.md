@@ -72,7 +72,7 @@ Format as structured JSON."
 Agent 3 - PAI System State:
 "Analyze the current state of the user's PAI system:
 - List skills in ~/.pai/skills/
-- List hooks in ~/.claude/hooks/
+- List hooks in ~/.pai/hooks/
 - Read ~/.claude/settings.json
 
 Extract and return:
