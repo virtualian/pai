@@ -1,9 +1,5 @@
 # Apply Workflow (Two-Gate Approval)
 
-```bash
-bun ~/.pai/PAI/Tools/Notify.ts "Running the Apply workflow in the Learning skill to stage and apply approved changes"
-```
-
 Running the **Apply** workflow in the **Learning** skill to stage and apply approved changes...
 
 **Two-gate approval: generates staged diffs for accepted proposals, then applies only human-checked changes.**

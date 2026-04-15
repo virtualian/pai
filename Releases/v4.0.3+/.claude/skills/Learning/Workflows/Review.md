@@ -1,9 +1,5 @@
 # Review Workflow (Propose + Open Review File)
 
-```bash
-bun ~/.pai/PAI/Tools/Notify.ts "Running the Review workflow in the Learning skill to generate change proposals"
-```
-
 Running the **Review** workflow in the **Learning** skill to generate change proposals...
 
 **Generates concrete change proposals from synthesis results, writes/updates review.md for human review.**

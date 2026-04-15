@@ -60,7 +60,6 @@ Hooks are TypeScript scripts that execute at specific lifecycle events in Claude
 │                                                                     │
 │  Stop ──┬──► LastResponseCache (cache response for ratings)         │
 │         ├──► ResponseTabReset (tab title/color reset)              │
-│         ├──► VoiceCompletion (TTS voice line)                      │
 │         └──► DocIntegrity (cross-ref checks)                       │
 │                                                                     │
 │  SessionEnd ──┬──► WorkCompletionLearning (insight extraction)      │
@@ -155,7 +154,6 @@ interface StopPayload extends BasePayload {
 |------|---------|----------|--------------|
 | `LastResponseCache.hook.ts` | Cache last response for RatingCapture bridge | No | None |
 | `ResponseTabReset.hook.ts` | Reset Kitty tab title/color after response | No | Kitty terminal |
-| `VoiceCompletion.hook.ts` | Send 🗣️ voice line to TTS server | No | Voice Server |
 | `DocIntegrity.hook.ts` | Cross-ref + semantic drift checks | No | Inference API |
 
 ### SessionEnd Hooks
@@ -253,8 +251,7 @@ Stop
     │
     ▼
 Stop hooks:
-    ├─► ResponseTabReset → DEFAULT (brand color)
-    └─► VoiceCompletion → Voice announces completion
+    └─► ResponseTabReset → DEFAULT (brand color)
 ```
 
 ---
@@ -301,7 +298,7 @@ Located in `hooks/lib/`:
 | `time.ts` | PST timestamps, ISO formatting | Rating hooks, work hooks |
 | `paths.ts` | Canonical path construction | Work hooks, security |
 | `notifications.ts` | ntfy push notifications | SessionEnd hooks, UpdateTabTitle |
-| `output-validators.ts` | Tab title + voice output validation | UpdateTabTitle, TabState, VoiceNotification, SetQuestionTab |
+| `output-validators.ts` | Tab title + voice output validation | UpdateTabTitle, TabState, SetQuestionTab |
 | `hook-io.ts` | Shared stdin reader + transcript parser | All Stop hooks |
 | `learning-utils.ts` | Learning categorization | Rating hooks, WorkCompletion |
 | `change-detection.ts` | Detect file/code changes | IntegrityCheck |

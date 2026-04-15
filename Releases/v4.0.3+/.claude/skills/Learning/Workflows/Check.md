@@ -1,9 +1,5 @@
 # Check Workflow (Mine + Synthesise)
 
-```bash
-bun ~/.pai/PAI/Tools/Notify.ts "Running the Check workflow in the Learning skill to mine and synthesise learning signals"
-```
-
 Running the **Check** workflow in the **Learning** skill to mine and synthesise learning signals...
 
 **Mines reflections and ratings in parallel, cross-references them, and writes synthesis files for downstream workflows.**
