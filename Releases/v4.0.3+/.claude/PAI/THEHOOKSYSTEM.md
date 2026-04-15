@@ -4,7 +4,7 @@
 
 **Event-Driven Automation Infrastructure**
 
-**Location:** `~/.claude/hooks/`
+**Location:** `~/.pai/hooks/`
 **Configuration:** `~/.claude/settings.json`
 **Status:** Active - 20 hooks running in production
 
@@ -657,7 +657,7 @@ async function main() {
 Decide which event should trigger your hook (SessionStart, Stop, PostToolUse, etc.)
 
 ### Step 2: Create Hook Script
-**Location:** `~/.claude/hooks/my-custom-hook.ts`
+**Location:** `~/.pai/hooks/my-custom-hook.ts`
 
 **Template:**
 ```typescript
@@ -698,7 +698,7 @@ main();
 
 ### Step 3: Make Executable
 ```bash
-chmod +x ~/.claude/hooks/my-custom-hook.ts
+chmod +x ~/.pai/hooks/my-custom-hook.ts
 ```
 
 ### Step 4: Add to settings.json
@@ -722,7 +722,7 @@ chmod +x ~/.claude/hooks/my-custom-hook.ts
 ### Step 5: Test
 ```bash
 # Test hook directly
-echo '{"session_id":"test","transcript_path":"/tmp/test.jsonl","hook_event_name":"Stop"}' | bun ~/.claude/hooks/my-custom-hook.ts
+echo '{"session_id":"test","transcript_path":"/tmp/test.jsonl","hook_event_name":"Stop"}' | bun ~/.pai/hooks/my-custom-hook.ts
 ```
 
 ### Step 6: Restart Claude Code
@@ -784,7 +784,7 @@ await Promise.race([readPromise, timeoutPromise]);
 ### Hook Not Running
 
 **Check:**
-1. Is hook script executable? `chmod +x ~/.claude/hooks/my-hook.ts`
+1. Is hook script executable? `chmod +x ~/.pai/hooks/my-hook.ts`
 2. Is path correct in settings.json? Use `${PAI_DIR}/hooks/...`
 3. Is settings.json valid JSON? `jq . ~/.claude/settings.json`
 4. Did you restart Claude Code after editing settings.json?
@@ -792,10 +792,10 @@ await Promise.race([readPromise, timeoutPromise]);
 **Debug:**
 ```bash
 # Test hook directly
-echo '{"session_id":"test","transcript_path":"/tmp/test.jsonl","hook_event_name":"Stop"}' | bun ~/.claude/hooks/my-hook.ts
+echo '{"session_id":"test","transcript_path":"/tmp/test.jsonl","hook_event_name":"Stop"}' | bun ~/.pai/hooks/my-hook.ts
 
 # Check hook logs (stderr output)
-tail -f ~/.claude/hooks/debug.log  # If you add logging
+tail -f ~/.pai/hooks/debug.log  # If you add logging
 ```
 
 ---
@@ -895,7 +895,7 @@ tail ~/.pai/MEMORY/RAW/$(date +%Y-%m)/$(date +%Y-%m-%d)_all-events.jsonl
 cat ~/.pai/MEMORY/STATE/agent-sessions.json | jq .
 
 # Check subagent-stop debug log
-tail -f ~/.claude/hooks/subagent-stop-debug.log
+tail -f ~/.pai/hooks/subagent-stop-debug.log
 ```
 
 **Fix:**
@@ -940,7 +940,7 @@ grep '"type":"user"' ~/.claude/projects/-Users-username--claude/*.jsonl | head -
 **Debug:**
 ```bash
 # Test context loading directly
-bun ~/.claude/hooks/LoadContext.hook.ts
+bun ~/.pai/hooks/LoadContext.hook.ts
 
 # Should output <system-reminder> with SKILL.md content
 ```
@@ -948,7 +948,7 @@ bun ~/.claude/hooks/LoadContext.hook.ts
 **Common Issues:**
 - Subagent sessions loading main context → Fixed (subagent detection in hook)
 - File not found → Check `PAI_DIR` environment variable
-- Permission denied → `chmod +x ~/.claude/hooks/LoadContext.hook.ts`
+- Permission denied → `chmod +x ~/.pai/hooks/LoadContext.hook.ts`
 
 ---
 
@@ -1122,13 +1122,13 @@ POST TOOL USE (2 hooks):
 
 KEY FILES:
 ~/.claude/settings.json              Hook configuration
-~/.claude/hooks/                     Hook scripts (22 files)
-~/.claude/hooks/handlers/            Handler modules (6 files)
-~/.claude/hooks/lib/                 Shared libraries (13 files)
-~/.claude/hooks/lib/learning-utils.ts Learning categorization
-~/.claude/hooks/lib/time.ts          PST timestamp utilities
-~/.claude/hooks/lib/event-types.ts   Typed event definitions (22 interfaces)
-~/.claude/hooks/lib/event-emitter.ts appendEvent() → events.jsonl
+~/.pai/hooks/                     Hook scripts (22 files)
+~/.pai/hooks/handlers/            Handler modules (6 files)
+~/.pai/hooks/lib/                 Shared libraries (13 files)
+~/.pai/hooks/lib/learning-utils.ts Learning categorization
+~/.pai/hooks/lib/time.ts          PST timestamp utilities
+~/.pai/hooks/lib/event-types.ts   Typed event definitions (22 interfaces)
+~/.pai/hooks/lib/event-emitter.ts appendEvent() → events.jsonl
 ~/.pai/MEMORY/WORK/               Work tracking
 ~/.pai/MEMORY/LEARNING/           Learning captures
 ~/.pai/MEMORY/STATE/              Runtime state

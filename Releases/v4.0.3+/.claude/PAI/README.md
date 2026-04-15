@@ -6,20 +6,26 @@ PAI is a general problem-solving system that magnifies human capabilities. It ru
 
 **CLAUDE.md** is the master config — generated from `CLAUDE.md.template` via `BuildCLAUDE.ts`. It defines execution modes, The Algorithm, and the context routing table. Claude Code loads it natively every session. A SessionStart hook keeps it fresh automatically.
 
-**This directory (`PAI/`)** contains all system documentation, tools, user context, and the SKILL.md that defines PAI as a skill. The rest of the system lives alongside it under `~/.claude/` (hooks, skills, settings, memory).
+**This directory (`PAI/`)** contains all system documentation, tools, user context, and the SKILL.md that defines PAI as a skill. Post-#101 two-root split, CODE (PAI internals, hooks, skills, agents, commands, memory) lives under `~/.pai/`, while Claude Code CONFIG (`settings.json`, `CLAUDE.md`) lives under `~/.claude/`.
 
 ## Directory Structure
 
 ```
-~/.claude/
+~/.claude/                     # Claude Code CONFIG root
   CLAUDE.md                    # Master config (generated from template)
   CLAUDE.md.template           # Source template with variables
   settings.json                # Single source of truth for all configuration
-  hooks/                       # Event lifecycle hooks (21+)
-  skills/                      # 12 categories, 49 skills — each with SKILL.md
-  MEMORY/                      # Persistent memory (work, learning, relationship, state)
+  skills/                      # Harness scan path — per-pack symlinks to ~/.pai/skills/
+  commands/                    # Harness scan path — symlinks to ~/.pai/commands/
+
+~/.pai/                        # PAI CODE root (canonical)
   PAI/                         # This directory — system docs + tools + user context
     Algorithm/                 # Versioned algorithm files + LATEST pointer
+  hooks/                       # Event lifecycle hooks (21+)
+  skills/                      # 12 categories, 49 skills — each with SKILL.md
+  agents/                      # Specialized agent definitions
+  commands/                    # Slash command source of truth
+  MEMORY/                      # Persistent memory (work, learning, relationship, state)
 ```
 
 ## Core Subsystems
@@ -31,7 +37,7 @@ The 7-phase execution engine: Observe, Think, Plan, Build, Execute, Verify, Lear
 12 hierarchical categories with 49 total skills in `~/.pai/skills/`, each with a `SKILL.md` defining triggers, workflows, and tools. Skills are the primary capability unit.
 
 ### Hooks (`THEHOOKSYSTEM.md`)
-21+ event hooks across the session lifecycle: SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, Stop, SessionEnd. Defined in `settings.json`, implemented in `~/.claude/hooks/`.
+21+ event hooks across the session lifecycle: SessionStart, UserPromptSubmit, PreToolUse, PostToolUse, Stop, SessionEnd. Defined in `settings.json`, implemented in `~/.pai/hooks/`.
 
 ### Memory (`MEMORYSYSTEM.md`)
 Persistent storage across sessions:
@@ -84,6 +90,6 @@ All other documentation loads on-demand based on the routing table in CLAUDE.md.
 ## Extending PAI
 
 - **Add a skill:** Use the CreateSkill skill under Utilities
-- **Add a hook:** Create handler in `~/.claude/hooks/handlers/`, register in `settings.json`
+- **Add a hook:** Create handler in `~/.pai/hooks/handlers/`, register in `settings.json`
 - **Add startup files:** Append to `settings.json → loadAtStartup.files`
 - **Add user context:** Create files in `PAI/USER/`
