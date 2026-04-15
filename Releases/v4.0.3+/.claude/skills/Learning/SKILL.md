@@ -12,15 +12,9 @@ If this directory exists, load and apply any PREFERENCES.md, configurations,
 or resources found there. These override default behavior. If the directory
 does not exist, proceed with skill defaults.
 
-## Voice Notification
+## Workflow Announcement
 
-**When executing a workflow, announce via Notify.ts:**
-
-```bash
-bun ~/.pai/PAI/Tools/Notify.ts "Running the WORKFLOWNAME workflow in the Learning skill to ACTION"
-```
-
-Then output text notification:
+When executing a workflow, output a text announcement:
 ```
 Running the **WorkflowName** workflow in the **Learning** skill to ACTION...
 ```
