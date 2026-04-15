@@ -41,6 +41,22 @@ DO NOT start implementation. Ask for issue numbers first.
 
 ---
 
+## Issue Work Sequence (MANDATORY ORDER)
+
+When the user asks you to work on a GitHub issue (e.g., "work on #111", "pick up issue 126", "create a branch and fix #108"), follow this exact order. **Each step MUST complete before the next begins.**
+
+1. **Read the issue body in full.** Use `gh issue view N --repo virtualian/pai --json number,title,body,state,labels`. Do not rely on the title alone — the body contains scope boundaries, acceptance criteria, and out-of-scope notes that shape everything downstream.
+
+2. **Create the feature branch immediately** — before any other ceremony. Branch name convention: `NNN-kebab-description`, where `NNN` is the issue number and the suffix is a short kebab-case slug derived from the issue title (e.g., `111-backport-algorithm-and-claudemd`, `126-preserve-claudemd-imports`). Base from `main` unless the issue is a hotfix. Command: `git checkout -b NNN-kebab-description`.
+
+3. **THEN enter the PAI Algorithm.** The Algorithm (entry banner, voice announce, PRD stub, OBSERVE phase) begins AFTER the branch is checked out. Inside the Algorithm, the Directive Compliance Gate's branch check merely verifies the pre-created branch is active — it must not be the place where the branch is created.
+
+**Rationale:** Creating the branch before Algorithm entry ensures that every tool output, PRD file, voice notification, reflection JSONL entry, and intermediate artefact is attributable to the correct branch from step one. Creating it mid-OBSERVE leaves a short window where thinking, initial reads, and the PRD stub happen against `main` — which pollutes attribution and occasionally causes "what branch was I on?" confusion at phase transitions.
+
+**Exception:** If the user explicitly says "just read the issue" or "investigate #N without branching yet", treat that as an atomic scope-locked ask and skip the branch step. The default is branch-first; explicit opt-out is the only way around it.
+
+---
+
 ## Issue Types
 
 | Type | Definition | Scope |
