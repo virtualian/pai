@@ -23,7 +23,6 @@
  * 4. If validation fails both paths → getWorkingFallback()
  *
  * VOICE: Announces inference-generated summary on prompt receipt.
- * Task completion voice is separate (VoiceCompletion.hook.ts → VoiceNotification handler).
  * DO NOT REMOVE voice from this hook — see MEMORY/LEARNING/SYSTEM/2026-01/
  * 2026-01-15-205500_LEARNING_voice-on-prompt-submit-architecture.md
  */

@@ -235,10 +235,6 @@
           },
           {
             "type": "command",
-            "command": "${PAI_DIR}/hooks/VoiceCompletion.hook.ts"
-          },
-          {
-            "type": "command",
             "command": "${PAI_DIR}/hooks/DocIntegrity.hook.ts"
           }
         ]
