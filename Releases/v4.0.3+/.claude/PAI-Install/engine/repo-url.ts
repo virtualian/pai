@@ -7,9 +7,9 @@
  *   3. DEFAULT_PAI_REPO_URL (upstream fallback)
  */
 
-import { execSync } from "child_process";
 import { existsSync } from "fs";
 import { join } from "path";
+import { tryExec } from "./exec";
 
 export const DEFAULT_PAI_REPO_URL = "https://github.com/danielmiessler/Personal_AI_Infrastructure.git";
 
@@ -46,14 +46,7 @@ export function resolveRepoUrl(paiDir?: string): ResolvedRepoUrl {
 export function readOriginRemote(paiDir: string): string | null {
   if (!existsSync(join(paiDir, ".git"))) return null;
 
-  try {
-    // 5s timeout guards against hangs on corrupted repos.
-    const raw = execSync(
-      `git -C "${paiDir}" remote get-url origin 2>/dev/null`,
-      { encoding: "utf-8", timeout: 5000 }
-    ).trim();
-    return raw || null;
-  } catch {
-    return null;
-  }
+  // 5s timeout guards against hangs on corrupted repos.
+  const raw = tryExec(`git -C "${paiDir}" remote get-url origin 2>/dev/null`, 5000);
+  return raw || null;
 }

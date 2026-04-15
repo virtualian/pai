@@ -4,21 +4,16 @@
  * All detection is read-only and non-destructive.
  */
 
-import { execSync } from "child_process";
 import { existsSync, readFileSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
 import type { DetectionResult } from "./types";
+import { tryExec } from "./exec";
 
-function tryExec(cmd: string): string | null {
-  try {
-    return execSync(cmd, { timeout: 5000, stdio: ["pipe", "pipe", "pipe"] })
-      .toString()
-      .trim();
-  } catch {
-    return null;
-  }
-}
+// Detection probes are short and should fail fast. Historical timeout is 5s;
+// every call site in this module passes it explicitly to preserve that bound
+// on top of `tryExec`'s 30s default (see engine/exec.ts, GitHub #121).
+const DETECT_TIMEOUT_MS = 5000;
 
 function detectOS(): DetectionResult["os"] {
   const platform = process.platform === "darwin" ? "darwin" : "linux";
@@ -28,13 +23,16 @@ function detectOS(): DetectionResult["os"] {
   let name = "";
 
   if (platform === "darwin") {
-    const swVers = tryExec("sw_vers -productVersion");
+    const swVers = tryExec("sw_vers -productVersion", DETECT_TIMEOUT_MS);
     version = swVers || "";
     name = `macOS ${version}`;
   } else {
-    const release = tryExec("cat /etc/os-release 2>/dev/null | grep PRETTY_NAME | cut -d= -f2 | tr -d '\"'");
+    const release = tryExec(
+      "cat /etc/os-release 2>/dev/null | grep PRETTY_NAME | cut -d= -f2 | tr -d '\"'",
+      DETECT_TIMEOUT_MS,
+    );
     name = release || "Linux";
-    version = tryExec("uname -r") || "";
+    version = tryExec("uname -r", DETECT_TIMEOUT_MS) || "";
   }
 
   return { platform, arch, version, name };
@@ -43,7 +41,7 @@ function detectOS(): DetectionResult["os"] {
 function detectShell(): DetectionResult["shell"] {
   const shellPath = process.env.SHELL || "/bin/sh";
   const shellName = shellPath.split("/").pop() || "sh";
-  const version = tryExec(`${shellPath} --version 2>&1 | head -1`) || "";
+  const version = tryExec(`${shellPath} --version 2>&1 | head -1`, DETECT_TIMEOUT_MS) || "";
 
   return { name: shellName, version, path: shellPath };
 }
@@ -52,10 +50,10 @@ function detectTool(
   name: string,
   versionCmd: string
 ): { installed: boolean; version?: string; path?: string } {
-  const path = tryExec(`which ${name}`);
+  const path = tryExec(`which ${name}`, DETECT_TIMEOUT_MS);
   if (!path) return { installed: false };
 
-  const versionOutput = tryExec(versionCmd);
+  const versionOutput = tryExec(versionCmd, DETECT_TIMEOUT_MS);
   // Extract version number from output
   const versionMatch = versionOutput?.match(/(\d+\.\d+[\.\d]*)/);
   const version = versionMatch?.[1] || versionOutput || undefined;
@@ -138,8 +136,8 @@ export function detectSystem(): DetectionResult {
       claude: detectTool("claude", "claude --version 2>&1"),
       node: detectTool("node", "node --version"),
       brew: {
-        installed: tryExec("which brew") !== null,
-        path: tryExec("which brew") || undefined,
+        installed: tryExec("which brew", DETECT_TIMEOUT_MS) !== null,
+        path: tryExec("which brew", DETECT_TIMEOUT_MS) || undefined,
       },
     },
     existing: detectExisting(home, paiDir, configDir),

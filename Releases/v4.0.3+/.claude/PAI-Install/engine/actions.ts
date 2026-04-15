@@ -15,6 +15,7 @@ import { generateSettingsJson } from "./config-gen";
 import { resolveRepoUrl, readOriginRemote } from "./repo-url";
 import { migratePerPackSymlinks } from "./skill-migration";
 import { migratePerPackCommands } from "./command-migration";
+import { tryExec } from "./exec";
 
 /**
  * Remove duplicate bun PATH entries from shell config.
@@ -145,14 +146,6 @@ function findExistingVoiceConfig(): { voiceId: string; aiName: string; source: s
     }
   }
   return null;
-}
-
-function tryExec(cmd: string, timeout = 30000): string | null {
-  try {
-    return execSync(cmd, { timeout, stdio: ["pipe", "pipe", "pipe"] }).toString().trim();
-  } catch {
-    return null;
-  }
 }
 
 // ─── User Context Migration (v2.5/v3.0 → v4.x) ─────────────────
