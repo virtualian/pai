@@ -67,10 +67,8 @@ interface PromptOutput {
 // Constants
 // ============================================================================
 
-const ART_AESTHETIC_PATH = resolve(
-  process.env.HOME!,
-  ".claude/PAI/Aesthetic.md"
-);
+const PAI_ROOT = process.env.PAI_DIR || resolve(process.env.HOME!, ".pai");
+const ART_AESTHETIC_PATH = resolve(PAI_ROOT, "PAI/Aesthetic.md");
 
 const COLOR_HEX_MAP: Record<TokyoNightColor, string> = {
   "Electric Blue": "#7aa2f7",
