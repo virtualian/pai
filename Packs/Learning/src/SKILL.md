@@ -98,6 +98,23 @@ Next steps:
 | User ratings | `~/.pai/MEMORY/LEARNING/SIGNALS/ratings.jsonl` | RatingCapture.hook.ts | Explicit + implicit ratings with sentiment |
 | HWM state | `~/.pai/MEMORY/LEARNING/SIGNALS/mine-ratings-hwm.json` | MineRatings.ts | Last-processed timestamp for incremental analysis |
 
+## Signal Coverage by Mode
+
+Six signal channels feed the pipeline. Most are written by hooks and fire regardless of mode; only `algorithm-reflections.jsonl` is mode-gated.
+
+| Signal channel | NATIVE | FAST-PATH atomic | Standard+ | Writer |
+|----------------|--------|------------------|-----------|--------|
+| `ratings.jsonl` | yes | yes | yes | `RatingCapture.hook.ts` (UserPromptSubmit) |
+| `behavioral-signals.jsonl` | yes | yes | yes | `RatingCapture.hook.ts` (UserPromptSubmit) |
+| Low-rating learnings (rating <= 4) | yes | yes | yes | `RatingCapture.hook.ts` (UserPromptSubmit) |
+| Failure captures (rating <= 3) | yes | yes | yes | `RatingCapture.hook.ts` (UserPromptSubmit) |
+| WorkCompletion learnings* | yes | yes | yes | `WorkCompletionLearning.hook.ts` (SessionEnd) |
+| `algorithm-reflections.jsonl` | no | no | yes | Algorithm LEARN phase 7/7 |
+
+*WorkCompletion captures only when files changed, multiple work items exist, or the work was manually created.
+
+The Check workflow's parallel miners read both reflections and ratings and cross-reference them (see `Workflows/Check.md`), so patterns that appear in rating sentiment but not in reflection Q1/Q2 still reach `review.md` and downstream proposals. Missing one channel for a given mode does not mean the pipeline is blind to that mode.
+
 ## Pipeline Output Files
 
 | File | Writer | Content | Persistence |
