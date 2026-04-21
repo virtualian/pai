@@ -881,7 +881,7 @@
   },
   "plansDirectory": "Plans/",
   "loadAtStartup": {
-    "_docs": "Files force-loaded into session context at startup by LoadContext.hook.ts. Paths relative to PAI_DIR. Injected as <system-reminder> blocks.",
+    "_docs": "Files force-loaded into session context at startup by LoadContext.hook.ts. Paths relative to PAI_DIR. Injected as <system-reminder> blocks. Missing files are skipped with a stderr warning (see LoadContext.hook.ts existsSync guard), so the list may include optional user-override slots such as PAI/USER/AISTEERINGRULES.md and PAI/USER/PROJECTS/PROJECTS.md that the user creates post-install.",
     "files": [
       "PAI/AISTEERINGRULES.md",
       "PAI/USER/AISTEERINGRULES.md",
