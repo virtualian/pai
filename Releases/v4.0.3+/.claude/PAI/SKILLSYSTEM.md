@@ -79,6 +79,8 @@ Personal configuration loaded from:
 
 **NEVER hardcode personal data in system skills.**
 
+**Pack user-choice policy (MANDATORY for shared system skills):** Packs distributed via the PAI pack system MUST NOT invoke `AskUserQuestion` directly from any code path that executes inside a spawned subagent. Skills running in the primary DA context may invoke `AskUserQuestion` directly; skills running inside a `Task`/`Agent` invocation MUST return user-choice points via the `pending_user_choices[]` bubble protocol defined in `PAI/PROTOCOLS/qa-contract.md`. **Done-state:** every new pack added after this policy either (a) contains no user-choice points, (b) matches the bubble pattern when run from a subagent context, or (c) is flagged for review before merge into the public PAI repository.
+
 ---
 
 ## Skill Customization System

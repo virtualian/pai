@@ -20,11 +20,15 @@ FOR: Simple tasks that won't take much effort or time. More advanced tasks use A
 🗒️ TASK: [8 word description]
 [work]
 🔄 ITERATION on: [16 words of context if this is a follow-up]
+❓ OPEN_CHOICES: [one-line list of enumerable unresolved choices, or 'none']
 📃 CONTENT: [Up to 128 lines of the content, if there is any]
 🔧 CHANGE: [8-word bullets on what changed]
 ✅ VERIFY: [8-word bullets on how we know what happened]
 🗣️ {DAIDENTITY.NAME}: [8-16 word summary]
 ```
+
+**OPEN_CHOICES rule:** any non-empty value on this line MUST be paired with an `AskUserQuestion` invocation in the same turn. The value `none` is always valid — use it only when no enumerable multi-option decisions remain unresolved (2–4 discrete options; not free-text or subjective). See `~/.pai/PAI/AISTEERINGRULES.md` "AskUserQuestion for choices" for the full trigger list.
+
 On follow-ups, include the ITERATION line. On first response to a new request, omit it.
 
 ## ALGORITHM MODE
