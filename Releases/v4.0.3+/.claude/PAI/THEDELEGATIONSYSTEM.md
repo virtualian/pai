@@ -109,6 +109,41 @@ When delegating, ALWAYS include:
 4. SUCCESS CRITERIA (what output should look like)
 5. TIMING SCOPE (fast|standard|deep) — controls agent output verbosity
 
+### User-choice bubbling (MANDATORY for subagent decisions)
+
+When a spawned agent encounters a discrete multi-option decision whose answer materially changes its output, it MUST NOT invoke `AskUserQuestion` directly. Runtime probes (2026-04-22, issue #148) confirmed that `Architect`, `Engineer`, `Plan`, and `general-purpose` subagents all report `AskUserQuestion` as ABSENT from their tool set — direct invocation is foreclosed. Even if it were available, multiple parallel agents asking simultaneously would break the one-asker invariant that existing hooks (`SetQuestionTab`, `QuestionAnswered`) rely on.
+
+**Required pattern:** the subagent returns a structured `pending_user_choices[]` field in its result, pauses, and lets the primary DA aggregate choices from all currently-running subagents into a single `AskUserQuestion` call (up to 4 questions per call). The Request/Response schema, Carrier A (subagent return-value) format, and Carrier B (DA→user AskUserQuestion) mapping are defined in `PAI/PROTOCOLS/qa-contract.md`. Callers MUST reference that single source of truth — do not re-specify the schema inline.
+
+**Anti-pattern — direct subagent invocation (WRONG):**
+
+```typescript
+// WRONG — subagent is told to ask the user directly.
+// (1) AskUserQuestion is not in the subagent's tools → silent failure.
+// (2) Even if it were, multiple parallel subagents asking the user simultaneously
+//     would violate the one-asker invariant and break the tab/hook contract.
+Task({
+  subagent_type: "Engineer",
+  prompt: "Implement the cache layer. If you're unsure whether to use Redis or Upstash, call AskUserQuestion."
+})
+```
+
+**Correct pattern — bubble the choice:**
+
+```typescript
+// RIGHT — subagent returns the choice for the DA to surface.
+Task({
+  subagent_type: "Engineer",
+  prompt: `Implement the cache layer.
+## Scope
+Timing: STANDARD.
+## User-choice handling
+If a decision point is enumerable (2-4 discrete options) and you have no evident default, include it in pending_user_choices[] per PAI/PROTOCOLS/qa-contract.md Carrier A and pause. Do NOT call AskUserQuestion yourself.`
+})
+// DA then aggregates pending_user_choices from all concurrent subagents
+// and issues a single AskUserQuestion batched call (max 4 questions).
+```
+
 ### Timing Scope in Agent Prompts
 
 Every agent prompt MUST include a `## Scope` section that matches the validated timing tier from the Algorithm's THINK phase. This prevents agents from over-producing on simple tasks or under-delivering on complex ones.
