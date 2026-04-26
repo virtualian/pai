@@ -63,8 +63,21 @@
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from 'fs';
 import { join } from 'path';
 import { homedir } from 'os';
-import { parse as parseYaml } from 'yaml';
+import type { parse as YamlParse } from 'yaml';
 import { configPath, codePath } from './lib/paths';
+
+// Lazy yaml load — static `import 'yaml'` crashes module load when the package
+// isn't resolvable from this hook's directory.
+let parseYaml: typeof YamlParse | null = null;
+
+async function ensureYamlLoaded(): Promise<void> {
+  if (parseYaml) return;
+  try {
+    parseYaml = (await import('yaml')).parse;
+  } catch {
+    parseYaml = null;
+  }
+}
 
 // ========================================
 // Security Event Logging
@@ -214,6 +227,16 @@ function loadPatterns(): PatternsConfig {
     return {
       version: '0.0',
       philosophy: { mode: 'permissive', principle: 'No patterns loaded - fail open' },
+      bash: { trusted: [], blocked: [], confirm: [], alert: [] },
+      paths: { zeroAccess: [], readOnly: [], confirmWrite: [], noDelete: [] },
+      projects: {}
+    };
+  }
+
+  if (!parseYaml) {
+    return {
+      version: '0.0',
+      philosophy: { mode: 'permissive', principle: 'YAML parser unavailable - fail open' },
       bash: { trusted: [], blocked: [], confirm: [], alert: [] },
       paths: { zeroAccess: [], readOnly: [], confirmWrite: [], noDelete: [] },
       projects: {}
@@ -551,6 +574,7 @@ function handleRead(input: HookInput): void {
 // ========================================
 
 async function main(): Promise<void> {
+  await ensureYamlLoaded();
   let input: HookInput;
 
   try {
