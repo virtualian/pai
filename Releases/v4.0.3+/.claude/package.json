@@ -1,0 +1,8 @@
+{
+  "name": "pai-runtime",
+  "private": true,
+  "description": "PAI runtime — manifest enabling hook scripts under ~/.pai/hooks/ to resolve native deps via Bun's parent-directory module resolution. Lands at ~/.pai/package.json; bun install creates ~/.pai/node_modules/ which the hooks then walk up to find.",
+  "dependencies": {
+    "yaml": "^2.0.0"
+  }
+}
