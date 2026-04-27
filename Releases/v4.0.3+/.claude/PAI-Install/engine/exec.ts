@@ -14,11 +14,35 @@
  * pass the timeout explicitly.
  */
 
-import { execSync } from "child_process";
+import { execSync, execFileSync } from "child_process";
 
 export function tryExec(cmd: string, timeout = 30000): string | null {
   try {
     return execSync(cmd, {
+      encoding: "utf-8",
+      timeout,
+      stdio: ["pipe", "pipe", "pipe"],
+    }).trim();
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Like `tryExec`, but invokes a single binary with structured arg vector and
+ * working directory — no shell, no string concatenation. Use this whenever
+ * the binary path or any arg might contain user-controlled input (env vars,
+ * filesystem paths, etc.) so quotes/dollars/backticks cannot inject commands.
+ */
+export function tryExecAt(
+  file: string,
+  args: string[],
+  cwd: string,
+  timeout = 30000,
+): string | null {
+  try {
+    return execFileSync(file, args, {
+      cwd,
       encoding: "utf-8",
       timeout,
       stdio: ["pipe", "pipe", "pipe"],
