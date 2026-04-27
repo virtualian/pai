@@ -34,47 +34,10 @@ import {
   copyFileSync,
   cpSync,
 } from "fs";
-import { homedir } from "os";
-import { join, basename } from "path";
+import { join } from "path";
 import type { EngineEventHandler } from "./types";
 import { tryExec, tryExecAt } from "./exec";
-
-const IGNORED_ENTRIES = new Set([".DS_Store"]);
-
-function isIgnored(name: string): boolean {
-  if (IGNORED_ENTRIES.has(name)) return true;
-  if (name.startsWith("._")) return true;
-  return false;
-}
-
-/**
- * `cpSync` filter: skip .DS_Store and macOS resource-fork `._*` files.
- * Applied at every filesystem copy to keep junk out of the canonical tree.
- */
-function cpFilter(src: string): boolean {
-  return !isIgnored(basename(src));
-}
-
-/**
- * Resolve the canonical PAI runtime directory (`~/.pai/`).
- * Uses PAI_DIR env var if set (test-mode override or custom install layout),
- * otherwise defaults to `~/.pai`. A `~/` or `$HOME/` prefix on the env var
- * value is expanded so user-supplied overrides work.
- *
- * This is DIFFERENT from the installer's `paiDir` variable in actions.ts,
- * which is misleadingly named and always resolves to `~/.claude/`. Pattern
- * inlined from skill-migration.ts (not exported there) to keep this module
- * self-contained.
- */
-function getPaiHomeDir(): string {
-  let envPaiDir = (process.env.PAI_DIR || "").trim();
-  if (envPaiDir === "~" || envPaiDir.startsWith("~/")) {
-    envPaiDir = join(homedir(), envPaiDir.slice(1));
-  } else if (envPaiDir.startsWith("$HOME")) {
-    envPaiDir = join(homedir(), envPaiDir.slice("$HOME".length));
-  }
-  return envPaiDir || join(homedir(), ".pai");
-}
+import { getPaiHome, makeCpFilter } from "./pai-paths";
 
 /**
  * Byte-compare two files. Returns true if both exist and have identical
@@ -302,7 +265,8 @@ async function materializePaiSecuritySystem(
       recursive: true,
       dereference: false,
       force: true,
-      filter: cpFilter,
+      // allowBackups: true — no-op for shipped tree (no backup files), explicit for intent.
+      filter: makeCpFilter({ allowBackups: true }),
     });
     await emit({
       event: "message",
@@ -344,7 +308,7 @@ export async function migratePaiRuntime(
   emit: EngineEventHandler,
 ): Promise<PaiRuntimeMigrationSummary> {
   const claudeRoot = paiDir;
-  const paiHome = getPaiHomeDir();
+  const paiHome = getPaiHome();
 
   const summary: PaiRuntimeMigrationSummary = {
     packageJsonAction: "source-absent",

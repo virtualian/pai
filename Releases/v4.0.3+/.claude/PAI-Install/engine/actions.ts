@@ -18,6 +18,7 @@ import { migratePerPackCommands } from "./command-migration";
 import { migrateMemoryDirectory } from "./memory-migration";
 import { migratePaiRuntime } from "./pai-runtime-migration";
 import { tryExec } from "./exec";
+import { getPaiHome } from "./pai-paths";
 
 /**
  * Remove duplicate bun PATH entries from shell config.
@@ -591,14 +592,9 @@ export async function runRepository(
   // run before any subsequent step that might write new MEMORY state at
   // the canonical location. `paiDir` here is semantically the Claude Code
   // config root — same naming convention as the skill/command migrators.
-  {
-    let canonicalPaiHome = (process.env.PAI_DIR || "").trim();
-    if (canonicalPaiHome === "~" || canonicalPaiHome.startsWith("~/")) {
-      canonicalPaiHome = join(homedir(), canonicalPaiHome.slice(1));
-    }
-    if (!canonicalPaiHome) canonicalPaiHome = join(homedir(), ".pai");
-    await migrateMemoryDirectory(paiDir, canonicalPaiHome, emit);
-  }
+  // Uses the shared getPaiHome() resolver (#162) so the $HOME-prefix branch
+  // and any future env-var fixes apply here too.
+  await migrateMemoryDirectory(paiDir, getPaiHome(), emit);
 
   // Canonicalize each PAI-owned skill pack as a symlink from ~/.claude/skills
   // to ~/.pai/skills (GitHub #110). Runs on both fresh and upgrade paths:
