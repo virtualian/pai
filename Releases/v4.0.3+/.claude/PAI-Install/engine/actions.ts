@@ -16,6 +16,7 @@ import { resolveRepoUrl, readOriginRemote } from "./repo-url";
 import { migratePerPackSymlinks } from "./skill-migration";
 import { migratePerPackCommands } from "./command-migration";
 import { migrateMemoryDirectory } from "./memory-migration";
+import { migratePaiRuntime } from "./pai-runtime-migration";
 import { tryExec } from "./exec";
 
 /**
@@ -611,6 +612,14 @@ export async function runRepository(
   // stage canonical sources into ~/.pai/commands/; this migrator wires up
   // the harness scan path.
   await migratePerPackCommands(paiDir, emit);
+
+  // Materialize PAI runtime artefacts (package.json, bun.lock, PAI/
+  // PAISECURITYSYSTEM/) from ~/.claude/ into ~/.pai/, then run bun install
+  // so SecurityValidator.hook.ts can resolve `yaml` and read patterns.
+  // Soft-fails per sub-routine — failures here surface via
+  // Tools/verify-security-validator.sh rather than aborting the install.
+  // Closes the SecurityValidator regression chain (#156→#157→#158→#159→#160).
+  await migratePaiRuntime(paiDir, emit);
 
   await emit({ event: "progress", step: "repository", percent: 100, detail: "Repository ready" });
   await emit({ event: "step_complete", step: "repository" });
