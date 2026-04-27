@@ -39,9 +39,9 @@ import {
   rmSync,
   cpSync,
 } from "fs";
-import { homedir } from "os";
 import { join, resolve, relative, basename } from "path";
 import type { EngineEventHandler } from "./types";
+import { getPaiCommandsDir, isJunkEntry } from "./pai-paths";
 
 export type CommandClassification =
   | "already-correct-symlink"
@@ -58,31 +58,10 @@ export interface CommandMigrationSummary {
   failed: number;
 }
 
-const IGNORED_ENTRIES = new Set([".DS_Store", ".gitkeep"]);
-const BACKUP_SUFFIX_RE = /\.backup-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z$/;
-
-function isIgnored(name: string): boolean {
-  if (IGNORED_ENTRIES.has(name)) return true;
-  if (name.startsWith("._")) return true;
-  if (BACKUP_SUFFIX_RE.test(name)) return true;
-  return false;
-}
-
-/**
- * Resolve the canonical PAI commands directory. Uses PAI_DIR env var if set
- * (test-mode override or custom install layout), otherwise defaults to
- * `~/.pai/commands`.
- */
-function getPaiCommandsDir(): string {
-  let envPaiDir = (process.env.PAI_DIR || "").trim();
-  if (envPaiDir === "~" || envPaiDir.startsWith("~/")) {
-    envPaiDir = join(homedir(), envPaiDir.slice(1));
-  } else if (envPaiDir.startsWith("$HOME")) {
-    envPaiDir = join(homedir(), envPaiDir.slice("$HOME".length));
-  }
-  const paiHome = envPaiDir || join(homedir(), ".pai");
-  return join(paiHome, "commands");
-}
+// Command-tree-specific extra junk: .gitkeep markers used to keep otherwise-
+// empty pack-source dirs tracked in git. Layered onto the shared base
+// (.DS_Store, ._*, backup-suffix) via isJunkEntry's extraEntries opt.
+const COMMAND_EXTRA_JUNK: ReadonlySet<string> = new Set([".gitkeep"]);
 
 /**
  * Enumerate top-level command filenames under `dir` that are real .md files
@@ -93,7 +72,7 @@ function collectOwnedFiles(dir: string): Set<string> {
   const out = new Set<string>();
   if (!existsSync(dir)) return out;
   for (const e of readdirSync(dir, { withFileTypes: true })) {
-    if (isIgnored(e.name)) continue;
+    if (isJunkEntry(e.name, { extraEntries: COMMAND_EXTRA_JUNK })) continue;
     if (!e.name.endsWith(".md")) continue;
     if (e.isFile() && !e.isSymbolicLink()) {
       out.add(e.name);
@@ -257,10 +236,10 @@ export async function migratePerPackCommands(
 
   const allNames = new Set<string>();
   for (const e of readdirSync(claudeCommandsDir, { withFileTypes: true })) {
-    if (!isIgnored(e.name) && e.name.endsWith(".md")) allNames.add(e.name);
+    if (!isJunkEntry(e.name, { extraEntries: COMMAND_EXTRA_JUNK }) && e.name.endsWith(".md")) allNames.add(e.name);
   }
   for (const e of readdirSync(paiCommandsDir, { withFileTypes: true })) {
-    if (!isIgnored(e.name) && e.name.endsWith(".md")) allNames.add(e.name);
+    if (!isJunkEntry(e.name, { extraEntries: COMMAND_EXTRA_JUNK }) && e.name.endsWith(".md")) allNames.add(e.name);
   }
 
   if (allNames.size === 0) {

@@ -36,9 +36,9 @@ import {
   rmSync,
   cpSync,
 } from "fs";
-import { homedir } from "os";
 import { join, resolve, relative, basename } from "path";
 import type { EngineEventHandler } from "./types";
+import { getPaiSkillsDir, isJunkEntry, makeCpFilter } from "./pai-paths";
 
 export type PackClassification =
   | "already-correct-symlink"
@@ -61,40 +61,6 @@ export interface MigrationSummary {
 // handles their USER subdirs separately.
 const SKIP_SYSTEM_DIRS = new Set(["PAI", "CORE"]);
 
-const IGNORED_ENTRIES = new Set([".DS_Store"]);
-
-// Matches the backup suffix this module creates during drift resolution:
-// `<pack>.backup-YYYY-MM-DDTHH-MM-SS-sssZ`. Backups must be invisible to
-// subsequent migration runs so they don't get re-symlinked.
-const BACKUP_SUFFIX_RE = /\.backup-\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}-\d{3}Z$/;
-
-function isIgnored(name: string): boolean {
-  if (IGNORED_ENTRIES.has(name)) return true;
-  if (name.startsWith("._")) return true;
-  if (BACKUP_SUFFIX_RE.test(name)) return true;
-  return false;
-}
-
-/**
- * Resolve the canonical PAI skills directory.
- * Uses PAI_DIR env var if set (test-mode override or custom install layout),
- * otherwise defaults to `~/.pai/skills`. A `~/` or `$HOME/` prefix on the
- * env var value is expanded so user-supplied overrides work.
- *
- * This is DIFFERENT from the installer's `paiDir` variable in actions.ts,
- * which is misleadingly named and always resolves to `~/.claude/`.
- */
-function getPaiSkillsDir(): string {
-  let envPaiDir = (process.env.PAI_DIR || "").trim();
-  if (envPaiDir === "~" || envPaiDir.startsWith("~/")) {
-    envPaiDir = join(homedir(), envPaiDir.slice(1));
-  } else if (envPaiDir.startsWith("$HOME")) {
-    envPaiDir = join(homedir(), envPaiDir.slice("$HOME".length));
-  }
-  const paiHome = envPaiDir || join(homedir(), ".pai");
-  return join(paiHome, "skills");
-}
-
 /**
  * Enumerate top-level pack names under `dir` that are real directories
  * (not symlinks, not ignored, not system dirs). Used to compute the PAI-owned
@@ -104,21 +70,13 @@ function getPaiSkillsDir(): string {
 function collectOwnedDirs(dir: string): Set<string> {
   const out = new Set<string>();
   for (const e of readdirSync(dir, { withFileTypes: true })) {
-    if (isIgnored(e.name)) continue;
+    if (isJunkEntry(e.name)) continue;
     if (SKIP_SYSTEM_DIRS.has(e.name)) continue;
     if (e.isDirectory() && !e.isSymbolicLink()) {
       out.add(e.name);
     }
   }
   return out;
-}
-
-/**
- * `cpSync` filter: skip .DS_Store and macOS resource-fork `._*` files.
- * Applied at every filesystem copy to keep junk out of the canonical tree.
- */
-function cpFilter(src: string): boolean {
-  return !isIgnored(basename(src));
 }
 
 /**
@@ -215,7 +173,7 @@ async function migratePack(
         // Cross-device or non-empty destination: filtered recursive copy + remove source.
         cpSync(claudeSide, paiSide, {
           recursive: true,
-          filter: cpFilter,
+          filter: makeCpFilter(),
           dereference: false,
         });
         rmSync(claudeSide, { recursive: true, force: true });
@@ -303,10 +261,10 @@ export async function migratePerPackSymlinks(
   // Iterate the union of both sides.
   const allNames = new Set<string>();
   for (const e of readdirSync(claudeSkillsDir, { withFileTypes: true })) {
-    if (!isIgnored(e.name)) allNames.add(e.name);
+    if (!isJunkEntry(e.name)) allNames.add(e.name);
   }
   for (const e of readdirSync(paiSkillsDir, { withFileTypes: true })) {
-    if (!isIgnored(e.name)) allNames.add(e.name);
+    if (!isJunkEntry(e.name)) allNames.add(e.name);
   }
 
   await emit({
@@ -369,5 +327,12 @@ export async function migratePerPackSymlinks(
   return summary;
 }
 
-// Exposed for tests only.
-export const __testInternals = { getPaiSkillsDir, cpFilter, isIgnored, migratePack };
+// Exposed for tests only. Re-exports of the shared `pai-paths` helpers
+// preserve back-compat with any consumer that pokes at __testInternals
+// (current in-tree tests do not, but external scripts may).
+export const __testInternals = {
+  getPaiSkillsDir,
+  cpFilter: makeCpFilter(),
+  isIgnored: isJunkEntry,
+  migratePack,
+};
