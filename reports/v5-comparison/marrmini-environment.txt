@@ -59,3 +59,26 @@ note: com.pai.voice-server.plist file LEFT IN PLACE at ~/Library/LaunchAgents/ o
 2026-05-08T00:45:58Z: ~/.claude removed on marrmini (executed manually by Ian; marrair-side SecurityValidator blocked the SSH-wrapped rm, so it ran from marrmini's own shell)
 verified absent: ~/.claude → 'No such file or directory'; ~/.pai → 'No such file or directory'
 backup intact post-rm: marrmini:~/backups/pai/pre-v5-install-20260508-002618/ = 573M/12819 files; marrair mirror = 590M/12819 files
+
+==== known side-effect: Claude Code install-method marker wiped ====
+Symptom (observed 2026-05-08, post-install): `claude upgrade` emits warning:
+  "Running native installation but config install method is 'unknown'.
+   Fix: Run claude install to update configuration"
+
+Cause: Step 5's wholesale `rm -rf ~/.claude/` removed Claude Code's own install-method
+config marker (which lives inside ~/.claude/, alongside PAI's content). The PAI v5.0.0
+installer rebuilt ~/.claude/ with PAI files but did NOT restore Claude Code's own
+metadata — that is not the PAI installer's responsibility, it is Claude Code's.
+
+The same wipe explains Step 7's terminal `pai --print` post-install error: the
+installer's final hand-off tried to launch Claude Code non-interactively, but with
+no install marker present the launch path was incomplete.
+
+Resolution applied: 2026-05-08, `claude install` re-run on marrmini (interactive
+shell). Output: "Claude Code successfully installed! Version: 2.1.133. Location:
+~/.local/bin/claude". Future `claude upgrade` invocations should no longer warn.
+
+Generalisation for the comparison report (Step 10): any "wholesale remove ~/.claude
++ reinstall PAI" migration creates this metadata gap. Worth a one-line warning in
+upstream's migration guide, or a `claude install` step in the v5.0.0 installer
+itself.
