@@ -1,0 +1,137 @@
+==== marrmini environment capture ====
+captured_at: 2026-05-07T23:31:32Z
+captured_by_session: 20260508-001328_issue-166-steps-1-12
+shared_ts: 20260508-002618
+
+==== uname / shell / home / disk ====
+Darwin marrmini 25.5.0 Darwin Kernel Version 25.5.0: Fri Mar 20 18:55:22 PDT 2026; root:xnu-12377.120.72.0.4~13/RELEASE_ARM64_T8103 arm64
+SHELL=/bin/zsh
+HOME=/Users/ianmarr
+Filesystem      Size    Used   Avail Capacity iused ifree %iused  Mounted on
+/dev/disk3s1   228Gi   112Gi    70Gi    62%    903k  737M    0%   /System/Volumes/Data
+
+==== required tools ====
+/opt/homebrew/bin/bun
+/sbin/sha256sum
+/usr/bin/curl
+/usr/bin/git
+/usr/bin/rsync
+/usr/local/bin/node
+
+==== bun / node / git versions ====
+1.3.10
+v24.11.0
+git version 2.50.1 (Apple Git-155)
+
+==== pre-install state inventory ====
+~/.pai:
+ls: /Users/ianmarr/.pai: No such file or directory
+~/.claude:
+agents
+backups
+cache
+chrome
+CLAUDE-IGM.md
+CLAUDE.md
+CLAUDE.md.template
+commands
+downloads
+history.jsonl
+~/projects/pai:
+ls: /Users/ianmarr/projects/pai: No such file or directory
+~/backups/pai:
+ls: /Users/ianmarr/backups/pai: No such file or directory
+
+==== process check (must be empty before destructive op) ====
+1398 /Users/ianmarr/.bun/bin/bun run /Users/ianmarr/.claude/VoiceServer/server.ts
+2895 /Applications/Wispr Flow.app/Contents/Frameworks/Electron Framework.framework/Helpers/chrome_crashpad_handler --no-rate-limit --monitor-self-annotation=ptype=crashpad-handler --database=/Users/ianmarr/Library/Application Support/Wispr Flow/Crashpad --url=https://f.a.k/e --annotation=_productName=Wispr Flow --annotation=_version=1.4.822 --annotation=plat=OS X --annotation=prod=Electron --annotation=ver=39.5.2 --handshake-fd=18
+69948 claude --dangerously-skip-permissions
+93741 /usr/bin/login -f -pq -h 100.116.101.53 ianmarr /bin/zsh -c pgrep -afl -i "claude|electron" 2>/dev/null || echo "(no claude/electron processes)"
+93742 -zsh -c pgrep -afl -i "claude|electron" 2>/dev/null || echo "(no claude/electron processes)"
+
+==== quiescence actions (taken before destructive Step 5e) ====
+2026-05-08T00:39:07Z: launchctl bootout gui/$UID ~/Library/LaunchAgents/com.pai.voice-server.plist (exit 0)
+2026-05-08T00:39:07Z: kill 69948 (claude --dangerously-skip-permissions session)
+note: com.pai.voice-server.plist file LEFT IN PLACE at ~/Library/LaunchAgents/ on marrmini
+      (recoverable from pre-install backup if v5.0.0 install needs Voice; not removed pre-emptively)
+
+==== rm record ====
+2026-05-08T00:45:58Z: ~/.claude removed on marrmini (executed manually by Ian; marrair-side SecurityValidator blocked the SSH-wrapped rm, so it ran from marrmini's own shell)
+verified absent: ~/.claude → 'No such file or directory'; ~/.pai → 'No such file or directory'
+backup intact post-rm: marrmini:~/backups/pai/pre-v5-install-20260508-002618/ = 573M/12819 files; marrair mirror = 590M/12819 files
+
+==== known side-effect: Claude Code install-method marker wiped ====
+Symptom (observed 2026-05-08, post-install): `claude upgrade` emits warning:
+  "Running native installation but config install method is 'unknown'.
+   Fix: Run claude install to update configuration"
+
+Cause: Step 5's wholesale `rm -rf ~/.claude/` removed Claude Code's own install-method
+config marker (which lives inside ~/.claude/, alongside PAI's content). The PAI v5.0.0
+installer rebuilt ~/.claude/ with PAI files but did NOT restore Claude Code's own
+metadata — that is not the PAI installer's responsibility, it is Claude Code's.
+
+The same wipe explains Step 7's terminal `pai --print` post-install error: the
+installer's final hand-off tried to launch Claude Code non-interactively, but with
+no install marker present the launch path was incomplete.
+
+Resolution applied: 2026-05-08, `claude install` re-run on marrmini (interactive
+shell). Output: "Claude Code successfully installed! Version: 2.1.133. Location:
+~/.local/bin/claude". Future `claude upgrade` invocations should no longer warn.
+
+Generalisation for the comparison report (Step 10): any "wholesale remove ~/.claude
++ reinstall PAI" migration creates this metadata gap. Worth a one-line warning in
+upstream's migration guide, or a `claude install` step in the v5.0.0 installer
+itself.
+
+==== Skill listing budget overflow (v5.0.0 + 45 skills) ====
+Source: `/doctor` output captured 2026-05-08, marrmini, claude 2.1.133.
+
+Symptom: "45 skill descriptions dropped" warning visible in welcome panel.
+The model receives skill names but no descriptions for these 45 skills,
+degrading auto-routing. Skills remain invocable by name.
+
+Detail per `/doctor`:
+- Per-entry cap exceeded by 4 skills (descriptions individually too long):
+  ISA, BeCreative, Interview, +1 more.
+- Aggregate budget overflow: 45 descriptions would need 7.7% of context;
+  current `skillListingBudgetFraction` setting = 1%.
+- Opt-in cost to keep all descriptions: ~16k tokens per session,
+  faster rate-limit consumption.
+
+Causal context for issue #166: this is a function of v5.0.0's 45-skill
+default. The fork's Algorithm v3.7.0 ships 22 skills (culled set) and
+does not exhibit this warning on marrair — fewer skills fit the same
+budget without truncation. The skill-set growth between v4.x and v5.0.0
+is the structural cause, not a regression introduced by this migration.
+
+Remediations available (no choice locked):
+1. Live with truncation. Zero token cost; user invokes skills by name.
+2. `/skills` to disable unused skills. Per-skill choice; reduces aggregate.
+3. Raise `skillListingBudgetFraction` in settings.json. Trade context
+   budget for descriptions; ~16k tokens/session ongoing.
+4. Trim individual SKILL.md description fields (especially for ISA,
+   BeCreative, Interview — 4 skills exceeding per-entry cap regardless
+   of aggregate budget).
+
+Worth surfacing in Step 10's comparison report as a v5.0.0 baseline
+finding, and in Step 11's design doc as a port-strategy input. If
+porting the fork's curated skill subset is HIGH priority, this issue
+may auto-resolve as a side-effect.
+
+==== macOS Keychain not writable on marrmini (non-PAI; bundled here) ====
+Source: same `/doctor` output, 2026-05-08.
+
+Symptom: "macOS Keychain is not writable
+(security: SecKeychainItemCreateFromContent (<default>):
+Write permissions error.; add-generic-password: returned -61).
+Console login will fail to save your API key."
+
+Fix per `/doctor`: `security unlock-keychain ~/Library/Keychains/login.keychain-db`.
+If that does not resolve, login keychain password may be out of sync
+with the macOS account password — open Keychain Access, select the
+'login' keychain, Edit → Change Password.
+
+Not a migration finding — pre-existing macOS state on marrmini, surfaced
+when Claude Code tried to persist auth. Recorded here for completeness
+since `/doctor` exposed it during the same session as the skill-budget
+analysis. Independent of issue #166.
