@@ -43,6 +43,8 @@ ported forward (marrair → marrmini) and what gets dropped.
 | Fork clone on marrmini | **Required for PR development; cloned to `marrmini:~/projects/pai/`** |
 | marrair clone | **Archived (`marrair-final` tag + `ARCHIVED-marrair.md`); not deleted** |
 | marrair PAI lifecycle | **Keep running through port; decommission after design-doc-driven ports validate on marrmini** |
+| Phased move from marrair to marrmini | **A→B→C→D phases (see "Phased move" section); primary cutover after HIGH-priority ports validate on marrmini** |
+| marrmini overlay topology | **Overlay pattern: `~/projects/pai/Releases/v5.0.0-overlay/` holds our fixes (only the files we change). `~/.claude/` stays vanilla — re-applied via `deploy-overlay.sh` after each upstream upgrade. `~/projects/pai/` remotes: `origin` = new personal fork (e.g. `virtualian/PAI-v5`), `upstream` = `danielmiessler/Personal_AI_Infrastructure`. Upstream installer ships a tarball, not a git clone — overlay sidesteps that constraint without putting runtime state (history.jsonl, sessions/, caches) into git.** |
 
 **Out of scope (deferred to follow-up issues governed by the design doc):**
 - Actual porting of fork architecture (SecurityValidator, two-root,
@@ -52,6 +54,46 @@ ported forward (marrair → marrmini) and what gets dropped.
 - Cherry-picks of upstream `12265ed`, `698b15f`, `6e0bcc3` — design doc decides
 - Submitting fork architecture as upstream PRs — explicitly declined
 - Decommissioning marrair PAI install — happens AFTER ports validate on marrmini
+
+## Phased move from marrair to marrmini
+
+The plan locks "decommission after design-doc-driven ports validate" but
+does not stage the move. The phased structure:
+
+| Phase | When | Definition of "primary" |
+|---|---|---|
+| **A** | Through Step 9 (this PR) | marrair primary. marrmini installed but used only for runtime probes and overlay-tree setup. |
+| **B** | After Step 11 design doc names HIGH-priority ports | marrair primary. HIGH-priority items get ported into `~/projects/pai/Releases/v5.0.0-overlay/` on marrmini and deployed via `deploy-overlay.sh`. Trial sessions on marrmini surface friction. |
+| **C** | After HIGH-priority ports validate on marrmini | Switch primary to marrmini. marrair stays running as fallback for ~2-4 weeks. |
+| **D** | After validation period | Decommission marrair PAI install. Archive `virtualian/pai` on GitHub. |
+
+**Asymmetric blockers** (resolve before advancing each phase):
+- MEMORY transfer is uni-directional — once marrmini starts writing memory, syncing back gets messy. Pick a clean cutover moment at C.
+- Overlay tree at `~/projects/pai/Releases/v5.0.0-overlay/` and `deploy-overlay.sh` must exist BEFORE Phase B starts daily fixes there, or fixes are unrecoverable.
+- Issue #166's Steps 10/11/12 commits land on `virtualian/pai`'s `166-sync-v5-baseline-shift` branch — finishing #166 from marrmini requires cloning virtualian/pai there, which is friction. Prefer to finish #166 on marrair (Phase A) before advancing.
+
+**Intermediate posture (any phase):** short throwaway sessions on marrmini for low-stakes tasks (browse docs, draft notes, explore v5.0.0 features) build muscle memory without committing.
+
+## Overlay pattern for v5.0.0+ fixes
+
+Upstream ships v5.0.0 as a tarball (`curl -sSL https://ourpai.ai/install.sh | bash` extracts a release archive into `~/.claude/`), not a git clone. Editing tarball-installed files directly under `~/.claude/` risks losing fixes on next upgrade and conflates source with runtime state (`history.jsonl`, `sessions/`, caches). Pattern:
+
+- `~/projects/pai/Releases/v5.0.0-overlay/` — git-tracked tree that **mirrors the structure of `~/.claude/`** but contains ONLY files we changed (SKILL.md trims, settings overlays, ported hooks, etc.). Lives in the upstream-direct clone, but as an in-repo overlay subdirectory — does NOT mix with upstream's own tree.
+- `~/projects/pai/Tools/deploy-overlay.sh` — rsyncs the overlay tree onto `~/.claude/` after a fresh upstream install. Idempotent. Single command per fix-deployment.
+- `~/projects/pai/Tools/check-overlay.sh` — diffs the overlay against the current upstream version of the same paths, warning when upstream has advanced under our overlay (i.e., upstream changed a file we still have a fix for).
+- `~/.claude/` itself stays NEVER-git-tracked. Conversation history, session JSONL, caches stay out of git **by construction** — they can't accidentally enter the repo because they're never inside the overlay tree.
+
+**Upgrade workflow when upstream releases v5.x.y:**
+1. Re-run upstream installer → fresh v5.x.y tarball lands at `~/.claude/`.
+2. `bash Tools/deploy-overlay.sh` → overlay applied; `~/.claude/` is now v5.x.y + our fixes.
+3. `bash Tools/check-overlay.sh` → for each conflict, diff and decide:
+   - Drop the overlay file (upstream addressed our fix; no longer needed)
+   - Keep (still needed; upstream didn't touch the area)
+   - Merge (upstream changed the file but our fix is still required on top)
+
+**Settings.json caveat:** `settings.json` has merge semantics, not overwrite. `deploy-overlay.sh` should JSON-merge our settings overlay with the vanilla `settings.json` rather than wholesale-replacing — otherwise new keys upstream adds in v5.x.y would be lost on each deploy.
+
+**Upstream PR workflow:** each overlay file is a candidate fix for upstream. Branch off `upstream/main` in the dev clone, copy the overlay's version into the appropriate path, commit, push to personal fork, open PR upstream. If accepted, drop the file from the overlay (no longer needed).
 
 ## Recommendation (Headline)
 
@@ -323,6 +365,25 @@ a git-leak gate.
     AND personalisation transferred AND `pai` REPL functionally equivalent.
 - **Verify:** design doc covers every HIGH-priority item; path strategy
   decided; first 3 issues explicitly named; decommission criteria stated.
+
+### Step 11 focused-session structure
+
+The plan describes Step 11 as design-doc generation driven by Step 10's
+multi-day prose report. In practice, a focused session produces a thinner
+just-enough version sufficient to drive port priorities — without
+blocking on Step 10's full-prose deliverable.
+
+| Stage | Time | Output |
+|---|---|---|
+| Targeted diff | 30–60 min | `diff -rqN` between the two backup trees, filtered to high-leverage areas only (Algorithm, hooks, AISTEERINGRULES, SecurityValidator, two-root). NOT the full 8-prose-section report. |
+| Categorise + rank | 30–60 min | Each architectural-port item → HIGH/MED/LOW + one-sentence rationale |
+| Build initial overlay | 30–60 min | Create `~/projects/pai/Releases/v5.0.0-overlay/` with HIGH-priority ports populated; write `Tools/deploy-overlay.sh` and `Tools/check-overlay.sh` |
+| Write design doc | 30–60 min | `Plans/v5-0-0-plus-port.md` — port priority list, drop list, adopt list, personalisation transfer list, **overlay path strategy** confirmed (`Releases/v5.0.0-overlay/`), sequencing of first 3 follow-up issues, marrair decommission criteria |
+| File first 1–3 issues | 15–30 min | GitHub issues against new personal fork for first 3 ports |
+
+Total: half-day to a day. Output gates Phase B (start daily porting work onto marrmini's overlay).
+
+The full Step 10 prose report can come later as archaeological reference; it does not block the port work.
 
 ### Step 12 — Open PR `166-sync-v5-baseline-shift` → `main`
 
