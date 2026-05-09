@@ -83,6 +83,24 @@ Upstream ships v5.0.0 as a tarball (`curl -sSL https://ourpai.ai/install.sh | ba
 - `~/projects/pai/Tools/check-overlay.sh` — diffs the overlay against the current upstream version of the same paths, warning when upstream has advanced under our overlay (i.e., upstream changed a file we still have a fix for).
 - `~/.claude/` itself stays NEVER-git-tracked. Conversation history, session JSONL, caches stay out of git **by construction** — they can't accidentally enter the repo because they're never inside the overlay tree.
 
+### Three deploy classes
+
+Not every file we'd want to change has the same deploy semantics. Three classes (plus runtime state which is excluded entirely):
+
+| Class | Examples | Strategy | Where |
+|---|---|---|---|
+| **A. Pure overlay** | SKILL.md trims, ported hooks (`SecurityValidator.hook.ts`), modified `Algorithm/*.md`, tools we wrote | Replace (rsync) | In `Releases/v5.0.0-overlay/` |
+| **B. Merge-semantics** | `settings.json` (CC adds new keys; user adds permissions), `CLAUDE.md` (user customisation) | Per-file merge logic in `deploy-overlay.sh` (JSON merge, section append) | In overlay, but applied differently |
+| **C. Self-updating** | `AISTEERINGRULES.md` (auto-appended by `/learn`), `MEMORY/**/*` (auto-written by AI), `PAI/USER/PRINCIPAL_IDENTITY.md`, `PAI/USER/DA_IDENTITY.md` (auto-updated by `/interview`) | **NEVER in overlay.** Treat as "personalisation transfer" — one-time copy at Phase C cutover, then leave alone | NOT in overlay |
+| **D. Runtime state** | `history.jsonl`, `sessions/`, `cache/`, `.credentials.json` | Never tracked | Never in overlay |
+
+**Why this matters:** PAI self-updates some Class-C files (notably `AISTEERINGRULES.md` via the `/learn` skill and `MEMORY/**/*` via the auto-memory system). If those lived in the overlay, every `deploy-overlay.sh` run would stomp accumulated state. The overlay tree contains ONLY Class A and Class B files; Class C is handled outside the regular deploy via the personalisation-transfer list (named in Step 11), and Class D never enters git.
+
+**`check-overlay.sh` diffs overlay against LIVE `~/.claude/`** (not just against upstream's repo), because:
+- Live state is what's actually running
+- Auto-updates touch live state without touching upstream's repo
+- A live-vs-overlay drift signals that either upstream changed under us OR our overlay needs to incorporate something new
+
 **Upgrade workflow when upstream releases v5.x.y:**
 1. Re-run upstream installer → fresh v5.x.y tarball lands at `~/.claude/`.
 2. `bash Tools/deploy-overlay.sh` → overlay applied; `~/.claude/` is now v5.x.y + our fixes.
@@ -91,7 +109,7 @@ Upstream ships v5.0.0 as a tarball (`curl -sSL https://ourpai.ai/install.sh | ba
    - Keep (still needed; upstream didn't touch the area)
    - Merge (upstream changed the file but our fix is still required on top)
 
-**Settings.json caveat:** `settings.json` has merge semantics, not overwrite. `deploy-overlay.sh` should JSON-merge our settings overlay with the vanilla `settings.json` rather than wholesale-replacing — otherwise new keys upstream adds in v5.x.y would be lost on each deploy.
+**Settings.json is the canonical Class-B example:** has merge semantics, not overwrite. `deploy-overlay.sh` JSON-merges our settings overlay with the vanilla `settings.json` rather than wholesale-replacing — otherwise new keys CC or PAI adds in v5.x.y would be lost on each deploy. `CLAUDE.md` is the other major Class-B file — section-merge if customised, otherwise overlay-replace is acceptable.
 
 **Upstream PR workflow:** each overlay file is a candidate fix for upstream. Branch off `upstream/main` in the dev clone, copy the overlay's version into the appropriate path, commit, push to personal fork, open PR upstream. If accepted, drop the file from the overlay (no longer needed).
 
