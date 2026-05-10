@@ -418,6 +418,75 @@ Per parent plan's Step 11 sketch:
 - Did NOT touch marrair's PAI runtime (only read the snapshot)
 - Did NOT do personalisation transfer (Phase C)
 
+## Progress / Status (as of 2026-05-10)
+
+Tracking what has actually landed versus what the doc *plans for*. Updated
+on each `166-…` branch that revisits status; the design doc itself remains
+the source of truth for *what should happen*.
+
+### Issue #166 playbook (this repo)
+
+All 12 playbook steps from the issue body are functionally complete.
+Evidence:
+
+| Step | Status | Evidence |
+|---|---|---|
+| 1. Tag `pre-v5-baseline-shift` on marrair | ✅ | `git tag` shows `pre-v5-baseline-shift` |
+| 2. Branch `sync/v5-baseline-shift` on marrair | ✅ | merged via PR #167 |
+| 3. Snapshot marrair runtime | ✅ | `~/backups/pai/runtime-marrair-20260508-002618/` |
+| 4. Secret-scan hygiene log | ✅ | `reports/v5-comparison/scan-log.txt` |
+| 5. Prepare marrmini (decommission existing PAI) | ✅ | `~/backups/pai/marrmini-pre-v5-20260508-002618/` |
+| 6. Clone fork, archive marrair clone | ✅ | `marrair-final` tag |
+| 7. Clean v5.0.0 install on marrmini | ✅ | `~/backups/pai/marrmini-fresh-v5.0.0-20260508-021422/` |
+| 8. Snapshot post-install marrmini | ✅ | snapshot above |
+| 9. Freeze `Releases/v4.0.3+/` | ✅ | `v4.0.3+-final` tag |
+| 10. Comparison report | ✅ | targeted diff used in lieu of multi-day prose (per "What This Session Did NOT Do") |
+| 11. Design doc | ✅ | this file; landed via PR #167, refined via PR #170 |
+| 12. Open PR `sync/v5-baseline-shift` → `main` | ✅ | PR #167 merged 2026-05-09, PR #170 merged 2026-05-10 |
+
+### Follow-up issues on `virtualian/pai-v5`
+
+| ID | Title | State |
+|---|---|---|
+| `virtualian/pai-v5#1` | Port AskUserQuestion ENUMERATE→OFFER phase-exit gate to Algorithm v6.3.0+local (HIGH#1) | OPEN — overlay file populated; wiring + verification pending |
+| `virtualian/pai-v5#2` | Port AISTEERINGRULES.md base + `loadAtStartup` wiring (HIGH#2) | OPEN — overlay file + settings.json.overlay wiring populated; runtime verification pending |
+| `virtualian/pai-v5#3` | Adopt two-root architecture | CLOSED won't-do — per Decisions Locked |
+
+### Related issues filed in `virtualian/pai`
+
+- `#168` — Curate `SKILL.md` descriptions to fit default skill-listing
+  budget (referenced from MED item #11)
+- `#169` — Investigate v5 Learning Loop integration — port-side curation
+  layer + community research (referenced from MED item #10)
+
+### Overlay scaffold state on `virtualian/pai-v5:bootstrap/v5-overlay-and-tooling`
+
+Audited 2026-05-10. Findings detailed in
+[`reports/v5-comparison/v5-overlay-audit.md`](../reports/v5-comparison/v5-overlay-audit.md).
+
+- **Matches design:** README, AISTEERINGRULES.md (95-line runtime), askuq-gate.md, repo-url.ts, WorkArchival.ts, preserve-claudemd{,.test}.ts, settings.json.overlay (partial), deploy-overlay.sh, check-overlay.sh. Seven two-root migrators correctly absent.
+- **Drifts from design (PR #170 not yet applied to overlay):**
+  `hooks/SecurityValidator.hook.ts` (19.4 KB) still present;
+  `README.md` overlay-contents table still documents it Class A;
+  `settings.json.overlay` still wires it under `hooks.PreToolUse`.
+  Per PR #170 demotion these three sites need cleanup. Recommendation:
+  file a cleanup issue on `virtualian/pai-v5` against the scaffold
+  branch, gated on a Phase-B trial-session probe to confirm no
+  concrete destructive-pattern gap surfaces under v5's
+  SecurityPipeline + PatternInspector chain.
+- **Not yet captured (by design, deferred):** MED-priority
+  `settings.json` keys (item #13 — `autoUpdatesChannel`,
+  `skillListingBudgetFraction`, etc.), Scope gate overlay file (HIGH#3
+  in revised list), MED items 6–12.
+
+### Phase posture
+
+Currently mid-**Phase B** (per "Phased Move" table): design doc landed,
+overlay scaffold populated for HIGH#1/#2, first daily-work port session
+not yet started. Marrair remains primary. marrmini decommission criteria
+(this doc, lines 358–377) are 0 of 5 satisfied — HIGH#1 and HIGH#2 still
+need overlay-deploy + runtime validation on marrmini before Phase C cutover.
+
 ## References
 
 - Parent plan: [`Plans/v5-0-0-is-a-major-keen-wall.md`](v5-0-0-is-a-major-keen-wall.md)
