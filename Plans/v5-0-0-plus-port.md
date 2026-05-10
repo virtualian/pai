@@ -103,8 +103,6 @@ Releases/v5.0.0-overlay/
 │   └── TOOLS/
 │       ├── WorkArchival.ts                      # Class A — v4-only
 │       └── preserve-claudemd.ts (+test)         # Class A — v4-only
-├── hooks/
-│   └── SecurityValidator.hook.ts                # Class A — replace (v4 ≡ runtime)
 └── settings.json.overlay                        # Class B — JSON-merge with live
 ```
 
@@ -181,13 +179,13 @@ Together with the minimise-changes principle: the workflow defaults to
 keeps the overlay tree from accreting dead candidates.
 
 **Operational consequence:** future migration sessions (e.g. for HIGH#3
-SecurityValidator, HIGH#4 Scope gate) MUST present each candidate as an
+Scope gate) MUST present each candidate as an
 AskUserQuestion at categorisation, before any overlay file is created
 or any issue is filed. The current session's pattern (categorise → file
 → scaffold → ask) was retro-fixed by closing issue #3 and trimming the
 overlay; future sessions avoid the rework by asking earlier.
 
-### HIGH (4 — was 5; two-root dropped per Decisions Locked)
+### HIGH (3 — was 5; SecurityValidator demoted post-investigation, two-root dropped per Decisions Locked)
 
 Each item below MUST pass the migration principle's two bars before its
 issue acceptance criteria are met. The verify-first step is the new
@@ -206,13 +204,7 @@ first acceptance criterion on each issue.
    has none at this path. *Verify-first: grep v5's CLAUDE.md and
    PAI/USER files for equivalent text; port only the rules genuinely
    absent from v5's behaviour.*
-3. **SecurityValidator hook (642 LOC)** — fork's PreToolUse hard-block
-   for catastrophic destructive ops + confirm-gate for sensitive ones.
-   v5 ships SecurityPipeline + ContentScanner + PromptGuard +
-   ContainmentGuard. *Verify-first: in a v5 session, attempt
-   `rm -rf ~/.tmp-test-dir` and other destructive patterns; observe
-   whether v5's pipeline blocks. Port only the gaps.*
-4. **Scope gate (Atomic/Simple/Complex hard-block)** — fork's v3.7.0
+3. **Scope gate (Atomic/Simple/Complex hard-block)** — fork's v3.7.0
    `OBSERVE` SCOPE GATE forbids expanding atomic requests
    ("'while I'm there' is forbidden"). v6.3.0 has its own Tier
    Completeness Gate. *Verify-first: ask v5 a deliberately atomic task
@@ -240,17 +232,25 @@ first acceptance criterion on each issue.
 9. **Dependency analysis micro-phase (Algorithm)** — v3.7.0 PLAN-exit
    gate that forces parallel-track planning
 10. **Learning standalone pack (`~/.pai/skills/Learning/`)** — closes
-    the `/learn` loop by mining ratings + reflections + failures and
-    appending behaviour rules to AISTEERINGRULES; v5 has nothing
-    equivalent; substantial value but not daily-blocking
-11. **Curated skill subset (22 vs 45)** — addresses skill-budget overflow
-    surfaced in `marrmini-environment.txt`; mainly SKILL.md description
-    trims for ISA, BeCreative, Interview, +1 more
-12. **PAISECURITYSYSTEM `patterns.example.yaml`** — pattern data
-    consumed by SecurityValidator; ports together with #4
-13. **SessionAutoName hook (525 LOC)** — UX nicety; auto-names sessions
+    the `/learn` curation loop with PENDING/ACCEPTED/DEFERRED/REJECTED/
+    APPLIED proposal lifecycle and force-loaded AISTEERINGRULES write
+    target. v5 has substantial *automated capture* (5 hooks, weekly
+    `LearningPatternSynthesis.ts` CLI, WisdomFrames with CRYSTAL
+    confidence) but **no human curation loop** — and v5's system prompt
+    counter-recommends harness auto-memory for behavioural rules,
+    creating a doctrinal conflict to resolve at port time. Integration
+    design (port-side + community survey of v5 forks) tracked in #169.
+    See `reports/v5-learning-loop-vs-pack.md`.
+11. **Skill-listing budget bump (overlay-only)** — addresses skill-budget
+    overflow surfaced in `marrmini-environment.txt` by raising
+    `skillListingBudgetFraction` / `skillListingMaxDescChars` in the
+    Class-B `settings.json` merge (see item #13). v5 source is not
+    modified. Accepted trade-off: ~16k tokens/session ongoing. Per-skill
+    `SKILL.md` description curation (ISA, BeCreative, Interview, +1 more)
+    deferred to issue #168.
+12. **SessionAutoName hook (525 LOC)** — UX nicety; auto-names sessions
     from initial prompt
-14. **settings.json customisations (Class B merge)** — fork-side keys
+13. **settings.json customisations (Class B merge)** — fork-side keys
     (`autoUpdatesChannel`, `effortLevel`, `enableAllProjectMcpServers`,
     `enabledMcpjsonServers`, `mcpServers`, `remoteControlAtStartup`,
     `showThinkingSummaries`, `skillListingBudgetFraction`,
@@ -273,6 +273,8 @@ first acceptance criterion on each issue.
 | ISC count gate (Standard 8 / Extended 16 / Advanced 24 / Deep 40 / Comprehensive 64) | REPLACED by v5's stricter tier floors (E2≥16, E3≥32, E4≥128, E5≥256) |
 | `~/.claude/VoiceServer/` legacy directory on marrair | Residue from before voice removal; v5 manages voice via `VoiceCompletion.hook.ts` + `~/.claude/PAI/PULSE/VoiceServer/voice.ts` |
 | Marrair-only debug scripts that don't fit v5's architecture | TBD enumeration during Phase B trial sessions; not pre-listed here |
+| SecurityValidator hook (642 LOC) + audit-log writer | v5's `hooks/SecurityPipeline.hook.ts` self-documents (L4–L7) as replacing it with a composable `Pattern → Egress → Rules` inspector chain. v5's `PatternInspector.ts` consumes a **largely compatible** `patterns.yaml` shape (same `version` / `philosophy` / `bash` / `paths` / `projects` top-level; v5 has `bash.trusted` allowlist where fork has `bash.confirm` user-prompt — port-time consideration only if a user has custom `bash.confirm:` rules). PatternInspector is **fail-closed** on missing patterns (L200) where fork is fail-open. v5 ships `PATTERNS.yaml` (156 lines) in baseline. No documented residual gap. Verify-first probe deferred to Phase B trial sessions; promote back if a concrete gap surfaces. |
+| `PAISECURITYSYSTEM/patterns.example.yaml` | No purpose without SecurityValidator (above). v5 ships its own `~/.claude/PAI/USER/SECURITY/PATTERNS.yaml`. |
 
 ## Adopt List (vanilla v5.0.0 keeps verbatim)
 
@@ -281,9 +283,10 @@ first acceptance criterion on each issue.
   classifier at UserPromptSubmit, `/e1`–`/e5` effort overrides,
   ideate/optimize loop modes, `optimize-loop.md`, `mode-detection.md`,
   `eval-guide.md`, `parameter-schema.md`, `target-types.md`
-- **~40-hook set as baseline** — fork's HIGH-priority hooks added on top
-  via overlay (SecurityValidator); MED-priority hooks added in later
-  overlay updates
+- **~40-hook set as baseline** — fork-side hooks added on top via
+  overlay are MED-priority only (AgentExecutionGuard, SkillGuard,
+  SessionAutoName); no HIGH-priority hook ports survive
+  verify-against-v5
 - **New v5 settings.json keys** — `allowedHttpHookUrls`, `autoMode`,
   `awaySummaryEnabled`, `httpHookAllowedEnvVars`, `includeGitInstructions`,
   `max_tokens`, `observability`, `postCompactRestore`, `spinnerTipsOverride`,
@@ -345,17 +348,9 @@ per stored preference. HIGH#3 (was two-root, dropped) closed as won't-do.
    `Releases/v4.0.3+/.claude/PAI-Install/engine/` on `virtualian/pai`
    if the decision ever reverses.
 
-To file in subsequent sessions (HIGH#4, HIGH#5, picked up one at a time):
+To file in subsequent sessions (HIGH#3 in revised list, picked up one at a time):
 
-4. **(HIGH#3 in revised list) — Port SecurityValidator hook on top of
-   v5's security pipeline**
-   - Overlay file already populated this session:
-     `Releases/v5.0.0-overlay/hooks/SecurityValidator.hook.ts`
-   - Settings overlay already wires it under `hooks.PreToolUse`
-   - First: functional comparison of SecurityValidator vs SecurityPipeline +
-     ContentScanner + PromptGuard + ContainmentGuard
-   - Then: validate it complements rather than double-handles v5's pipeline
-5. **(HIGH#4 in revised list) — Port Scope gate (Atomic/Simple/Complex
+4. **(HIGH#3 in revised list) — Port Scope gate (Atomic/Simple/Complex
    hard-block) into v5 OBSERVE phase**
    - New overlay file needed: addendum to v6.3.0 OBSERVE, similar shape
      to `askuq-gate.md`
@@ -378,9 +373,9 @@ are true and have been validated by ≥1 week of daily use on marrmini:
    for any task
 
 (Originally 6 conditions; condition #3 ("two-root architecture ported")
-removed when two-root was dropped.) HIGH#3 (SecurityValidator) and HIGH#4
-(Scope gate) in the revised priority list are NOT decommission-blocking —
-they are quality-of-life ports that can land post-Phase-D.
+removed when two-root was dropped.) HIGH#3 (Scope gate) in the revised
+priority list is NOT decommission-blocking — it is a quality-of-life
+port that can land post-Phase-D.
 
 After all of the above conditions hold:
 - Tag `marrair-pai-final` on `virtualian/pai`'s current branch
@@ -402,7 +397,7 @@ After all of the above conditions hold:
 This session opens Phase B by:
 1. Creating `virtualian/pai-v5` (linked fork of upstream)
 2. Replacing `marrmini:~/projects/pai/` with `~/projects/pai-v5/`
-3. Scaffolding `Releases/v5.0.0-overlay/` with HIGH#1, #2, #4 overlay files
+3. Scaffolding `Releases/v5.0.0-overlay/` with HIGH#1, #2 overlay files
 4. Writing `Tools/deploy-overlay.sh` and `Tools/check-overlay.sh`
 5. Filing the first 3 follow-up issues against `virtualian/pai-v5`
 
