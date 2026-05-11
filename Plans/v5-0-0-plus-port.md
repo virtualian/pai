@@ -475,7 +475,7 @@ Evidence:
 | ID | Title | State |
 |---|---|---|
 | `virtualian/pai-v5#1` | Port AskUserQuestion ENUMERATE→OFFER phase-exit gate to Algorithm v6.3.0+local (HIGH#1) | **MERGED 2026-05-11** (pai-v5#4 / `7c1bd35`). Overlay deployed to marrmini's `~/.claude/`; structural verification passed (LATEST=`6.3.0+local`, askuq-gate.md + v6.3.0+local.md in place, v6.3.0.md byte-identical to vanilla v5). Behavioural acceptance bypassed pending real-world daily-use validation. |
-| `virtualian/pai-v5#2` | Port AISTEERINGRULES.md base + `@imports` wiring (HIGH#2) | OPEN — wiring approach revised per #175 Decision A (`@imports`, not `loadAtStartup`); bootstrap's `settings.json.overlay`-based scaffold is no longer applicable. Blocked on CLAUDE.md `@import`-merge tooling extension PR (pai-v5 infra issue TBD, mirrors pai-v5#5). After tooling lands: cut per-issue branch, refresh AISTEERINGRULES from marrair runtime, deploy. |
+| `virtualian/pai-v5#2` | Port AISTEERINGRULES.md base + `@imports` wiring (HIGH#2) | **MERGED 2026-05-11** (pai-v5#9 / `d564990`). Class B-imports tooling (pai-v5#7 / `0bc8879`) landed first to enable the `@import`-merge. Deploy on marrmini verified: `~/.claude/PAI/AISTEERINGRULES.md` present (MD5 `567f17cc…`, == marrair canonical), `@PAI/AISTEERINGRULES.md` inserted in `~/.claude/CLAUDE.md` after the 5 vanilla v5 imports, `check-overlay.sh` reports `ok`, idempotent on re-run. Known cosmetic drift: file preamble references `loadAtStartup` (accurate for marrair, misleading for marrmini); cleanup deferred until marrair migrates off `loadAtStartup`. Behavioural acceptance pending daily-use validation. |
 | `virtualian/pai-v5#3` | Adopt two-root architecture | CLOSED won't-do — per Decisions Locked |
 
 ### Related issues filed in `virtualian/pai`
@@ -487,7 +487,10 @@ Evidence:
 - `#173` — Track pai-v5#1 port: record Option 3 wiring decision
   (LATEST→6.3.0+local) in design doc (MERGED via PR #174, 2026-05-11)
 - `#175` — Track pai-v5#2 port: AISTEERINGRULES wiring decision
-  (`loadAtStartup` vs `@imports`) — Decision A resolved (`@imports`)
+  (`loadAtStartup` vs `@imports`) — Decision A resolved (`@imports`,
+  MERGED via PR #176, 2026-05-11)
+- `#177` — Track pai-v5#2 merged: refresh design doc with verification
+  evidence (this PR)
 
 ### Overlay scaffold state on `virtualian/pai-v5:bootstrap/v5-overlay-and-tooling`
 
@@ -515,13 +518,16 @@ Currently mid-**Phase B** (per "Phased Move" table): design doc landed,
 overlay scaffold populated for HIGH#1/#2, **pai-v5#1 (HIGH#1) MERGED
 and deployed to marrmini** (2026-05-11; structural verification passed,
 behavioural acceptance pending daily-use validation). **pai-v5#2 (HIGH#2)
-coordination open as #175** with wiring decision = `@imports` (v5-aligned);
-CLAUDE.md `@import`-merge tooling extension PR pending on pai-v5 before
-pai-v5#2 implementation can deploy. Marrair remains primary. marrmini
-decommission criteria (this doc, lines 358–377) — criterion #1 (HIGH#1)
-structurally met, ≥1-week daily-use validation outstanding; criteria
-#2 (HIGH#2), #3 (Class C transfer), #4 (REPL equivalence), #5 (≥7 daily
-sessions) outstanding.
+MERGED and deployed to marrmini** (2026-05-11; AISTEERINGRULES.md file
++ `@PAI/AISTEERINGRULES.md` directive both live, MD5 match against
+marrair canonical, idempotent re-deploy verified). Class B-imports
+tooling (pai-v5#7 / PR #8 / `0bc8879`) and deploy-tooling-on-main
+(pai-v5#5 / PR #6 / `e731b65`) both landed mid-Phase-B as enablers.
+Marrair remains primary. marrmini decommission criteria (this doc,
+lines 358–377) — criteria #1 (HIGH#1) and #2 (HIGH#2) structurally
+met, ≥1-week daily-use validation outstanding for both; criteria
+#3 (Class C transfer), #4 (REPL equivalence), #5 (≥7 daily sessions)
+outstanding.
 
 ## References
 
