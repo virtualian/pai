@@ -37,6 +37,7 @@ fork `virtualian/pai-v5`.
 | Class C personalisation | NEVER in overlay; one-time copy at Phase C cutover |
 | First 3 issues | One issue per HIGH-priority port (one-issue-at-a-time per stored preference) |
 | Wiring strategy for v6.3.0+local | **Option 3 — bump `LATEST` to `6.3.0+local`** + ship thin `v6.3.0+local.md` wrapper that loads v5's `v6.3.0.md` then applies `*-gate.md` addenda. v5's `v6.3.0.md` stays unmodified. Load chain: `CLAUDE.md` → `LATEST` → `v6.3.0+local.md` → (Read `v6.3.0.md` + `askuq-gate.md`). Establishes the **`vX.Y.Z+local` LATEST convention** for future fork-side Algorithm doctrine variants (Scope gate per HIGH#3 reuses this pattern). Rejected alternatives: (1) Class A overlay of `v6.3.0.md` — overwrites v5, high upgrade-drift; (2) `CLAUDE.md` section-append — needs `deploy-overlay.sh` CLAUDE.md-merge support, out of pai-v5#1 scope. Decision captured #173 (2026-05-11) |
+| Wiring strategy for AISTEERINGRULES (and future force-loaded markdown) | **`@imports` path** — add `@PAI/AISTEERINGRULES.md` to v5's `CLAUDE.md` @-imports cluster, mirroring how v5 loads `PRINCIPAL_IDENTITY`, `DA_IDENTITY`, etc. Aligns with v5's stated direction (`settings.json._docs`: *"v5.0: Static files migrated to @imports in CLAUDE.md.template. Dynamic context via LoadContext.hook.ts."*). Rejected: re-using `loadAtStartup.files` — v5 explicitly deprecated it. Cost: requires extending `deploy-overlay.sh` with CLAUDE.md `@import`-line idempotent append (separate infra PR on pai-v5, mirroring pai-v5#5 pattern). Decision captured #175 (2026-05-11) |
 
 ## Source authority
 
@@ -344,13 +345,30 @@ per stored preference. HIGH#3 (was two-root, dropped) closed as won't-do.
      enumerable decisions exist, on the `OPEN_CHOICES:` line, before
      THINK begins
 2. **virtualian/pai-v5#2 (HIGH#2) — Port AISTEERINGRULES.md base +
-   `loadAtStartup` wiring**
-   - Overlay file: `Releases/v5.0.0-overlay/PAI/AISTEERINGRULES.md` (95
-     lines, verbatim from marrair runtime; already populated this session)
-   - Wiring: `settings.json.overlay` adds `{path: PAI/AISTEERINGRULES.md}`
-     to the `loadAtStartup` array (already populated this session)
-   - Acceptance: rules force-loaded at session start; visible in early
-     turns; no regressions in v5's existing `loadAtStartup` entries
+   `@imports` wiring**
+   - Overlay file: `Releases/v5.0.0-overlay/PAI/AISTEERINGRULES.md` —
+     refresh from marrair runtime at pickup time (live runtime is the
+     source of truth per design doc authority rule; the 95-line
+     bootstrap snapshot from 2026-05-08 may have been /learn-extended
+     since)
+   - Wiring (per #175 Decision A — `@imports`, not `loadAtStartup`):
+     add `@PAI/AISTEERINGRULES.md` to v5's `CLAUDE.md` @-imports
+     cluster, alongside existing `@PAI/USER/PRINCIPAL_IDENTITY.md`
+     etc. Aligns with v5's stated direction ("Static files migrated
+     to @imports in CLAUDE.md.template"). v5's
+     `settings.json.loadAtStartup` is NOT used — explicitly deprecated
+     by v5
+   - Tooling dependency: requires CLAUDE.md `@import`-line idempotent
+     append support in `deploy-overlay.sh` (separate infra PR on
+     pai-v5, mirroring pai-v5#5 pattern). Cannot deploy until tooling
+     PR merges
+   - Bootstrap branch's `settings.json.overlay` `loadAtStartup` entry
+     for AISTEERINGRULES is now stale — flagged for cleanup in the
+     overlay-residue follow-up (alongside SecurityValidator + voice
+     residue per PR #171 audit)
+   - Acceptance: AISTEERINGRULES content visible in early-turn agent
+     responses on marrmini; no regressions in v5's existing CLAUDE.md
+     @-imports loading
 3. **~~virtualian/pai-v5#3~~ — closed won't-do** (was: Adopt two-root
    architecture). The 7 migration helper files exist in
    `Releases/v4.0.3+/.claude/PAI-Install/engine/` on `virtualian/pai`
@@ -456,8 +474,8 @@ Evidence:
 
 | ID | Title | State |
 |---|---|---|
-| `virtualian/pai-v5#1` | Port AskUserQuestion ENUMERATE→OFFER phase-exit gate to Algorithm v6.3.0+local (HIGH#1) | OPEN — overlay files authored on branch `1-port-askuq-gate` (askuq-gate.md cherry-picked + new v6.3.0+local.md wrapper + LATEST→`6.3.0+local`); deploy + acceptance verify on marrmini pending |
-| `virtualian/pai-v5#2` | Port AISTEERINGRULES.md base + `loadAtStartup` wiring (HIGH#2) | OPEN — overlay file + settings.json.overlay wiring populated; runtime verification pending |
+| `virtualian/pai-v5#1` | Port AskUserQuestion ENUMERATE→OFFER phase-exit gate to Algorithm v6.3.0+local (HIGH#1) | **MERGED 2026-05-11** (pai-v5#4 / `7c1bd35`). Overlay deployed to marrmini's `~/.claude/`; structural verification passed (LATEST=`6.3.0+local`, askuq-gate.md + v6.3.0+local.md in place, v6.3.0.md byte-identical to vanilla v5). Behavioural acceptance bypassed pending real-world daily-use validation. |
+| `virtualian/pai-v5#2` | Port AISTEERINGRULES.md base + `@imports` wiring (HIGH#2) | OPEN — wiring approach revised per #175 Decision A (`@imports`, not `loadAtStartup`); bootstrap's `settings.json.overlay`-based scaffold is no longer applicable. Blocked on CLAUDE.md `@import`-merge tooling extension PR (pai-v5 infra issue TBD, mirrors pai-v5#5). After tooling lands: cut per-issue branch, refresh AISTEERINGRULES from marrair runtime, deploy. |
 | `virtualian/pai-v5#3` | Adopt two-root architecture | CLOSED won't-do — per Decisions Locked |
 
 ### Related issues filed in `virtualian/pai`
@@ -467,7 +485,9 @@ Evidence:
 - `#169` — Investigate v5 Learning Loop integration — port-side curation
   layer + community research (referenced from MED item #10)
 - `#173` — Track pai-v5#1 port: record Option 3 wiring decision
-  (LATEST→6.3.0+local) in design doc (this document's updates)
+  (LATEST→6.3.0+local) in design doc (MERGED via PR #174, 2026-05-11)
+- `#175` — Track pai-v5#2 port: AISTEERINGRULES wiring decision
+  (`loadAtStartup` vs `@imports`) — Decision A resolved (`@imports`)
 
 ### Overlay scaffold state on `virtualian/pai-v5:bootstrap/v5-overlay-and-tooling`
 
@@ -492,12 +512,16 @@ Audited 2026-05-10. Findings detailed in
 ### Phase posture
 
 Currently mid-**Phase B** (per "Phased Move" table): design doc landed,
-overlay scaffold populated for HIGH#1/#2, **pai-v5#1 (HIGH#1) in flight**
-on branch `1-port-askuq-gate` (overlay files authored 2026-05-11; deploy
-+ acceptance verify on marrmini pending). Marrair remains primary.
-marrmini decommission criteria (this doc, lines 358–377) are 0 of 5
-satisfied — HIGH#1 and HIGH#2 still need overlay-deploy + runtime
-validation on marrmini before Phase C cutover.
+overlay scaffold populated for HIGH#1/#2, **pai-v5#1 (HIGH#1) MERGED
+and deployed to marrmini** (2026-05-11; structural verification passed,
+behavioural acceptance pending daily-use validation). **pai-v5#2 (HIGH#2)
+coordination open as #175** with wiring decision = `@imports` (v5-aligned);
+CLAUDE.md `@import`-merge tooling extension PR pending on pai-v5 before
+pai-v5#2 implementation can deploy. Marrair remains primary. marrmini
+decommission criteria (this doc, lines 358–377) — criterion #1 (HIGH#1)
+structurally met, ≥1-week daily-use validation outstanding; criteria
+#2 (HIGH#2), #3 (Class C transfer), #4 (REPL equivalence), #5 (≥7 daily
+sessions) outstanding.
 
 ## References
 
