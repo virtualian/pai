@@ -36,6 +36,7 @@ fork `virtualian/pai-v5`.
 | settings.json semantics | Class B per-key JSON-merge via `jq`; metadata keys (`_overlay_doc`, `_why`) stripped before merge; arrays REPLACE for now (TODO documented) |
 | Class C personalisation | NEVER in overlay; one-time copy at Phase C cutover |
 | First 3 issues | One issue per HIGH-priority port (one-issue-at-a-time per stored preference) |
+| Wiring strategy for v6.3.0+local | **Option 3 — bump `LATEST` to `6.3.0+local`** + ship thin `v6.3.0+local.md` wrapper that loads v5's `v6.3.0.md` then applies `*-gate.md` addenda. v5's `v6.3.0.md` stays unmodified. Load chain: `CLAUDE.md` → `LATEST` → `v6.3.0+local.md` → (Read `v6.3.0.md` + `askuq-gate.md`). Establishes the **`vX.Y.Z+local` LATEST convention** for future fork-side Algorithm doctrine variants (Scope gate per HIGH#3 reuses this pattern). Rejected alternatives: (1) Class A overlay of `v6.3.0.md` — overwrites v5, high upgrade-drift; (2) `CLAUDE.md` section-append — needs `deploy-overlay.sh` CLAUDE.md-merge support, out of pai-v5#1 scope. Decision captured #173 (2026-05-11) |
 
 ## Source authority
 
@@ -328,10 +329,17 @@ per stored preference. HIGH#3 (was two-root, dropped) closed as won't-do.
 
 1. **virtualian/pai-v5#1 (HIGH#1) — Port AskUserQuestion ENUMERATE→OFFER
    phase-exit gate to v5's Algorithm v6.3.0+local**
-   - Overlay file: `Releases/v5.0.0-overlay/PAI/ALGORITHM/askuq-gate.md`
-     (already populated this session)
-   - Wiring: confirm v6.3.0's OBSERVE phase loads this addendum at
-     OBSERVE→THINK boundary
+   - Overlay files (3, on branch `1-port-askuq-gate` cut 2026-05-11):
+     - `Releases/v5.0.0-overlay/PAI/ALGORITHM/askuq-gate.md` (88 lines;
+       cherry-picked from `bootstrap/v5-overlay-and-tooling`)
+     - `Releases/v5.0.0-overlay/PAI/ALGORITHM/v6.3.0+local.md` (new;
+       load-order wrapper)
+     - `Releases/v5.0.0-overlay/PAI/ALGORITHM/LATEST` (new; `6.3.0+local`)
+   - Wiring (Option 3 from #173 decision): bump `LATEST` to `6.3.0+local`
+     so v5's `CLAUDE.md` MANDATORY FIRST ACTION lands on
+     `v6.3.0+local.md`, whose MANDATORY LOAD SEQUENCE Reads `v6.3.0.md`
+     then `askuq-gate.md` before OBSERVE executes. v5's `v6.3.0.md`
+     untouched
    - Acceptance: AskUserQuestion is invoked exactly when 2–4-option
      enumerable decisions exist, on the `OPEN_CHOICES:` line, before
      THINK begins
@@ -448,7 +456,7 @@ Evidence:
 
 | ID | Title | State |
 |---|---|---|
-| `virtualian/pai-v5#1` | Port AskUserQuestion ENUMERATE→OFFER phase-exit gate to Algorithm v6.3.0+local (HIGH#1) | OPEN — overlay file populated; wiring + verification pending |
+| `virtualian/pai-v5#1` | Port AskUserQuestion ENUMERATE→OFFER phase-exit gate to Algorithm v6.3.0+local (HIGH#1) | OPEN — overlay files authored on branch `1-port-askuq-gate` (askuq-gate.md cherry-picked + new v6.3.0+local.md wrapper + LATEST→`6.3.0+local`); deploy + acceptance verify on marrmini pending |
 | `virtualian/pai-v5#2` | Port AISTEERINGRULES.md base + `loadAtStartup` wiring (HIGH#2) | OPEN — overlay file + settings.json.overlay wiring populated; runtime verification pending |
 | `virtualian/pai-v5#3` | Adopt two-root architecture | CLOSED won't-do — per Decisions Locked |
 
@@ -458,6 +466,8 @@ Evidence:
   budget (referenced from MED item #11)
 - `#169` — Investigate v5 Learning Loop integration — port-side curation
   layer + community research (referenced from MED item #10)
+- `#173` — Track pai-v5#1 port: record Option 3 wiring decision
+  (LATEST→6.3.0+local) in design doc (this document's updates)
 
 ### Overlay scaffold state on `virtualian/pai-v5:bootstrap/v5-overlay-and-tooling`
 
@@ -482,10 +492,12 @@ Audited 2026-05-10. Findings detailed in
 ### Phase posture
 
 Currently mid-**Phase B** (per "Phased Move" table): design doc landed,
-overlay scaffold populated for HIGH#1/#2, first daily-work port session
-not yet started. Marrair remains primary. marrmini decommission criteria
-(this doc, lines 358–377) are 0 of 5 satisfied — HIGH#1 and HIGH#2 still
-need overlay-deploy + runtime validation on marrmini before Phase C cutover.
+overlay scaffold populated for HIGH#1/#2, **pai-v5#1 (HIGH#1) in flight**
+on branch `1-port-askuq-gate` (overlay files authored 2026-05-11; deploy
++ acceptance verify on marrmini pending). Marrair remains primary.
+marrmini decommission criteria (this doc, lines 358–377) are 0 of 5
+satisfied — HIGH#1 and HIGH#2 still need overlay-deploy + runtime
+validation on marrmini before Phase C cutover.
 
 ## References
 
