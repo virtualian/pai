@@ -444,7 +444,7 @@ Per parent plan's Step 11 sketch:
 - Did NOT touch marrair's PAI runtime (only read the snapshot)
 - Did NOT do personalisation transfer (Phase C)
 
-## Progress / Status (as of 2026-05-10)
+## Progress / Status (as of 2026-05-18)
 
 Tracking what has actually landed versus what the doc *plans for*. Updated
 on each `166-…` branch that revisits status; the design doc itself remains
@@ -477,6 +477,7 @@ Evidence:
 | `virtualian/pai-v5#1` | Port AskUserQuestion ENUMERATE→OFFER phase-exit gate to Algorithm v6.3.0+local (HIGH#1) | **MERGED 2026-05-11** (pai-v5#4 / `7c1bd35`). Overlay deployed to marrmini's `~/.claude/`; structural verification passed (LATEST=`6.3.0+local`, askuq-gate.md + v6.3.0+local.md in place, v6.3.0.md byte-identical to vanilla v5). Behavioural acceptance bypassed pending real-world daily-use validation. |
 | `virtualian/pai-v5#2` | Port AISTEERINGRULES.md base + `@imports` wiring (HIGH#2) | **MERGED 2026-05-11** (pai-v5#9 / `d564990`). Class B-imports tooling (pai-v5#7 / `0bc8879`) landed first to enable the `@import`-merge. Deploy on marrmini verified: `~/.claude/PAI/AISTEERINGRULES.md` present (MD5 `567f17cc…`, == marrair canonical), `@PAI/AISTEERINGRULES.md` inserted in `~/.claude/CLAUDE.md` after the 5 vanilla v5 imports, `check-overlay.sh` reports `ok`, idempotent on re-run. Known cosmetic drift: file preamble references `loadAtStartup` (accurate for marrair, misleading for marrmini); cleanup deferred until marrair migrates off `loadAtStartup`. Behavioural acceptance pending daily-use validation. |
 | `virtualian/pai-v5#3` | Adopt two-root architecture | CLOSED won't-do — per Decisions Locked |
+| `virtualian/pai-v5#11` | Port Scope gate (Atomic/Simple/Complex hard-block) to Algorithm v6.3.0+local (HIGH#3) | **CLOSED won't-do 2026-05-18** — verify-first complete. Source-read concluded preliminary PARTIAL-PORT; live-probe on marrmini (vanilla v5 + pai-v5#1 + pai-v5#2 target config verified before probes — `Algorithm/LATEST=6.3.0+local`, AISTEERINGRULES.md md5=`567f17ccdc71a4f691aecd02ceff113a` matches marrair canonical) shifted disposition to CLOSE-AS-WON'T-DO. All 4 probes from report §7 ran clean: P1 atomic + tempting adjacent work → scope-locked with explicit consent-seeking on adjacent items; P2 Simple + architectural temptation → scope-locked, named related files as separate asks; P3 Complex anti-probe → proceeded normally without over-restriction; **P4 restatement-emergence → RESTATED YES** with quoted evidence (*"Renaming `foo` → `bar` in `src/x.ts`."*) — v5 already implicitly restates the literal ask before plan/execute. All 5 v3.7.0 SCOPE GATE sub-behaviours covered on v5 via different mechanisms (classification + hard-block by AISTEERINGRULES:8/50/54 deployed via pai-v5#2 — *proven behaviourally* by P1+P2; restatement-verification by v5's implicit habit — *proven behaviourally* by P4; Algorithm-phase placement contraindicated by fork doctrine). Zero overlay change required. Full investigation on branch `pai-v5-11-step0-source-read`; closure report at `reports/v5-comparison/pai-v5-11-scope-gate-gap.md` §10. |
 
 ### Related issues filed in `virtualian/pai`
 
@@ -528,6 +529,20 @@ lines 358–377) — criteria #1 (HIGH#1) and #2 (HIGH#2) structurally
 met, ≥1-week daily-use validation outstanding for both; criteria
 #3 (Class C transfer), #4 (REPL equivalence), #5 (≥7 daily sessions)
 outstanding.
+
+**pai-v5#11 (HIGH#3) CLOSED won't-do 2026-05-18** — verify-first complete.
+Live-probe on marrmini confirmed AISTEERINGRULES.md rules fire
+behaviourally (P1+P2 PASS scope-lock) AND v5 already implicitly restates
+the literal ask before plan/execute (P4=YES, quoted evidence). All 5
+v3.7.0 SCOPE GATE sub-behaviours covered on v5 via different mechanisms;
+zero overlay change required. Branch `pai-v5-11-step0-source-read`
+holds full investigation; closure report at
+`reports/v5-comparison/pai-v5-11-scope-gate-gap.md` §10.
+
+**HIGH bucket now fully closed:** HIGH#1 MERGED (pai-v5#1, AskUQ gate),
+HIGH#2 MERGED (pai-v5#2, AISTEERINGRULES), HIGH#3 won't-do (pai-v5#11,
+verify-first concluded gap absent). Any further ports would be MED tier
+("useful but not daily-blocking" per priority list line 225+).
 
 ## References
 
