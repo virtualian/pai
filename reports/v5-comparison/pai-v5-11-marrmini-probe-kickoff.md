@@ -2,9 +2,18 @@
 
 **Paste everything from `## Context` through `## After all probes` below into a fresh Claude Code session on marrmini.** This is the live-probe half of Step 0 for [pai-v5#11](https://github.com/virtualian/pai-v5/issues/11).
 
-The marrmini session needs to be running on a vanilla v5.0.0 install with pai-v5#1 (AskUserQuestion gate) and pai-v5#2 (AISTEERINGRULES.md + `@imports` wiring) already deployed — i.e. the current production marrmini state as of 2026-05-11. Do NOT run this on the marrair fork install or on a fresh-vanilla install without pai-v5#1/#2 — the probe results would be uninterpretable in either case.
+The marrmini session needs to be running on a vanilla v5.0.0 install with pai-v5#1 (AskUserQuestion gate) and pai-v5#2 (AISTEERINGRULES.md + `@imports` wiring) already deployed. Do NOT run this on the marrair fork install or on a fresh-vanilla install without pai-v5#1/#2 — the probe results would be uninterpretable in either case. The pasted block below has a "Verified target state" section the Claude session checks before starting.
 
 After the probes run, paste the transcripts back into a marrair session and we'll apply the disposition-shift matrix to produce the final pai-v5#11 port disposition.
+
+## How to start the marrmini Claude session
+
+Two equivalent invocation modes:
+
+- **Interactively at marrmini:** open Terminal on marrmini, run `claude`. If you get `command not found`, use the absolute path: `/Users/ianmarr/.local/bin/claude`.
+- **Via SSH from any host with SSH access to marrmini:** `ssh marrmini`, then run `claude` (or `/Users/ianmarr/.local/bin/claude` if `claude` returns command-not-found — the SSH non-interactive shell uses a minimal PATH that misses `~/.local/bin/`, even with `zsh -l`).
+
+Once the Claude session is open, paste the block from `## Context` through `## After all probes complete` below.
 
 ---
 
@@ -15,6 +24,16 @@ You are running the live-probe half of Step 0 verify-first for [`virtualian/pai-
 Source-read half completed on marrair 2026-05-18. Preliminary disposition: PARTIAL-PORT — port only the *restatement-verification step* (sub-behaviour 3) because the fork's AISTEERINGRULES.md rules already cover Atomic/Simple/Complex classification (sub-behaviour 1) and "while I'm there" hard-block (sub-behaviour 2). The fork itself (AISTEERINGRULES.md:54) says Algorithm-phase placement (sub-behaviour 5) is *insufficient* and the rule must fire pre-mode-classification — so that placement should NOT be ported.
 
 **The empirical question this probe answers:** do the AISTEERINGRULES.md rules ("Surgical fixes only", "Minimal scope", "Atomic-narrow requests are scope-locked" — lines 8/50/54, deployed to this v5 install via pai-v5#2 on 2026-05-11) actually *fire behaviourally* under realistic atomic-task pressure, or are they structurally-deployed-but-behaviourally-ineffective? If they fire, partial-port stands. If they don't, full-port is warranted as an Algorithm-phase backup gate.
+
+## Verified target state (sanity-check before starting)
+
+Verified from marrair on 2026-05-18 via SSH probe to marrmini. Before running probes P1-P4, confirm the following on the marrmini install you're sitting in:
+
+- `cat ~/.claude/PAI/Algorithm/LATEST` should return `6.3.0+local` (the pai-v5#1 askuq-gate overlay version — confirms the fork-algorithm extension is active, not raw vanilla v6.3.0)
+- `md5 ~/.claude/PAI/AISTEERINGRULES.md` should return `567f17ccdc71a4f691aecd02ceff113a` (matches the marrair canonical at `~/backups/pai/runtime-marrair-20260508-002618/.pai/PAI/AISTEERINGRULES.md` — confirms pai-v5#2 deployed byte-perfect, no drift since 2026-05-11)
+- `claude --version` should be `2.1.138 (Claude Code)` or later
+
+If any of these don't match: STOP. The target config has drifted from what the source-read findings assumed; the probe results would be misattributed to scope-gate semantics when the actual cause is config drift. Report the drift back to the marrair session before running any probes.
 
 ## Probe protocol
 
