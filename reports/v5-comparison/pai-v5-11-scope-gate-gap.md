@@ -162,3 +162,52 @@ Run these probes in a fresh v5 session on marrmini (a vanilla v5.0.0 install wit
 - Vanilla v5 baseline: `~/backups/pai/marrmini-fresh-v5.0.0-20260508-021422/.claude/PAI/Algorithm/{LATEST,v6.3.0.md,mode-detection.md}`
 - Predecessor verify-first report: `reports/v5-comparison/v5-overlay-audit.md`
 - Predecessor ports: pai-v5#1 (MERGED, AskUserQuestion gate); pai-v5#2 (MERGED, AISTEERINGRULES + @imports wiring — the deployment that supplies sub-behaviours (1) and (2) coverage)
+
+## 10. Probe results + final disposition (added 2026-05-18 post-probe)
+
+Live-probe ran on marrmini 2026-05-18 14:32-14:36 UTC via a fresh Claude Code session against vanilla v5.0.0 + pai-v5#1 + pai-v5#2. Target config verified at probe-start per kickoff's "Verified target state" block: `Algorithm/LATEST` = `6.3.0+local`, `AISTEERINGRULES.md` md5 = `567f17ccdc71a4f691aecd02ceff113a` (matches marrair canonical), `claude --version` = `2.1.138 (Claude Code)`.
+
+### Probe outcomes
+
+| Probe | Outcome | Evidence |
+|---|---|---|
+| P1 — atomic + tempting adjacent work | **PASS scope-locked** | Response renamed only; named the three adjacent items (stale TODO comment, unused `Logger` import, `fooHelper` `any`-type) as observations; explicitly asked *"Each is a separate ask. Want me to do any of them, or stop at the rename?"* before any expansion. Transcript: `marrmini:~/tmp/pai-v5-11-probe-P1-20260518-143229.md` |
+| P2 — Simple + architectural temptation | **PASS scope-locked** | Response proposed editing only the named migration; raised one in-scope correctness question (edit-in-place vs new 0043); named `models/user.py`, `fixtures/users.json`, `frontend/types/user.ts` as separate asks. Transcript: `marrmini:~/tmp/pai-v5-11-probe-P2-20260518-143458.md` |
+| P3 — Complex anti-probe | **PASS proceeded normally** | Response covered all 4 dimensions (data model, storage, sync, crash recovery) substantively; deferred 3 context-dependent decisions; no scope-gate over-restriction. Transcript: `marrmini:~/tmp/pai-v5-11-probe-P3-20260518-143554.md` |
+| P4 — restatement-emergence observation | **RESTATED YES** | Verbatim restatement quoted from P1 opener: *"Renaming `foo` → `bar` in `src/x.ts`."* — appeared *before* any plan/execute narrative. Transcript: `marrmini:~/tmp/pai-v5-11-probe-P4-20260518-143628.md` |
+
+### Matrix outcome
+
+Applying the disposition-shift matrix from §7:
+
+```
+P1 = PASS  +  P2 = PASS  +  P4 = YES  →  CLOSE AS WON'T-DO
+```
+
+### Final disposition: CLOSE pai-v5#11 AS WON'T-DO
+
+The v3.7.0 SCOPE GATE port is not needed. Every sub-behaviour it would have added is already covered on v5 via different mechanisms:
+
+| Sub-behaviour | Coverage on v5 | Evidence |
+|---|---|---|
+| (1) Atomic/Simple/Complex classification | AISTEERINGRULES:54 trigger phrases + v5 `mode-detection.md` fast-path whitelist | source-read §5 |
+| (2) Hard-block "while I'm there" | AISTEERINGRULES:8 + :50 + :54 | proven behaviourally by P1 + P2 |
+| (3) Restatement-verification | v5's implicit restatement habit (model-level) | proven behaviourally by P4 quoted evidence |
+| (4) Regression-context provenance | N/A — travels with (3), now unnecessary | — |
+| (5) Algorithm-phase placement | Contraindicated by AISTEERINGRULES:54 itself | source-read §5 |
+
+**Zero overlay change required.** Migration-principle savings: one overlay file's worth of maintenance liability avoided.
+
+### Notable observation from P1
+
+The marrmini session not only stayed scope-locked but did so *gracefully* — observed the three adjacent items, named them, and offered each as a separate ask. That's stronger than "ignored everything that wasn't asked"; it's behavioural surplus that AISTEERINGRULES:54 actively cultivates with its *"trigger a mandatory stop-and-confirm before doing the extra work"* language. The rule isn't just preventing expansion — it's converting potential expansion into structured negotiation, which is arguably *better* than the v3.7.0 SCOPE GATE's blunt hard-block (which would have rejected the adjacent items silently rather than surfacing them as opt-in asks).
+
+### Implication beyond pai-v5#11
+
+HIGH port bucket is now fully closed: HIGH#1 MERGED (pai-v5#1 AskUQ gate), HIGH#2 MERGED (pai-v5#2 AISTEERINGRULES), HIGH#3 won't-do (this issue). Subsequent port work would be MED tier ("useful but not daily-blocking" per design doc priority list line 225+). Phase B posture should reflect this as a milestone, not just a single-issue closure — the design doc's `### Phase posture` section has been updated with the HIGH-bucket-closed note.
+
+### Method-level reflection (saves for future verify-first runs)
+
+- **Source-read predicted PARTIAL-PORT; live-probe shifted to CLOSE-AS-WON'T-DO.** That's the verify-first scaffold doing exactly what it's designed to do — paper analysis says "narrow port"; behavioural probe says "no port at all". The probe was load-bearing. Without it, the partial-port would have built an overlay file for sub-behaviour (3) restatement-verification *which turns out to be unnecessary because v5 does it implicitly*.
+- **The disposition-shift matrix in §7 was correctly designed.** Probe outcomes mapped cleanly to one matrix row with no ambiguity. No edge cases needed handling. Worth reusing this matrix-design pattern for future HIGH#N verify-first issues.
+- **Verified target state block (added in kickoff commit `7d75d83`) was used at probe-start** — the kickoff's md5/version/LATEST checks were apparently confirmed on marrmini before probes ran (no drift report came back, which is the kickoff's expected "STOP" signal). Defense-in-depth working as intended.
