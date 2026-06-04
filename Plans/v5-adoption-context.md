@@ -88,6 +88,18 @@ Run this mentally before any read-for-decision or any edit:
 
 ---
 
-## Phase posture (as of 2026-05-20)
+## Phase posture (as of 2026-06-04)
 
-Mid-Phase B. HIGH bucket fully closed: pai-v5#1 MERGED (AskUserQuestion gate), pai-v5#2 MERGED (AISTEERINGRULES + `@imports`), pai-v5#11 won't-do (SCOPE GATE — v5 covers it). marrair remains primary; marrmini decommission criteria (≥1-week daily-use validation ×2, Class C transfer, REPL equivalence, ≥7 daily sessions) outstanding. Remaining port candidates are MED tier ("useful but not daily-blocking") — expect aggressive drops under the migration principle.
+Late Phase B — **the port/overlay engineering backlog is empty.** `pai-v5` has 0 open issues (all 8 closed); verified live against the tracker on 2026-06-04.
+
+**HIGH bucket — settled (2 ported, 2 dropped):**
+- pai-v5#1 MERGED — AskUserQuestion ENUMERATE→OFFER gate (Algorithm `v6.3.0+local` wrapper, PR #4).
+- pai-v5#2 MERGED — `AISTEERINGRULES.md` base via `@imports` (PR #9).
+- pai-v5#3 won't-do (`not_planned`, 2026-05-09) — **two-root `CLAUDE_CONFIG_DIR`/`PAI_DIR` split dropped; marrmini runs single-root vanilla v5.** The 7 migration engine files were removed from the overlay (they survive in `Releases/v4.0.3+/` if the decision ever reverses). NB: *this fork's* runtime is two-root — what's being retired, not carried forward.
+- pai-v5#11 won't-do — SCOPE GATE; v5 covers all 5 sub-behaviours (verify-first source-read + live marrmini probe).
+
+**Infra + hygiene — merged:** pai-v5#5 (deploy tooling onto `main`, PR #6), pai-v5#7 (Class B-imports merge mode, PR #8), pai-v5#10 (drop `SecurityValidator` + stale `loadAtStartup` residue, PR #13, merged 2026-05-22), pai-v5#12 (harden `PATTERNS.yaml`: `rm -rf $HOME` + `chmod -R 777 /`, PR #14, merged 2026-05-23). The last two merged *after* the previous posture date — what made it stale.
+
+**MED-tier candidates** were never filed as issues → effectively dropped under "default = drop"; they live only as a list in `v5-0-0-plus-port.md`.
+
+**Outstanding = operational, not engineering** (carried from record; NOT live-verified at this update): marrair remains primary; marrmini decommission criteria — ≥1-week daily-use validation ×2, Class C transfer, REPL equivalence, ≥7 daily sessions.
