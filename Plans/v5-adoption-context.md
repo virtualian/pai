@@ -71,7 +71,7 @@ Run this mentally before any read-for-decision or any edit:
 
 ## Workflow
 
-- **Port candidates** are tracked as issues on `virtualian/pai-v5`. Each port is a per-issue branch cut from `bootstrap/v5-overlay-and-tooling`; the overlay file(s) land there.
+- **Port candidates** are tracked as issues on `virtualian/pai-v5`. Each *port* is a per-issue branch cut from `bootstrap/v5-overlay-and-tooling`; the overlay file(s) land there. **But verify the base against the actual merged state, not this default.** Release-housekeeping issues that *continue* a change already merged to `main` (e.g. `pai-v5#16`, the doc-refresh half of #15) cut from **`main`**, not bootstrap — bootstrap is currently behind `main` and still carries the deleted `v2.x`–`v4.x` snapshot folders. "Cut from bootstrap" is a stale default for housekeeping; it applies to genuine overlay ports.
 - **Deployment** to marrmini is via `deploy-overlay.sh` (rsync Class-A files + `jq`-merge Class-B `settings.json` overlay).
 - **Tracking/decision records** (design-doc refreshes, wiring decisions, closure notes) are issues + PRs on `virtualian/pai` — these document the migration from the fork side.
 - **Verify-first lives inside the port issue** as Step 0; default disposition is drop unless Step 0 confirms a real gap on the target.
@@ -88,9 +88,9 @@ Run this mentally before any read-for-decision or any edit:
 
 ---
 
-## Phase posture (as of 2026-06-06)
+## Phase posture (as of 2026-06-08)
 
-Late Phase B — **the overlay backlog has one open item: `pai-v5#16`** (full refresh of `Releases/README.md` to present v5.0.0 as the current release — the deferred rewrite half of #15). `pai-v5` has 1 open + 9 closed issues; verified live against the tracker on 2026-06-06. (The prior 2026-06-04 snapshot recorded "0 open / 8 closed" — but #15 closed and #16 was filed ~25 min *after* that day's doc commit, so the "empty backlog" claim went stale almost immediately. Lesson: a dated "verified" line is a cache, not a guarantee — re-probe `gh issue list` rather than trusting the recorded count.)
+Late Phase B — **the overlay backlog is empty.** The last open item, `pai-v5#16` (full refresh of `Releases/README.md` to present v5.0.0 as current — the deferred rewrite half of #15), merged via PR #20 and closed `completed` on 2026-06-08; `pai-v5` now has 0 open engineering issues. Verified live against the tracker on 2026-06-08. (History: the 2026-06-04 snapshot recorded "0 open / 8 closed", but #15 closed and #16 was filed ~25 min *after* that day's doc commit, so the "empty backlog" claim went stale almost immediately — which is why the count above is a re-probe, not a trusted cache. Lesson stands: re-probe `gh issue list` rather than trusting a recorded count.)
 
 **HIGH bucket — settled (2 ported, 2 dropped):**
 - pai-v5#1 MERGED — AskUserQuestion ENUMERATE→OFFER gate (Algorithm `v6.3.0+local` wrapper, PR #4).
@@ -98,10 +98,10 @@ Late Phase B — **the overlay backlog has one open item: `pai-v5#16`** (full re
 - pai-v5#3 won't-do (`not_planned`, 2026-05-09) — **two-root `CLAUDE_CONFIG_DIR`/`PAI_DIR` split dropped; marrmini runs single-root vanilla v5.** The 7 migration engine files were removed from the overlay (they survive in `Releases/v4.0.3+/` if the decision ever reverses). NB: *this fork's* runtime is two-root — what's being retired, not carried forward.
 - pai-v5#11 won't-do — SCOPE GATE; v5 covers all 5 sub-behaviours (verify-first source-read + live marrmini probe).
 
-**Infra + hygiene — merged:** pai-v5#5 (deploy tooling onto `main`, PR #6), pai-v5#7 (Class B-imports merge mode, PR #8), pai-v5#10 (drop `SecurityValidator` + stale `loadAtStartup` residue, PR #13, merged 2026-05-22), pai-v5#12 (harden `PATTERNS.yaml`: `rm -rf $HOME` + `chmod -R 777 /`, PR #14, merged 2026-05-23), pai-v5#15 (remove prior `Releases/v2.3`–`v4.0.3` snapshots after no-live-dependency verification, PR #18, merged 2026-06-04).
+**Infra + hygiene — merged:** pai-v5#5 (deploy tooling onto `main`, PR #6), pai-v5#7 (Class B-imports merge mode, PR #8), pai-v5#10 (drop `SecurityValidator` + stale `loadAtStartup` residue, PR #13, merged 2026-05-22), pai-v5#12 (harden `PATTERNS.yaml`: `rm -rf $HOME` + `chmod -R 777 /`, PR #14, merged 2026-05-23), pai-v5#15 (remove prior `Releases/v2.3`–`v4.0.3` snapshots after no-live-dependency verification, PR #18, merged 2026-06-04), pai-v5#16 (full v5 refresh of `Releases/README.md`, PR #20, merged 2026-06-08).
 
-**Open — the one live engineering item:** pai-v5#16 — full refresh of `Releases/README.md` to present `v5.0.0` (+ `v5.0.0-overlay`) as the current release: accurate feature highlights mirroring the root README changelog, Installation switched to the one-line `curl … install.sh` method, no references to the removed `v2.x`–`v4.x` snapshot folders, internal links resolve. Release housekeeping on the overlay repo, **not** a port candidate — no verify-first / marrmini probe required.
+**Open — none.** The overlay backlog is clear. (Last closed: pai-v5#16 — full v5 refresh of `Releases/README.md`, PR #20, merged 2026-06-08. Release housekeeping on the overlay repo, **not** a port candidate — so it was cut from `main`, where #15 had already merged, *not* from bootstrap.)
 
 **MED-tier candidates** were never filed as issues → effectively dropped under "default = drop"; they live only as a list in `v5-0-0-plus-port.md`.
 
-**Outstanding engineering:** just pai-v5#16 (above). **Outstanding operational, not engineering** (carried from record; NOT live-verified at this update): marrair remains primary; marrmini decommission criteria — ≥1-week daily-use validation ×2, Class C transfer, REPL equivalence, ≥7 daily sessions.
+**Outstanding engineering:** none — overlay backlog empty. **Outstanding operational, not engineering** (carried from record; NOT live-verified at this update): marrair remains primary; marrmini decommission criteria — ≥1-week daily-use validation ×2, Class C transfer, REPL equivalence, ≥7 daily sessions.
